@@ -15,8 +15,6 @@ const createToken = (id) => {
 
 
 exports.signup = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-
   const { matricNumber, fullName, phoneNumber, password } = req.body;
   // Check if Student already exists
   const existingStudent = await Student.findOne({ matricNumber });
@@ -45,8 +43,6 @@ exports.signup = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-
   const { matricNumber, password } = req.body;
 
   // Check if Student exists
@@ -68,15 +64,11 @@ exports.login = async (req, res) => {
 };
 
 exports.signout = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-
   res.cookie("jwt", "", { maxAge: 1 }); // deleting the token from the cookies
   res.status(200).json({ message: "User logged out successfully" });
 };
 
 exports.setPin = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-
   try {
     const {pin} = req.body
     const token = req.cookies.jwt; // getting the token from the cookies

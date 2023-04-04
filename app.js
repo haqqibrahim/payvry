@@ -23,16 +23,19 @@ mongoose
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.json());
-
+const allowCORS = (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+};
 // Use the authentication routes
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Payvry" });
 });
-app.use("/student/api", studentAuthRoutes)
-app.use("/student/api", studentTransactionRoutes)
-app.use("/vendor/api",vendorAuthRoutes)
-app.use("/vendor/api",vendorTransactionRoutes)
-app.use("/admin/api",adminAuthRoutes)
+app.use("/student/api",allowCORS, studentAuthRoutes)
+app.use("/student/api",allowCORS, studentTransactionRoutes)
+app.use("/vendor/api",allowCORS,vendorAuthRoutes)
+app.use("/vendor/api",allowCORS,vendorTransactionRoutes)
+app.use("/admin/api",allowCORS,adminAuthRoutes)
 // start the server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
