@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require('cors');
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const port = process.env.PORT || 3000;
@@ -22,6 +23,7 @@ mongoose
 // parse requests
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors());
 app.use(express.json());
 const allowCORS = (req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
