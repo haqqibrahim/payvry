@@ -23,7 +23,11 @@ mongoose
 // parse requests
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:8081',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 app.use(express.json());
 const allowCORS = (req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
