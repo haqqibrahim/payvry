@@ -16,6 +16,10 @@ const createToken = (id) => {
 
 exports.signup = async (req, res) => {
   const { matricNumber, fullName, phoneNumber, password } = req.body;
+  if(!matricNumber || matricNumber === '' || !fullName || fullName === '' || !phoneNumber || phoneNumber === '' || !password || password === '') {
+    return res.status(409).json({message: "Empty fields"})
+  }
+  
   // Check if Student already exists
   const existingStudent = await Student.findOne({ matricNumber });
   if (existingStudent) {
@@ -44,7 +48,10 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { matricNumber, password } = req.body;
-
+  if(!matricNumber || matricNumber === '' || !password || password === '') {
+    return res.status(409).json({message: "Empty fields"})
+  }
+  
   // Check if Student exists
   const student = await Student.findOne({ matricNumber });
   if (!student) {
