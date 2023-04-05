@@ -81,14 +81,14 @@ exports.signout = async (req, res) => {
 
 exports.setPin = async (req, res) => {
   try {
-    const {pin} = req.body
+    const {pin,token} = req.body
     if(pin.length < 6) {
       return res.status(400).json({ message: "Pin must be 6 digit" });
 
     }
 
-    
-    const token = req.cookies.jwt; // getting the token from the cookies
+
+    // const token = req.cookies.jwt; // getting the token from the cookies
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const studentId = decoded.id;
     const student = await Student.findById(studentId);
