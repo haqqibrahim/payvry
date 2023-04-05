@@ -86,6 +86,8 @@ exports.setPin = async (req, res) => {
       return res.status(400).json({ message: "Pin must be 6 digit" });
 
     }
+
+    
     const token = req.cookies.jwt; // getting the token from the cookies
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const studentId = decoded.id;
