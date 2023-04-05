@@ -15,7 +15,9 @@ const app = express();
 // Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({
+  orgin: "http://localhost:8080"
+}));
 app.use(express.json());
 
 // Set up MongoDB connection
