@@ -25,6 +25,10 @@ exports.signup = async (req, res) => {
   if (existingStudent) {
     return res.status(409).json({ message: "Matric Number already exists" });
   }
+  const studentNumber  = await Student.findOne({phoneNumber})
+  if(studentNumber) {
+    return res.status(409).json({message: "Phone number already exists"})
+  }
   // Hash the password
   const saltRounds = 15;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
