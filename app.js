@@ -20,6 +20,7 @@ app.use(cors({
   orgin: "http://localhost:8080"
 }));
 
+
 app.use(express.json());
 
 // Set up MongoDB connection
