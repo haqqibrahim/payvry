@@ -7,4 +7,5 @@ router.post('/signup', studentAuthController.signup);
 router.post('/login', studentAuthController.login);
 router.post("/signout", studentAuthController.signout)
 router.post("/setpin", studentAuthController.setPin)
+router.post("/user", studentAuthController.getStudent)
 module.exports = router;

@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Student = require("../../Models/Student");
 const AdminDashboard = require("../../Models/AdminDashboard");
-
+const StudentTransaction = require("../../Models/StudentTransactions")
 // create json web token
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (id) => {
@@ -105,4 +105,25 @@ exports.setPin = async (req, res) => {
   }
 };
 
+exports.getStudent = async(req, res) => {
+  try {
+    const {token} = req.body
+  
 
+    // const token = req.cookies.jwt; // getting the token from the cookies
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
+    const studentId = decoded.id;
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(400).json({ message: "User not found" });
+    }
+   const studentTransaction = await StudentTransaction.find({user_id: studentId})
+   if (!studentTransaction) {
+    return res.status(400).json({ message: "Student Transaction not found" });
+  }
+    return res.status(200).json({message: "found student", student, studentTransaction})
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err });
+  }
+}
