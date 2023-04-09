@@ -15,13 +15,12 @@ function generateRandomString(length) {
 
 exports.deposit = async (req, res) => {
   try {
-    const { amount, transaction_ref } = req.body;
-    const token = req.cookies.jwt; // getting the token from the cookies
+    const { amount, transaction_ref,token } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const studentId = decoded.id;
     const student = await Student.findById(studentId);
     if (!student) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(409).json({ message: "User not found" });
     }
     const transaction = new Transaction({
       user_id: studentId,
@@ -39,7 +38,7 @@ exports.deposit = async (req, res) => {
     return res.status(200).json({ message: "Transaction Saved", transaction });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: err });
+    res.status(409).json({ message: err });
   }
 };
 
@@ -51,13 +50,13 @@ exports.balance  = async (req, res) => {
         const studentId = decoded.id;
         const student = await Student.findById(studentId);
         if (!student) {
-          return res.status(400).json({ message: "User not found" });
+          return res.status(409).json({ message: "User not found" });
         }
         const balance = student.balance
         return res.status(200).json({message: balance})
       } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err });
+        res.status(409).json({ message: err });
       }
 }
 
@@ -69,13 +68,13 @@ exports.history = async (req, res) => {
         const studentId = decoded.id;
         const student = await Student.findById(studentId);
         if (!student) {
-          return res.status(400).json({ message: "User not found" });
+          return res.status(409).json({ message: "User not found" });
         }
         const transactions = await Transaction.find({ user_id: studentId });
         console.log(transactions)
         return res.status(200).json({message: transactions})
       } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err });
+        res.status(409).json({ message: err });
       }
 }
