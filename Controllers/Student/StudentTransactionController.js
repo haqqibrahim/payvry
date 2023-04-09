@@ -44,8 +44,7 @@ exports.deposit = async (req, res) => {
 
 exports.balance  = async (req, res) => {
     try {
-       
-        const token = req.cookies.jwt; // getting the token from the cookies
+       const {token} = req.body
         const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
         const studentId = decoded.id;
         const student = await Student.findById(studentId);
@@ -63,7 +62,7 @@ exports.balance  = async (req, res) => {
 exports.history = async (req, res) => {
     try {
         
-        const token = req.cookies.jwt; // getting the token from the cookies
+       const {token} = req.body
         const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
         const studentId = decoded.id;
         const student = await Student.findById(studentId);

@@ -4,6 +4,6 @@ const studentTransactionController = require('../../Controllers/Student/StudentT
 const router = express.Router();
 
 router.post("/deposit", studentTransactionController.deposit)
-router.get("/balance", studentTransactionController.balance)
-router.get("/history", studentTransactionController.history)
+router.post("/balance", studentTransactionController.balance)
+router.post("/history", studentTransactionController.history)
 module.exports = router
