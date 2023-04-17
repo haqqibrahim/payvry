@@ -24,7 +24,7 @@ exports.signup = async (req, res) => {
   if (existingVendor) {
     return res.status(409).json({ message: "Vednor already exists" });
   }
-  const exitingNumber  = await Vendor.findOne({phoneNumber});
+  const existingNumber  = await Vendor.findOne({phoneNumber});
   if(existingNumber) {
     return res.status(409).json({message: "Phone Number has been used already"})
   }
