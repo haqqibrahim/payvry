@@ -54,7 +54,7 @@ function generateRandomString(length) {
 
 exports.balance = async (req, res) => {
   try {
-    const token = req.cookies.jwt; // getting the token from the cookies
+    const {token} = req.body; // getting the token from the cookies
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
@@ -65,24 +65,23 @@ exports.balance = async (req, res) => {
     return res.status(200).json({ message: balance });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: err });
+    res.status(409).json({ message: err });
   }
 };
 
 exports.getStudent = async (req, res) => {
   try {
-    const { matricNumber } = req.body;
-    const token = req.cookies.jwt; // getting the token from the cookies
+    const { matricNumber,token } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
-      return res.status(400).json({ message: "Vendor not found" });
+      return res.status(409).json({ message: "Vendor not found" });
     }
     console.log("Vendor found");
     const student = await Student.find({ matricNumber });
     if (student.length == []) {
-      return res.status(400).json({ message: "Matric Number not found" });
+      return res.status(409).json({ message: "Matric Number not found" });
     }
     console.log(student[0]);
     const studentName = student[0].fullName;
@@ -95,22 +94,21 @@ exports.getStudent = async (req, res) => {
 
 exports.acceptPayment = async (req, res) => {
   try {
-    const { matricNumber, amount, pin } = req.body;
+    const { matricNumber, amount, pin, token } = req.body;
 
-    const token = req.cookies.jwt; // getting the token from the cookies
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
-      return res.status(400).json({ message: "Vendor not found" });
+      return res.status(409).json({ message: "Vendor not found" });
     }
     const student = await Student.find({ matricNumber });
     if (student.length == []) {
-      return res.status(400).json({ message: "Matric Number not found" });
+      return res.status(409).json({ message: "Matric Number not found" });
     }
 
     if (student[0].balance < amount) {
-      return res.status(400).json({ message: "Insufficient Funds" });
+      return res.status(409).json({ message: "Insufficient Funds" });
     }
     // Check if pin is correct
     const pinMatch = await bcrypt.compare(pin, student[0].pin);
@@ -169,18 +167,17 @@ exports.acceptPayment = async (req, res) => {
 
 exports.verifyPin = async (req, res) => {
   try {
-    const { pin, pinId, matricNumber, amount } = req.body;
+    const { pin, pinId, matricNumber, amount,token } = req.body;
 
-    const token = req.cookies.jwt; // getting the token from the cookies
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
-      return res.status(400).json({ message: "Vendor not found" });
+      return res.status(409).json({ message: "Vendor not found" });
     }
     const student = await Student.find({ matricNumber });
     if (student.length == []) {
-      return res.status(400).json({ message: "Matric Number not found" });
+      return res.status(409).json({ message: "Matric Number not found" });
     }
     if (!pin) {
       return res.status(400).json({
@@ -259,8 +256,7 @@ exports.verifyPin = async (req, res) => {
 
 exports.refund = async (req, res) => {
   try {
-    const { matricNumber, amount, transaction_ref } = req.body;
-    const token = req.cookies.jwt; // getting the token from the cookies
+    const { matricNumber, amount, transaction_ref,token } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
@@ -313,8 +309,7 @@ exports.refund = async (req, res) => {
 
 exports.history = async (req, res) => {
   try {
-    const { email } = req.body;
-    const token = req.cookies.jwt; // getting the token from the cookies
+    const { email,token } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
@@ -361,13 +356,12 @@ exports.funds = async (req, res) => {
 
 exports.withdraw = async (req, res) => {
   try {
-    const { amount, transaction_ref } = req.body;
-    const token = req.cookies.jwt; // getting the token from the cookies
+    const { amount, transaction_ref,token } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
-      return res.status(400).json({ message: "Vendor not found" });
+      return res.status(409).json({ message: "Vendor not found" });
     }
     const transaction = new VendorTransaction({
       user_id: vendorId,

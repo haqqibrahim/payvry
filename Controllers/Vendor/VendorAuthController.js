@@ -16,6 +16,9 @@ const createToken = (id) => {
 
 exports.signup = async (req, res) => {
   const { vendorUsername, vendorName,vendorOwner, phoneNumber, password } = req.body;
+   if(!vendorUsername || vendorUsername === '' || !vendorName || vendorName === '' || !vendorOwner || vendorOwner === '' || !phoneNumber || phoneNumber === '' !password || password === '') {
+    return res.status(409).json({message: "All fields must be field"})
+  }
   // Check if Vendor already exists
   const existingVendor = await Vendor.findOne({ vendorUsername });
   if (existingVendor) {
@@ -44,17 +47,19 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
   const {vendorUsername, password } = req.body;
-
+ if(!vendorUsername || vendorUsername === '' ||  !password || password === '') {
+    return res.status(409).json({message: "All fields must be field"})
+  }
   // Check if Vendor exists
   const vendor = await Vendor.findOne({ vendorUsername });
   if (!vendor) {
-    return res.status(401).json({ message: "Vendor not found" });
+    return res.status(4019).json({ message: "Vendor not found" });
   }
 
   // Check if password is correct
   const passwordMatch = await bcrypt.compare(password, vendor.password);
   if (!passwordMatch) {
-    return res.status(401).json({ message: "Invalid password" });
+    return res.status(409).json({ message: "Invalid password" });
   }
 
   // Generate a JSON web token
@@ -70,8 +75,8 @@ exports.signout = async (req, res) => {
 
 exports.setPin = async (req, res) => {
   try {
-    const {pin} = req.body
-    const token = req.cookies.jwt; // getting the token from the cookies
+    const {pin, token} = req.body
+   
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
@@ -82,7 +87,7 @@ exports.setPin = async (req, res) => {
     return res.status(200).json({message: "Pin set Successful"})
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: err });
+    res.status(409).json({ message: err });
   }
 };
 
