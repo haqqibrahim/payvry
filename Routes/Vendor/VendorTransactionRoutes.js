@@ -3,7 +3,7 @@ const vendorTransactionController = require('../../Controllers/Vendor/VendorTran
 
 const router = express.Router();
 
-router.get("/balance", vendorTransactionController.balance)
+router.post("/balance", vendorTransactionController.balance)
 router.post("/getstudent", vendorTransactionController.getStudent)
 router.post("/acceptpayment", vendorTransactionController.acceptPayment)
 router.post("/refund", vendorTransactionController.refund)
