@@ -363,6 +363,9 @@ exports.withdraw = async (req, res) => {
     if (!vendor) {
       return res.status(409).json({ message: "Vendor not found" });
     }
+     const oldVendorBalance = vendor.balance;
+    const newVendorBalance = Number(oldVendorBalance) - Number(amount);
+
     const transaction = new VendorTransaction({
       user_id: vendorId,
       student: "Null",
@@ -372,6 +375,7 @@ exports.withdraw = async (req, res) => {
       transaction_ref,
     });
     await transaction.save();
+     await Vendor.updateOne({ _id: vendorId }, { balance: newVendorBalance });
     return res.status(200).json({ message: "Withdraw Succesful" });
   } catch (err) {
     console.log(err);
