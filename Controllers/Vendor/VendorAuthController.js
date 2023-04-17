@@ -16,7 +16,7 @@ const createToken = (id) => {
 
 exports.signup = async (req, res) => {
   const { vendorUsername, vendorName,vendorOwner, phoneNumber, password } = req.body;
-   if(!vendorUsername || vendorUsername === '' || !vendorName || vendorName === '' || !vendorOwner || vendorOwner === '' || !phoneNumber || phoneNumber === '' !password || password === '') {
+   if(!vendorUsername || vendorUsername === '' || !vendorName || vendorName === '' || !vendorOwner || vendorOwner === '' || !phoneNumber || phoneNumber === '' || !password || password === '') {
     return res.status(409).json({message: "All fields must be field"})
   }
   // Check if Vendor already exists
