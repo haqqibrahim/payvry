@@ -7,4 +7,6 @@ router.post('/signup', vendorAuthController.signup);
 router.post('/login', vendorAuthController.login);
 router.post("/signout", vendorAuthController.signout)
 router.post("/setpin", vendorAuthController.setPin)
+router.post("/vendor", vendorAuthController.getVendor)
+router.post("/update",vendorAuthController.updateVendor)
 module.exports = router;

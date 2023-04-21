@@ -2,7 +2,7 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Vendor = require("../../Models/Vendor");
-
+const VendorTransaction = require("../../Models/VendorTransactions")
 
 // create json web token
 const maxAge = 3 * 24 * 60 * 60;
@@ -96,3 +96,60 @@ exports.setPin = async (req, res) => {
 };
 
 
+exports.getVendor = async (req, res) => {
+  try {
+const { token} = req.body
+   
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
+    const vendorId = decoded.id;
+    const vendor = await Vendor.findById(vendorId);
+    if (!vendor) {
+      return res.status(400).json({ message: "Vendor not found" });
+    }
+     const vendorTransaction = await VendorTransaction.find({user_id: vendorId})
+   if (!vendorTransaction) {
+    return res.status(400).json({ message: "Vendor Transaction not found" });
+  }
+    return res.status(200).json({message: "found vendor", vendor, vendorTransaction})
+  }catch(err) {
+    console.log(err);
+    res.status(409).json({ message: err });
+  }
+}
+
+exports.updateVendor = async(req,res) => {
+  try {
+    const {vendorName, vendorUsername, vendorNumber, phoneNumber, vendorOwner,password, token} = req.body
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const vendorId = decoded.id
+   const vendor = await Vendor.findById(vendorId);
+    if (!vendor) {
+      return res.status(400).json({ message: "Vendor not found" });
+    }
+    if(vendor.vendorUsername !== vendorUsername){
+const existingVendor = await Vendor.findOne({ vendorUsername });
+  if (existingVendor) {
+    return res.status(409).json({ message: "Vednor already exists" });
+  }
+    }
+    if(vendor.phoneNumber != phoneNumber) {
+      console.log(vendor.phoneNumber)
+      console.log(phoneNumber)
+ const existingNumber  = await Vendor.findOne({phoneNumber});
+  if(existingNumber) {
+    return res.status(409).json({message: "Phone Number has been used already"})
+  }
+    }
+     const saltRounds = 15;
+    
+    
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+      await Vendor.update({ _id: vendorId }, { vendorName, vendorUsername, vendorNumber, phoneNumber, vendorOwner, password:hashedPassword});
+const vendorUpdates = await Vendor.findById(vendorId);
+            return res.status(200).json({message: "Vendor Details Updated", vendor: vendorUpdates})
+
+  }catch(err) {
+    console.log(err);
+    res.status(409).json({ message: err });
+  }
+}
