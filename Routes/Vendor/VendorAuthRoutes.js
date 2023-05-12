@@ -9,4 +9,6 @@ router.post("/signout", vendorAuthController.signout)
 router.post("/setpin", vendorAuthController.setPin)
 router.post("/vendor", vendorAuthController.getVendor)
 router.post("/update",vendorAuthController.updateVendor)
+router.post("/verify-otp", vendorAuthController.otpVerification)
+router.post("/sent-otp", vendorAuthController.otpSend)
 module.exports = router;

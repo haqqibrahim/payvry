@@ -5,9 +5,9 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const port = process.env.PORT || 3000;
-const studentAuthRoutes = require("./Routes/Student/StudentAuthRoutes");
+const UserAuthRoutes = require("./Routes/User/UserAuthRoutes");
 const vendorAuthRoutes = require("./Routes/Vendor/VendorAuthRoutes");
-const studentTransactionRoutes = require("./Routes/Student/StudentTransactionRoutes");
+const userTransactionRoutes = require("./Routes/User/UserTransactionRoutes");
 const vendorTransactionRoutes = require("./Routes/Vendor/VendorTransactionRoutes");
 const adminAuthRoutes = require("./Routes/Admin/AdminAuthRoutes");
 
@@ -36,8 +36,8 @@ mongoose
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Payvry" });
 });
-app.use("/student/api", studentAuthRoutes);
-app.use("/student/api", studentTransactionRoutes);
+app.use("/user/api", UserAuthRoutes);
+app.use("/user/api", userTransactionRoutes);
 app.use("/vendor/api", vendorAuthRoutes);
 app.use("/vendor/api", vendorTransactionRoutes);
 app.use("/admin/api", adminAuthRoutes);

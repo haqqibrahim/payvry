@@ -3,12 +3,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const Vendor = require("../../Models/Vendor");
-const Student = require("../../Models/Student");
-const VendorTransaction = require("../../Models/VendorTransactions");
-const StudentTransaction = require("../../Models/StudentTransactions");
-const RefundTransaction = require("../../Models/RefundTransaction");
-const TransactionPin = require("../../Models/TransactionPin");
-const AdminDashboard = require("../../Models/AdminDashboard");
+const User = require("../../Models/User");
+const Account = require("../../Models/Account");
+const Transaction = require("../../Models/Transaction");
 
 // Nodemailer transporter
 let transporter = nodemailer.createTransport({
@@ -21,22 +18,31 @@ let transporter = nodemailer.createTransport({
 // Define a function to generate a CSV string from the transactions array
 function generateCsv(transactions) {
   const headers = [
-    "Datetime",
+    "Date-time",
     "Transtaction-ref",
+    "balance",
     "Amount",
-    "Status",
-    "Student",
-    "Alert",
-    "Vendor",
+    "Account",
+    "Transaction Type",
+    "ID",
   ];
   const rows = transactions.map(
-    ({ date_time, transtaction_ref, amount, status, student, alert }) => [
-      date_time,
+    ({
+      date,
       transtaction_ref,
+      balance,
       amount,
-      status,
-      student,
-      alert,
+      accountType,
+      transactionType,
+      ID,
+    }) => [
+      date,
+      transtaction_ref,
+      balance,
+      amount,
+      accountType,
+      transactionType,
+      ID,
     ]
   );
   return [headers, ...rows].map((row) => row.join(",")).join("\n");
@@ -54,14 +60,18 @@ function generateRandomString(length) {
 
 exports.balance = async (req, res) => {
   try {
-    const {token} = req.body; // getting the token from the cookies
+    const { token } = req.body; // getting the token from the cookies
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
       return res.status(400).json({ message: "Vendor not found" });
     }
-    const balance = vendor.balance;
+    const userAccount = await Account.findOne({ ID: vendorId });
+    if (!userAccount) {
+      return res.status(409).json({ message: "Account not found" });
+    }
+    const balance = userAccount.balance;
     return res.status(200).json({ message: balance });
   } catch (err) {
     console.log(err);
@@ -71,7 +81,7 @@ exports.balance = async (req, res) => {
 
 exports.getStudent = async (req, res) => {
   try {
-    const { matricNumber,token } = req.body;
+    const { matricNumber, token } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
@@ -79,7 +89,7 @@ exports.getStudent = async (req, res) => {
       return res.status(409).json({ message: "Vendor not found" });
     }
     console.log("Vendor found");
-    const student = await Student.find({ matricNumber });
+    const student = await User.find({ matricNumber });
     if (student.length == []) {
       return res.status(409).json({ message: "Matric Number not found" });
     }
@@ -102,60 +112,79 @@ exports.acceptPayment = async (req, res) => {
     if (!vendor) {
       return res.status(409).json({ message: "Vendor not found" });
     }
-    const student = await Student.find({ matricNumber });
-    if (student.length == []) {
+    const user = await User.findOne({ matricNumber });
+    if (!user) {
       return res.status(409).json({ message: "Matric Number not found" });
     }
 
-    if (student[0].balance < amount) {
+    console.log(user);
+
+    const userAccount = await Account.findOne({ ID: user._id });
+    if (!userAccount) {
+      return res.status(409).json({ message: "Account not found" });
+    }
+
+    if (userAccount.balance < amount) {
       return res.status(409).json({ message: "Insufficient Funds" });
     }
-    // Check if pin is correct
-    const pinMatch = await bcrypt.compare(pin, student[0].pin);
+    const vendorAccount = await Account.findOne({ ID: vendor._id });
+
+    if (!vendorAccount) {
+      return res.status(409).json({ message: "Vendor Account not found" });
+    }
+
+    // Check if password is correct
+    const pinMatch = await bcrypt.compare(pin, userAccount.pin);
     if (!pinMatch) {
-      return res.status(401).json({ message: "Invalid pin" });
+      return res.status(409).json({ message: "Invalid pin" });
     }
     const transaction_ref = generateRandomString(20);
-
-    const vendorTransaction = new VendorTransaction({
-      user_id: vendorId,
-      student: matricNumber,
-      amount,
-      alert: "credit",
-      status: "completed",
-      transaction_ref,
-    });
-    const oldVendorBalance = vendor.balance;
+    const oldVendorBalance = vendorAccount.balance;
     const newVendorBalance = Number(oldVendorBalance) + Number(amount);
 
-    const studentDebitAmount = Number(amount) + Number(10);
-    const studentTransaction = new StudentTransaction({
-      user_id: matricNumber,
-      vendor: vendor.vendorUsername,
-      amount: studentDebitAmount,
-      alert: "debit",
-      status: "completed",
+    const vendorTransaction = new Transaction({
+      ID: vendorAccount._id,
+      transactionType: "credit",
+      accountType: "Vendor",
+      amount,
       transaction_ref,
+      balance: newVendorBalance,
+      date: Date.now(),
+      created_at: Date.now(),
     });
-    const oldStudentBalance = student[0].balance;
-    const newStudentBalance =
-      Number(oldStudentBalance) - Number(studentDebitAmount);
+    const oldUserBalance = userAccount.balance;
+    const newUserBalance = Number(oldUserBalance) - Number(amount);
 
+    const userTransaction = new Transaction({
+      ID: userAccount._id,
+      transactionType: "debit",
+      accountType: "User",
+      amount,
+      transaction_ref,
+      balance: newUserBalance,
+      date: Date.now(),
+      created_at: Date.now(),
+    });
     await vendorTransaction.save();
-    await studentTransaction.save();
-    await Vendor.updateOne({ _id: vendorId }, { balance: newVendorBalance });
-    await Student.updateOne(
-      { _id: student[0]._id },
-      { balance: newStudentBalance }
-    );
-      await AdminDashboard.updateOne({}, { $inc: { all_transactions: 1 } })
-      await AdminDashboard.updateOne({}, { $inc: { all_profit_earned: 10 } })
-      const currentDate = new Date().toISOString().slice(0, 10); // get current date in format 'YYYY-MM-DD'
-
-      if(student[0].lastTransactionDate !== currentDate) {
-        await Student.updateOne({_id: student[0]._id}, {lastTransactionDate: currentDate})
-        await AdminDashboard.updateOne({}, { $inc: { active_users_today: 1 } })
+    await userTransaction.save();
+    await Account.updateOne(
+      { _id: vendorAccount._id },
+      {
+        balance: newVendorBalance,
+        lastTransactionType: "credit",
+        lastTransactionAmount: amount,
       }
+    );
+
+    await Account.updateOne(
+      { _id: userAccount._id },
+      {
+        balance: newUserBalance,
+        lastTransactionType: "debit",
+        lastTransactionAmount: amount,
+      }
+    );
+
     return res
       .status(200)
       .json({ message: "Transaction Completed", vendorTransaction });
@@ -165,9 +194,9 @@ exports.acceptPayment = async (req, res) => {
   }
 };
 
-exports.verifyPin = async (req, res) => {
+exports.refund = async (req, res) => {
   try {
-    const { pin, pinId, matricNumber, amount,token } = req.body;
+    const { matricNumber, amount, transaction_ref, token } = req.body;
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
@@ -175,132 +204,81 @@ exports.verifyPin = async (req, res) => {
     if (!vendor) {
       return res.status(409).json({ message: "Vendor not found" });
     }
-    const student = await Student.find({ matricNumber });
-    if (student.length == []) {
+    const user = await User.findOne({ matricNumber });
+    if (!user) {
       return res.status(409).json({ message: "Matric Number not found" });
     }
-    if (!pin) {
-      return res.status(400).json({
-        message: "Empty Pin is not allowed, please check your email",
-      });
-    }
-    const transactionPinRecords = await TransactionPin.find({ pinId });
-    if (transactionPinRecords.length <= 0) {
-      return res.status(400).json({
-        message: "No Pin record found. Please try again",
-      });
-    }
-    const { expiredAt } = transactionPinRecords[0];
-    const hashedpin = transactionPinRecords[0].pin;
-    if (expiredAt < Date.now()) {
-      await TransactionPin.deleteMany({ pinId });
-      return res.status(400).json({
-        message: "Pin has expired. Please try again",
-      });
-    }
-    const validPin = await bcrypt.compare(pin, hashedpin);
-    if (validPin) {
-      await TransactionPin.deleteMany({ pinId });
-      const transaction_ref = generateRandomString(20);
-      const token = req.cookies.jwt; // getting the token from the cookies
-      const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
-      const vendorId = decoded.id;
-      const vendor = await Vendor.findById(vendorId);
-      if (!vendor) {
-        return res.status(400).json({ message: "Vendor not found" });
-      }
-      const student = await Student.find({ matricNumber });
-      if (student.length == []) {
-        return res.status(400).json({ message: "Matric Number not found" });
-      }
-      const vendorTransaction = new VendorTransaction({
-        user_id: vendorId,
-        student: matricNumber,
-        amount,
-        alert: "credit",
-        status: "completed",
-        transaction_ref,
-      });
-      const oldVendorBalance = vendor.balance;
-      const newVendorBalance = Number(oldVendorBalance) + Number(amount);
 
-      const studentDebitAmount = Number(amount) + Number(10);
-      const studentTransaction = new StudentTransaction({
-        user_id: matricNumber,
-        vendor: vendor.vendorUsername,
-        amount: studentDebitAmount,
-        alert: "debit",
-        status: "completed",
-        transaction_ref,
-      });
-      const oldStudentBalance = student[0].balance;
-      const newStudentBalance =
-        Number(oldStudentBalance) - Number(studentDebitAmount);
+    console.log(user);
 
-      await vendorTransaction.save();
-      await studentTransaction.save();
-      await Vendor.updateOne({ _id: vendorId }, { balance: newVendorBalance });
-      await Student.updateOne(
-        { _id: student[0]._id },
-        { balance: newStudentBalance }
-      );
-      return res
-        .status(200)
-        .json({ message: "Transaction Completed", vendorTransaction });
+    const userAccount = await Account.findOne({ ID: user._id });
+    if (!userAccount) {
+      return res.status(409).json({ message: "Account not found" });
     }
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: err });
-  }
-};
 
-exports.refund = async (req, res) => {
-  try {
-    const { matricNumber, amount, transaction_ref,token } = req.body;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
-    const vendorId = decoded.id;
-    const vendor = await Vendor.findById(vendorId);
-    if (!vendor) {
-      return res.status(400).json({ message: "Vendor not found" });
+    if (userAccount.balance < amount) {
+      return res.status(409).json({ message: "Insufficient Funds" });
     }
-    const student = await Student.find({ matricNumber });
-    if (student.length == []) {
-      return res.status(400).json({ message: "Matric Number not found" });
+    const vendorAccount = await Account.findOne({ ID: vendor._id });
+
+    if (!vendorAccount) {
+      return res.status(409).json({ message: "Vendor Account not found" });
     }
-    const refund_ref = "Refund-" + transaction_ref;
-    const refundTransaction = new RefundTransaction({
-      user_id: vendorId,
-      student: matricNumber,
-      amount,
-      alert: "refund",
-      status: "completed",
-      refund_ref,
-    });
-    const oldVendorBalance = vendor.balance;
+
+    const tx = await Transaction.findOne({ transaction_ref });
+    if (!tx) {
+      return res.status(409).json({ message: "Transaction not found" });
+    }
+
+    const oldVendorBalance = vendorAccount.balance;
     const newVendorBalance = Number(oldVendorBalance) - Number(amount);
 
-    const studentTransaction = new StudentTransaction({
-      user_id: matricNumber,
-      vendor: vendor.vendorUsername,
+    const vendorTransaction = new Transaction({
+      ID: vendorAccount._id,
+      transactionType: "refund",
+      accountType: "Vendor",
       amount,
-      alert: "refund",
-      status: "completed",
-      transaction_ref: refund_ref,
+      transaction_ref: `refund-${transaction_ref}`,
+      balance: newVendorBalance,
+      date: Date.now(),
+      created_at: Date.now(),
     });
+    const oldUserBalance = userAccount.balance;
+    const newUserBalance = Number(oldUserBalance) + Number(amount);
 
-    const oldStudentBalance = student[0].balance;
-    const newStudentBalance = Number(oldStudentBalance) + Number(amount);
-
-    await refundTransaction.save();
-    await studentTransaction.save();
-    await Vendor.updateOne({ _id: vendorId }, { balance: newVendorBalance });
-    await Student.updateOne(
-      { _id: student[0]._id },
-      { balance: newStudentBalance }
+    const userTransaction = new Transaction({
+      ID: userAccount._id,
+      transactionType: "refund",
+      accountType: "User",
+      amount,
+      transaction_ref: `refund-${transaction_ref}`,
+      balance: newUserBalance,
+      date: Date.now(),
+      created_at: Date.now(),
+    });
+    await vendorTransaction.save();
+    await userTransaction.save();
+    await Account.updateOne(
+      { _id: vendorAccount._id },
+      {
+        balance: newVendorBalance,
+        lastTransactionType: "refund",
+        lastTransactionAmount: amount,
+      }
     );
+
+    await Account.updateOne(
+      { _id: userAccount._id },
+      {
+        balance: newUserBalance,
+        lastTransactionType: "refund",
+        lastTransactionAmount: amount,
+      }
+    );
+
     return res
       .status(200)
-      .json({ message: "Refund Completed", refundTransaction });
+      .json({ message: "Refund Completed", vendorTransaction });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: err });
@@ -309,14 +287,21 @@ exports.refund = async (req, res) => {
 
 exports.history = async (req, res) => {
   try {
-    const { email,token } = req.body;
+    const { email, token } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
       return res.status(400).json({ message: "Vendor not found" });
     }
-    const transactions = await VendorTransaction.find({ user_id: vendorId });
+    const vendorAccount = await Account.findOne({ ID: vendor._id });
+
+    if (!vendorAccount) {
+      return res.status(409).json({ message: "Vendor Account not found" });
+    }
+    console.log(vendorAccount);
+    const transactions = await Transaction.find({ ID: vendorAccount._id });
+    console.log(transactions);
     let mailOptions = {
       from: "enessyibrahim@gmail.com", // sender address
       to: email, // list of receivers
@@ -345,37 +330,44 @@ exports.history = async (req, res) => {
   }
 };
 
-exports.funds = async (req, res) => {
-  try {
-    await VendorTransaction.deleteMany({ refund_ref: null });
-    res.status(200).json({ message: "We good" });
-  } catch (err) {
-    res.status(500).json({ message: err });
-  }
-};
-
 exports.withdraw = async (req, res) => {
   try {
-    const { amount, transaction_ref,token } = req.body;
+    const { amount, transaction_ref, token } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
       return res.status(409).json({ message: "Vendor not found" });
     }
-     const oldVendorBalance = vendor.balance;
+
+    const vendorAccount = await Account.findOne({ ID: vendor._id });
+
+    if (!vendorAccount) {
+      return res.status(409).json({ message: "Vendor Account not found" });
+    }
+
+    const oldVendorBalance = vendorAccount.balance;
     const newVendorBalance = Number(oldVendorBalance) - Number(amount);
 
-    const transaction = new VendorTransaction({
-      user_id: vendorId,
-      student: "Null",
+    const vendorTransaction = new Transaction({
+      ID: vendorAccount._id,
+      transactionType: "withdraw",
+      accountType: "Vendor",
       amount,
-      alert: "withdraw",
-      status: "completed",
       transaction_ref,
+      balance: newVendorBalance,
+      date: Date.now(),
+      created_at: Date.now(),
     });
-    await transaction.save();
-     await Vendor.updateOne({ _id: vendorId }, { balance: newVendorBalance });
+    await vendorTransaction.save()
+     await Account.updateOne(
+       { _id: vendorAccount._id },
+       {
+         balance: newVendorBalance,
+         lastTransactionType: "withdraw",
+         lastTransactionAmount: amount,
+       }
+     );
     return res.status(200).json({ message: "Withdraw Succesful" });
   } catch (err) {
     console.log(err);
