@@ -10,4 +10,6 @@ router.post('/login', UserAuthController.login);
 router.post("/signout", UserAuthController.signout)
 router.post("/setpin", UserAuthController.setPin)
 router.post("/user", UserAuthController.getStudent)
+router.post("/balance", UserAuthController.balance);
+
 module.exports = router;

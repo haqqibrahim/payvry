@@ -2,7 +2,7 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Vendor = require("../../Models/Vendor");
-const VendorTransaction = require("../../Models/VendorTransactions")
+const VendorTransaction = require("../../Models/VendorTransactions");
 const Account = require("../../Models/Account");
 const { sendOTP, verifyOTP } = require("../../HelperFunctions/OTP");
 
@@ -10,21 +10,33 @@ const { sendOTP, verifyOTP } = require("../../HelperFunctions/OTP");
 const maxAge = 3 * 24 * 60 * 60;
 const { createToken } = require("../../HelperFunctions/Token");
 
-
-
 exports.signup = async (req, res) => {
-  const { vendorUsername, vendorName,vendorOwner, phoneNumber, password } = req.body;
-   if(!vendorUsername || vendorUsername === '' || !vendorName || vendorName === '' || !vendorOwner || vendorOwner === '' || !phoneNumber || phoneNumber === '' || !password || password === '') {
-    return res.status(409).json({message: "All fields must be field"})
+  const { vendorUsername, vendorName, vendorOwner, phoneNumber, password } =
+    req.body;
+  if (
+    !vendorUsername ||
+    vendorUsername === "" ||
+    !vendorName ||
+    vendorName === "" ||
+    !vendorOwner ||
+    vendorOwner === "" ||
+    !phoneNumber ||
+    phoneNumber === "" ||
+    !password ||
+    password === ""
+  ) {
+    return res.status(409).json({ message: "All fields must be field" });
   }
   // Check if Vendor already exists
   const existingVendor = await Vendor.findOne({ vendorUsername });
   if (existingVendor) {
     return res.status(409).json({ message: "Vednor already exists" });
   }
-  const existingNumber  = await Vendor.findOne({phoneNumber});
-  if(existingNumber) {
-    return res.status(409).json({message: "Phone Number has been used already"})
+  const existingNumber = await Vendor.findOne({ phoneNumber });
+  if (existingNumber) {
+    return res
+      .status(409)
+      .json({ message: "Phone Number has been used already" });
   }
   // Hash the password
   const saltRounds = 15;
@@ -41,7 +53,7 @@ exports.signup = async (req, res) => {
     updatedAt: Date.now(),
   });
   await vendor.save();
-  
+
   const account = new Account({
     ID: vendor._id,
     accountType: "Vendor",
@@ -56,7 +68,7 @@ exports.signup = async (req, res) => {
   // Generate a JSON web token
   const token = createToken(vendor._id);
   res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
-    sendOTP(vendor._id, phoneNumber);
+  // sendOTP(vendor._id, phoneNumber);
   res.status(201).json({ token, vendor });
 };
 
@@ -90,9 +102,14 @@ exports.otpVerification = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const {vendorUsername, password } = req.body;
- if(!vendorUsername || vendorUsername === '' ||  !password || password === '') {
-    return res.status(409).json({message: "All fields must be field"})
+  const { vendorUsername, password } = req.body;
+  if (
+    !vendorUsername ||
+    vendorUsername === "" ||
+    !password ||
+    password === ""
+  ) {
+    return res.status(409).json({ message: "All fields must be field" });
   }
   // Check if Vendor exists
   const vendor = await Vendor.findOne({ vendorUsername });
@@ -100,11 +117,22 @@ exports.login = async (req, res) => {
     return res.status(4019).json({ message: "Vendor not found" });
   }
 
+  const vendorAccount = await Account.findOne({ ID: vendor._id });
+  if (!vendorAccount) {
+    return res.status(409).json({ message: "Account not found" });
+  }
+
+  if (!vendor.setPin) {
+    return res.status(409).json({ message: "Transaction Pin not set!" });
+  }
+
   // Check if password is correct
   const passwordMatch = await bcrypt.compare(password, vendor.password);
   if (!passwordMatch) {
     return res.status(409).json({ message: "Invalid password" });
   }
+
+
 
   // Generate a JSON web token
   const token = createToken(vendor._id);
@@ -119,85 +147,129 @@ exports.signout = async (req, res) => {
 
 exports.setPin = async (req, res) => {
   try {
-    const {pin, token} = req.body
-   
+    const { pin, token } = req.body;
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
       return res.status(400).json({ message: "Vendor not found" });
     }
-     const saltRounds = 15;
-     const hashedPin = await bcrypt.hash(pin, saltRounds);
-     await Account.updateOne({ ID: vendorId }, { pin: hashedPin });
-      await Vendor.updateOne(
-        { _id: vendorId },
-        {
-          setPin: true,
-        }
-      );
-     return res.status(200).json({ message: "Pin set Successful" });
+    const saltRounds = 15;
+    const hashedPin = await bcrypt.hash(pin, saltRounds);
+    await Account.updateOne({ ID: vendorId }, { pin: hashedPin });
+    await Vendor.updateOne(
+      { _id: vendorId },
+      {
+        setPin: true,
+      }
+    );
+    return res.status(200).json({ message: "Pin set Successful" });
   } catch (err) {
     console.log(err);
     res.status(409).json({ message: err });
   }
 };
 
-
 exports.getVendor = async (req, res) => {
   try {
-const { token} = req.body
-   
+    const { token } = req.body;
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
       return res.status(400).json({ message: "Vendor not found" });
     }
-     const vendorTransaction = await VendorTransaction.find({user_id: vendorId})
-   if (!vendorTransaction) {
-    return res.status(400).json({ message: "Vendor Transaction not found" });
-  }
-    return res.status(200).json({message: "found vendor", vendor, vendorTransaction})
-  }catch(err) {
+    const vendorTransaction = await VendorTransaction.find({
+      user_id: vendorId,
+    });
+    if (!vendorTransaction) {
+      return res.status(400).json({ message: "Vendor Transaction not found" });
+    }
+    return res
+      .status(200)
+      .json({ message: "found vendor", vendor, vendorTransaction });
+  } catch (err) {
     console.log(err);
     res.status(409).json({ message: err });
   }
-}
+};
 
-exports.updateVendor = async(req,res) => {
+exports.updateVendor = async (req, res) => {
   try {
-    const {vendorName, vendorUsername, vendorNumber, phoneNumber, vendorOwner,password, token} = req.body
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const vendorId = decoded.id
-   const vendor = await Vendor.findById(vendorId);
+    const {
+      vendorName,
+      vendorUsername,
+      vendorNumber,
+      phoneNumber,
+      vendorOwner,
+      password,
+      token,
+    } = req.body;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const vendorId = decoded.id;
+    const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
       return res.status(400).json({ message: "Vendor not found" });
     }
-    if(vendor.vendorUsername !== vendorUsername){
-const existingVendor = await Vendor.findOne({ vendorUsername });
-  if (existingVendor) {
-    return res.status(409).json({ message: "Vednor already exists" });
-  }
+    if (vendor.vendorUsername !== vendorUsername) {
+      const existingVendor = await Vendor.findOne({ vendorUsername });
+      if (existingVendor) {
+        return res.status(409).json({ message: "Vednor already exists" });
+      }
     }
-    if(vendor.phoneNumber != phoneNumber) {
-      console.log(vendor.phoneNumber)
-      console.log(phoneNumber)
- const existingNumber  = await Vendor.findOne({phoneNumber});
-  if(existingNumber) {
-    return res.status(409).json({message: "Phone Number has been used already"})
-  }
+    if (vendor.phoneNumber != phoneNumber) {
+      console.log(vendor.phoneNumber);
+      console.log(phoneNumber);
+      const existingNumber = await Vendor.findOne({ phoneNumber });
+      if (existingNumber) {
+        return res
+          .status(409)
+          .json({ message: "Phone Number has been used already" });
+      }
     }
-     const saltRounds = 15;
-    
-    
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-      await Vendor.update({ _id: vendorId }, { vendorName, vendorUsername, vendorNumber, phoneNumber, vendorOwner, password:hashedPassword});
-const vendorUpdates = await Vendor.findById(vendorId);
-            return res.status(200).json({message: "Vendor Details Updated", vendor: vendorUpdates})
+    const saltRounds = 15;
 
-  }catch(err) {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    await Vendor.update(
+      { _id: vendorId },
+      {
+        vendorName,
+        vendorUsername,
+        vendorNumber,
+        phoneNumber,
+        vendorOwner,
+        password: hashedPassword,
+      }
+    );
+    const vendorUpdates = await Vendor.findById(vendorId);
+    return res
+      .status(200)
+      .json({ message: "Vendor Details Updated", vendor: vendorUpdates });
+  } catch (err) {
     console.log(err);
     res.status(409).json({ message: err });
   }
-}
+};
+
+exports.balance = async (req, res) => {
+  try {
+    const { token } = req.body;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
+    const vendorId = decoded.id;
+    const vendor = await Vendor.findById(vendorId);
+    if (!vendor) {
+      return res.status(409).json({ message: "User not found" });
+    }
+    const vendorAccount = await Account.findOne({ ID: vendor._id });
+    if (!vendorAccount) {
+      return res.status(409).json({ message: "Account not found" });
+    }
+    const balance = vendorAccount.balance;
+    return res.status(200).json({ message: balance });
+  } catch (err) {
+    console.log(err);
+    res.status(409).json({ message: err });
+  }
+};

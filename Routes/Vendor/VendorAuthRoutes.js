@@ -11,4 +11,5 @@ router.post("/vendor", vendorAuthController.getVendor)
 router.post("/update",vendorAuthController.updateVendor)
 router.post("/verify-otp", vendorAuthController.otpVerification)
 router.post("/sent-otp", vendorAuthController.otpSend)
+router.post("/balance", vendorAuthController.balance)
 module.exports = router;
