@@ -132,8 +132,6 @@ exports.login = async (req, res) => {
     return res.status(409).json({ message: "Invalid password" });
   }
 
-
-
   // Generate a JSON web token
   const token = createToken(vendor._id);
   res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
@@ -271,5 +269,31 @@ exports.balance = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(409).json({ message: err });
+  }
+};
+
+exports.update = async (req, res) => {
+  try {
+    const { token } = req.body;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
+    const vendorId = decoded.id;
+    const vendor = await Vendor.findById(vendorId);
+    if (!vendor) {
+      return res.status(409).json({ message: "User not found" });
+    }
+
+    // update vendor fields
+    vendor.vendorName = req.body.vendorName || vendor.vendorName;
+    vendor.vendorUsername = req.body.vendorUsername || vendor.vendorUsername;
+    vendor.vendorOwner = req.body.vendorOwner || vendor.vendorOwner;
+    vendor.password = req.body.password || vendor.password;
+    vendor.phoneNumber = req.body.phoneNumber || vendor.phoneNumber;
+    vendor.updatedAt = Date.now();
+
+    const updatedVendor = await vendor.save();
+
+    res.status(200).json(updatedVendor);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };

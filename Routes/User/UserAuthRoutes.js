@@ -11,5 +11,5 @@ router.post("/signout", UserAuthController.signout)
 router.post("/setpin", UserAuthController.setPin)
 router.post("/user", UserAuthController.getStudent)
 router.post("/balance", UserAuthController.balance);
-
+router.put("/update", UserAuthController.update)
 module.exports = router;

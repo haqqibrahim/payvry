@@ -93,7 +93,7 @@ exports.otpSend = async (req, res) => {
     return res.status(400).json({ message: "User not found" });
   }
   const phoneNumber = user.phoneNumber;
-  sendOTP(userId, phoneNumber);
+  // sendOTP(userId, phoneNumber);
   res.status(200).json({ message: "OTP Sent to WhatsApp" });
 };
 
@@ -168,7 +168,7 @@ exports.login = async (req, res) => {
     return res.status(409).json({ message: "Account not found" });
   }
 
-  if (!userAccount.setPin) {
+  if (!user.setPin) {
     return res.status(409).json({ message: "Transaction Pin no set!" });
   }
 
@@ -227,5 +227,30 @@ exports.balance = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(409).json({ message: err });
+  }
+};
+
+exports.update = async (req, res) => {
+  try {
+    const { token } = req.body;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
+    const userId = decoded.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(409).json({ message: "User not found" });
+    }
+
+    // update user fields
+    user.fullName = req.body.fullName || user.fullName;
+    user.matricNumber = req.body.matricNumber || user.matricNumber;
+    user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
+    user.password = req.body.password || user.password;
+    user.updatedAt = Date.now();
+
+    const updatedUser = await user.save();
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
