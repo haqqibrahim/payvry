@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="9OnYWiHawzDiB9hLJ0DV" name="Auth-User">
-        <mxGraphModel dx="710" dy="301" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="850" background="none" math="0" shadow="0">
+        <mxGraphModel dx="976" dy="563" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="850" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -812,6 +812,108 @@
                     <mxGeometry x="30" width="330" height="30" as="geometry">
                         <mxRectangle width="330" height="30" as="alternateBounds"/>
                     </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="1msKTZ4av2Mq-G6l-Co7" name="Page-4">
+        <mxGraphModel dx="1002" dy="563" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1390" pageHeight="980" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-5" value="MedicalSystem" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;swimlaneFillColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="450" y="50" width="270" height="208" as="geometry">
+                        <mxRectangle x="450" y="50" width="120" height="30" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-6" value="-userLocation: Location" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-5">
+                    <mxGeometry y="26" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-7" value="-doctorList: List&lt;Doctor&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-5">
+                    <mxGeometry y="52" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-8" value="-patientList: List&lt;Patient&gt;  &#10;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;strokeWidth=5;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-5">
+                    <mxGeometry y="78" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-9" value="+getNerbyDoctors(): List&lt;Doctor&gt;|&#10;&#10; | +getPatients(): List&lt;Patient&gt;    |&#10;&#10; | +addPatient(patient: Patient): void |&#10; | +addDoctor(doctor: Doctor): voi" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-5">
+                    <mxGeometry y="104" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-10" value="+getPatients(): List&lt;Patient&gt; " style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-5">
+                    <mxGeometry y="130" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-11" value="+addPatient(patient: Patient): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-5">
+                    <mxGeometry y="156" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-12" value="+addDoctor(doctor: Doctor): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-5">
+                    <mxGeometry y="182" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-36" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="WrM7A9_Cp9Q0EPLPq_z3-15">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="570" y="260" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-15" value="MedicalSystem" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;swimlaneFillColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="210" y="350" width="270" height="234" as="geometry">
+                        <mxRectangle x="450" y="50" width="120" height="30" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-16" value="-userLocation: Location" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-15">
+                    <mxGeometry y="26" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-17" value="-doctorList: List&lt;Doctor&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-15">
+                    <mxGeometry y="52" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-18" value="-patientList: List&lt;Patient&gt;  &#10;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;strokeWidth=5;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-15">
+                    <mxGeometry y="78" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-19" value="+getNerbyDoctors(): List&lt;Doctor&gt;|&#10;&#10; | +getPatients(): List&lt;Patient&gt;    |&#10;&#10; | +addPatient(patient: Patient): void |&#10; | +addDoctor(doctor: Doctor): voi" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-15">
+                    <mxGeometry y="104" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-20" value="+getPatients(): List&lt;Patient&gt; " style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-15">
+                    <mxGeometry y="130" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-21" value="+addPatient(patient: Patient): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-15">
+                    <mxGeometry y="156" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-22" value="+addDoctor(doctor: Doctor): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-15">
+                    <mxGeometry y="182" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-24" value="-userLocation: Location" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-15">
+                    <mxGeometry y="208" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-37" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="WrM7A9_Cp9Q0EPLPq_z3-25">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="570" y="260" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-25" value="MedicalSystem" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;swimlaneFillColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="630" y="350" width="270" height="234" as="geometry">
+                        <mxRectangle x="450" y="50" width="120" height="30" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-26" value="-userLocation: Location" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-25">
+                    <mxGeometry y="26" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-27" value="-doctorList: List&lt;Doctor&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-25">
+                    <mxGeometry y="52" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-28" value="-patientList: List&lt;Patient&gt;  &#10;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;strokeWidth=5;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-25">
+                    <mxGeometry y="78" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-29" value="+getNerbyDoctors(): List&lt;Doctor&gt;|&#10;&#10; | +getPatients(): List&lt;Patient&gt;    |&#10;&#10; | +addPatient(patient: Patient): void |&#10; | +addDoctor(doctor: Doctor): voi" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-25">
+                    <mxGeometry y="104" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-30" value="+getPatients(): List&lt;Patient&gt; " style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-25">
+                    <mxGeometry y="130" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-31" value="+addPatient(patient: Patient): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-25">
+                    <mxGeometry y="156" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-32" value="+addDoctor(doctor: Doctor): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-25">
+                    <mxGeometry y="182" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="WrM7A9_Cp9Q0EPLPq_z3-33" value="-userLocation: Location" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="WrM7A9_Cp9Q0EPLPq_z3-25">
+                    <mxGeometry y="208" width="270" height="26" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

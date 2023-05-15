@@ -3,15 +3,6 @@ const jwt = require("jsonwebtoken");
 const Student = require("../../Models/User");
 const Transaction = require("../../Models/Transaction");
 const Account = require("../../Models/Account");
-function generateRandomString(length) {
-  const chars =
-    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let result = "";
-  for (let i = length; i > 0; --i) {
-    result += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return result;
-}
 
 exports.deposit = async (req, res) => {
   try {
@@ -69,6 +60,11 @@ exports.withdraw = async (req, res) => {
     if (!userAccount) {
       return res.status(409).json({ message: "Account not found" });
     }
+
+    
+    if (userAccount.balance < amount) {
+      return res.status(409).json({ message: "Insufficient Funds" });
+    }
     const oldBalance = userAccount.balance;
     const balance = Number(oldBalance) - Number(amount);
 
@@ -78,6 +74,7 @@ exports.withdraw = async (req, res) => {
       accountType: "User",
       amount,
       transaction_ref,
+      transaction_fee: 0,
       balance,
       date: Date.now(),
       created_at: Date.now(),

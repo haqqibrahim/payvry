@@ -19,6 +19,9 @@ const TransactionSchema = new mongoose.Schema({
   transaction_ref: {
     type: String,
   },
+  transaction_fee: {
+    type: Number
+  },
   balance: {
     type: Number,
   },

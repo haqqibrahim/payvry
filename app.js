@@ -9,7 +9,6 @@ const UserAuthRoutes = require("./Routes/User/UserAuthRoutes");
 const vendorAuthRoutes = require("./Routes/Vendor/VendorAuthRoutes");
 const userTransactionRoutes = require("./Routes/User/UserTransactionRoutes");
 const vendorTransactionRoutes = require("./Routes/Vendor/VendorTransactionRoutes");
-const adminAuthRoutes = require("./Routes/Admin/AdminAuthRoutes");
 
 const app = express();
 // Middleware
@@ -40,7 +39,6 @@ app.use("/user/api", UserAuthRoutes);
 app.use("/user/api", userTransactionRoutes);
 app.use("/vendor/api", vendorAuthRoutes);
 app.use("/vendor/api", vendorTransactionRoutes);
-app.use("/admin/api", adminAuthRoutes);
 // start the server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

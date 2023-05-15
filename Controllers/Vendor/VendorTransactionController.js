@@ -23,6 +23,7 @@ function generateCsv(transactions) {
     "balance",
     "Amount",
     "Account",
+    "Transaction fee",
     "Transaction Type",
     "ID",
   ];
@@ -33,6 +34,7 @@ function generateCsv(transactions) {
       balance,
       amount,
       accountType,
+      transaction_fee,
       transactionType,
       ID,
     }) => [
@@ -40,6 +42,7 @@ function generateCsv(transactions) {
       transtaction_ref,
       balance,
       amount,
+      transaction_fee,
       accountType,
       transactionType,
       ID,
@@ -148,12 +151,14 @@ exports.acceptPayment = async (req, res) => {
       accountType: "Vendor",
       amount,
       transaction_ref,
+      transaction_fee: 0,
       balance: newVendorBalance,
       date: Date.now(),
       created_at: Date.now(),
     });
     const oldUserBalance = userAccount.balance;
-    const newUserBalance = Number(oldUserBalance) - Number(amount);
+    const debitAmount = Number(amount) + 10;
+    const newUserBalance = Number(oldUserBalance) - Number(debitAmount);
 
     const userTransaction = new Transaction({
       ID: userAccount._id,
@@ -161,6 +166,7 @@ exports.acceptPayment = async (req, res) => {
       accountType: "User",
       amount,
       transaction_ref,
+      transaction_fee: 10,
       balance: newUserBalance,
       date: Date.now(),
       created_at: Date.now(),
@@ -187,7 +193,7 @@ exports.acceptPayment = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Transaction Completed", vendorTransaction });
+      .json({ message: "Transaction Completed", vendorTransaction,userTransaction });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: err });
@@ -216,9 +222,7 @@ exports.refund = async (req, res) => {
       return res.status(409).json({ message: "Account not found" });
     }
 
-    if (userAccount.balance < amount) {
-      return res.status(409).json({ message: "Insufficient Funds" });
-    }
+  
     const vendorAccount = await Account.findOne({ ID: vendor._id });
 
     if (!vendorAccount) {
@@ -230,8 +234,13 @@ exports.refund = async (req, res) => {
       return res.status(409).json({ message: "Transaction not found" });
     }
 
+    if(vendorAccount.balance < amount) {
+      return res.status(409).json({ message: "Insufficient Funds" });
+    }
+
     const oldVendorBalance = vendorAccount.balance;
-    const newVendorBalance = Number(oldVendorBalance) - Number(amount);
+    const debitAmount = Number(amount) + 10;
+    const newVendorBalance = Number(oldVendorBalance) - Number(debitAmount);
 
     const vendorTransaction = new Transaction({
       ID: vendorAccount._id,
@@ -239,6 +248,7 @@ exports.refund = async (req, res) => {
       accountType: "Vendor",
       amount,
       transaction_ref: `refund-${transaction_ref}`,
+      transaction_fee: 10,
       balance: newVendorBalance,
       date: Date.now(),
       created_at: Date.now(),
@@ -252,6 +262,7 @@ exports.refund = async (req, res) => {
       accountType: "User",
       amount,
       transaction_ref: `refund-${transaction_ref}`,
+      transaction_fee: 0,
       balance: newUserBalance,
       date: Date.now(),
       created_at: Date.now(),
@@ -278,7 +289,7 @@ exports.refund = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Refund Completed", vendorTransaction });
+      .json({ message: "Refund Completed", vendorTransaction, userTransaction });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: err });
@@ -345,9 +356,14 @@ exports.withdraw = async (req, res) => {
     if (!vendorAccount) {
       return res.status(409).json({ message: "Vendor Account not found" });
     }
+    
+    if (vendorAccount.balance < amount) {
+      return res.status(409).json({ message: "Insufficient Funds" });
+    }
 
     const oldVendorBalance = vendorAccount.balance;
-    const newVendorBalance = Number(oldVendorBalance) - Number(amount);
+    const debitAmount = Number(amount) + 300;
+    const newVendorBalance = Number(oldVendorBalance) - Number(debitAmount);
 
     const vendorTransaction = new Transaction({
       ID: vendorAccount._id,
@@ -355,19 +371,20 @@ exports.withdraw = async (req, res) => {
       accountType: "Vendor",
       amount,
       transaction_ref,
+      transaction_fee: 300,
       balance: newVendorBalance,
       date: Date.now(),
       created_at: Date.now(),
     });
-    await vendorTransaction.save()
-     await Account.updateOne(
-       { _id: vendorAccount._id },
-       {
-         balance: newVendorBalance,
-         lastTransactionType: "withdraw",
-         lastTransactionAmount: amount,
-       }
-     );
+    await vendorTransaction.save();
+    await Account.updateOne(
+      { _id: vendorAccount._id },
+      {
+        balance: newVendorBalance,
+        lastTransactionType: "withdraw",
+        lastTransactionAmount: amount,
+      }
+    );
     return res.status(200).json({ message: "Withdraw Succesful" });
   } catch (err) {
     console.log(err);

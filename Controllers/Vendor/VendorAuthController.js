@@ -2,7 +2,6 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Vendor = require("../../Models/Vendor");
-const VendorTransaction = require("../../Models/VendorTransactions");
 const Account = require("../../Models/Account");
 const { sendOTP, verifyOTP } = require("../../HelperFunctions/OTP");
 
@@ -179,12 +178,12 @@ exports.getVendor = async (req, res) => {
     if (!vendor) {
       return res.status(400).json({ message: "Vendor not found" });
     }
-    const vendorTransaction = await VendorTransaction.find({
-      user_id: vendorId,
-    });
-    if (!vendorTransaction) {
-      return res.status(400).json({ message: "Vendor Transaction not found" });
+    const vendorAccount = await Account.findOne({ ID: vendor._id });
+    if (!userAccount) {
+      return res.status(409).json({ message: "Account not found" });
     }
+    const vendorTransaction = await Transaction.find({ ID: vendorAccount._id });
+
     return res
       .status(200)
       .json({ message: "found vendor", vendor, vendorTransaction });

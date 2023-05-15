@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../../Models/User");
 const Account = require("../../Models/Account");
-const StudentTransaction = require("../../Models/StudentTransactions");
 const { sendOTP, verifyOTP } = require("../../HelperFunctions/OTP");
 const { createToken } = require("../../HelperFunctions/Token");
 const maxAge = 3 * 24 * 60 * 60;
@@ -189,20 +188,20 @@ exports.getStudent = async (req, res) => {
 
     // const token = req.cookies.jwt; // getting the token from the cookies
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
-    const studentId = decoded.id;
-    const user = await User.findById(studentId);
+    const userId = decoded.id;
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
-    const studentTransaction = await StudentTransaction.find({
-      user_id: studentId,
-    });
-    if (!studentTransaction) {
-      return res.status(400).json({ message: "User Transaction not found" });
+    const userAccount = await Account.findOne({ ID: user._id });
+    if (!userAccount) {
+      return res.status(409).json({ message: "Account not found" });
     }
+    const userTransactions = await Transaction.find({ ID: userAccount._id });
+
     return res
       .status(200)
-      .json({ message: "found user", user, studentTransaction });
+      .json({ message: "found user", user, userTransactions });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: err });
