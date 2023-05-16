@@ -165,11 +165,11 @@ exports.login = async (req, res) => {
 
   const userAccount = await Account.findOne({ ID: user._id });
   if (!userAccount) {
-    return res.status(409).json({ message: "Account not found" });
+    return res.status(500).json({ message: "Account not found" });
   }
 
   if (!user.setPin) {
-    return res.status(409).json({ message: "Transaction Pin no set!" });
+    return res.status(500).json({ message: "Transaction Pin no set!" });
   }
 
   // Generate a JSON web token
@@ -198,11 +198,11 @@ exports.getStudent = async (req, res) => {
     if (!userAccount) {
       return res.status(409).json({ message: "Account not found" });
     }
-    const userTransactions = await Transaction.find({ ID: userAccount._id });
+    const userTransaction = await Transaction.find({ ID: userAccount._id });
 
     return res
       .status(200)
-      .json({ message: "found user", user, userTransactions });
+      .json({ message: "found user", user, userTransaction });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: err });
