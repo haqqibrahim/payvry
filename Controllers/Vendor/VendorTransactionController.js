@@ -7,6 +7,13 @@ const User = require("../../Models/User");
 const Account = require("../../Models/Account");
 const Transaction = require("../../Models/Transaction");
 
+const Flutterwave = require("flutterwave-node-v3");
+const flw = new Flutterwave(
+  process.env.FLW_PUBLIC_KEY,
+  process.env.FLW_SECRET_KEY
+);
+
+
 // Nodemailer transporter
 let transporter = nodemailer.createTransport({
   service: "gmail",
@@ -193,7 +200,11 @@ exports.acceptPayment = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Transaction Completed", vendorTransaction,userTransaction });
+      .json({
+        message: "Transaction Completed",
+        vendorTransaction,
+        userTransaction,
+      });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: err });
@@ -222,7 +233,6 @@ exports.refund = async (req, res) => {
       return res.status(409).json({ message: "Account not found" });
     }
 
-  
     const vendorAccount = await Account.findOne({ ID: vendor._id });
 
     if (!vendorAccount) {
@@ -234,7 +244,7 @@ exports.refund = async (req, res) => {
       return res.status(409).json({ message: "Transaction not found" });
     }
 
-    if(vendorAccount.balance < amount) {
+    if (vendorAccount.balance < amount) {
       return res.status(409).json({ message: "Insufficient Funds" });
     }
 
@@ -289,7 +299,11 @@ exports.refund = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Refund Completed", vendorTransaction, userTransaction });
+      .json({
+        message: "Refund Completed",
+        vendorTransaction,
+        userTransaction,
+      });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: err });
@@ -343,7 +357,7 @@ exports.history = async (req, res) => {
 
 exports.withdraw = async (req, res) => {
   try {
-    const { amount, transaction_ref, token } = req.body;
+    const { account_bank, account_number, amount, token } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
@@ -356,21 +370,49 @@ exports.withdraw = async (req, res) => {
     if (!vendorAccount) {
       return res.status(409).json({ message: "Vendor Account not found" });
     }
-    
+
     if (vendorAccount.balance < amount) {
       return res.status(409).json({ message: "Insufficient Funds" });
     }
 
+    if (amount < 2500) {
+      return res
+        .status(409)
+        .json({ message: "The minimum you can withdraw is 2500" });
+    }
+
+    if (account_bank.length > 3) {
+      return res.status(409).json({message: "Bank not supported"})
+    }
+
+    
+    const reference = generateRandomString(10);
+
+    const details = {
+      account_bank,
+      account_number,
+      amount,
+      narration: "Payvry Withdrawal",
+      currency: "NGN",
+      reference,
+      callback_url: "https://webhook.site/b3e505b0-fe02-430e-a538-22bbbce8ce0d",
+      debit_currency: "NGN",
+    };
+    const response = await flw.Transfer.initiate(details);
+    if (response.status === "error") {
+      res.status(409).json({ message: response.message });
+    }
+    console.log(response);
+
     const oldVendorBalance = vendorAccount.balance;
-    const debitAmount = Number(amount) + 300;
-    const newVendorBalance = Number(oldVendorBalance) - Number(debitAmount);
+    const newVendorBalance = Number(oldVendorBalance) - Number(amount);
 
     const vendorTransaction = new Transaction({
       ID: vendorAccount._id,
       transactionType: "withdraw",
       accountType: "Vendor",
       amount,
-      transaction_ref,
+      transaction_ref: reference,
       transaction_fee: 300,
       balance: newVendorBalance,
       date: Date.now(),

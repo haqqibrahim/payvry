@@ -4,6 +4,23 @@ const Student = require("../../Models/User");
 const Transaction = require("../../Models/Transaction");
 const Account = require("../../Models/Account");
 
+const Flutterwave = require("flutterwave-node-v3");
+const flw = new Flutterwave(
+  process.env.FLW_PUBLIC_KEY,
+  process.env.FLW_SECRET_KEY
+);
+
+
+function generateRandomString(length) {
+  const chars =
+    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let result = "";
+  for (let i = length; i > 0; --i) {
+    result += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return result;
+}
+
 exports.deposit = async (req, res) => {
   try {
     const { amount, transaction_ref, token } = req.body;
@@ -13,7 +30,7 @@ exports.deposit = async (req, res) => {
     if (!user) {
       return res.status(409).json({ message: "User not found" });
     }
-    const userAccount = await Account.findOne({ ID: userId});
+    const userAccount = await Account.findOne({ ID: userId });
     if (!userAccount) {
       return res.status(409).json({ message: "Account not found" });
     }
@@ -49,7 +66,7 @@ exports.deposit = async (req, res) => {
 
 exports.withdraw = async (req, res) => {
   try {
-    const { amount, transaction_ref, token } = req.body;
+    const { account_bank, account_number, amount, token } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const userId = decoded.id;
     const user = await Student.findById(userId);
@@ -61,10 +78,27 @@ exports.withdraw = async (req, res) => {
       return res.status(409).json({ message: "Account not found" });
     }
 
-    
     if (userAccount.balance < amount) {
       return res.status(409).json({ message: "Insufficient Funds" });
     }
+
+    const reference = generateRandomString(10)
+
+    const details = {
+      account_bank,
+      account_number,
+      amount,
+      narration: "Payvry Withdrawal",
+      currency: "NGN",
+      reference,
+      callback_url: "https://webhook.site/b3e505b0-fe02-430e-a538-22bbbce8ce0d",
+      debit_currency: "NGN",
+    };
+    const response = await flw.Transfer.initiate(details);
+    if(response.status === 'error') {
+      res.status(409).json({message: response.message})
+    }
+    console.log(response);
     const oldBalance = userAccount.balance;
     const balance = Number(oldBalance) - Number(amount);
 
@@ -73,7 +107,7 @@ exports.withdraw = async (req, res) => {
       transactionType: "withdraw",
       accountType: "User",
       amount,
-      transaction_ref,
+      transaction_ref: reference,
       transaction_fee: 0,
       balance,
       date: Date.now(),
@@ -89,7 +123,8 @@ exports.withdraw = async (req, res) => {
         lastTransactionAmount: amount,
       }
     );
-    return res.status(200).json({ message: "Transaction Saved", transaction });
+    return res.status(200).json({ message: "Transaction Successful", transaction });
+
   } catch (err) {
     console.log(err);
     res.status(409).json({ message: err });
