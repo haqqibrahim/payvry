@@ -2,6 +2,7 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../../Models/User");
+const Transaction = require("../../Models/Transaction")
 const Account = require("../../Models/Account");
 const { sendOTP, verifyOTP } = require("../../HelperFunctions/OTP");
 const { createToken } = require("../../HelperFunctions/Token");
