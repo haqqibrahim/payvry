@@ -130,6 +130,11 @@ exports.acceptPayment = async (req, res) => {
     console.log(user);
 
     const userAccount = await Account.findOne({ ID: user._id });
+    // Check if password is correct
+    const pinMatch = await bcrypt.compare(pin, userAccount.pin);
+    if (!pinMatch) {
+      return res.status(500).json({ message: "Invalid pin" });
+    }
     if (!userAccount) {
       return res.status(500).json({ message: "Account not found" });
     }
@@ -144,11 +149,6 @@ exports.acceptPayment = async (req, res) => {
       return res.status(500).json({ message: "Vendor Account not found" });
     }
 
-    // Check if password is correct
-    const pinMatch = await bcrypt.compare(pin, userAccount.pin);
-    if (!pinMatch) {
-      return res.status(500).json({ message: "Invalid pin" });
-    }
     const transaction_ref = generateRandomString(10);
     const oldVendorBalance = vendorAccount.balance;
     const newVendorBalance = Number(oldVendorBalance) + Number(amount);
@@ -200,13 +200,11 @@ exports.acceptPayment = async (req, res) => {
       }
     );
 
-    return res
-      .status(200)
-      .json({
-        message: "Transaction Completed",
-        vendorTransaction,
-        userTransaction,
-      });
+    return res.status(200).json({
+      message: "Transaction Completed",
+      vendorTransaction,
+      userTransaction,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: err });
