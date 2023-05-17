@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const Student = require("../../Models/User");
 const Transaction = require("../../Models/Transaction");
 const Account = require("../../Models/Account");
+const { compareNames } = require("../../HelperFunctions/Name");
 
 const Flutterwave = require("flutterwave-node-v3");
 const flw = new Flutterwave(
