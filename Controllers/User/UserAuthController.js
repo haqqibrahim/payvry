@@ -22,7 +22,7 @@ exports.signup = async (req, res) => {
     password === ""
   ) {
     console.log("Empty fields found");
-    return res.status(409).json({ message: "All fields must be field" });
+    return res.status(500).json({ message: "All fields must be field" });
   }
 
   // Check if User already exists
@@ -30,7 +30,7 @@ exports.signup = async (req, res) => {
 
   const existingStudent = await User.findOne({ matricNumber });
   if (existingStudent) {
-    return res.status(409).json({ message: "Matric Number already exists" });
+    return res.status(500).json({ message: "Matric Number already exists" });
   }
 
   // Checking if User Number is used
@@ -38,7 +38,7 @@ exports.signup = async (req, res) => {
 
   const userNumber = await User.findOne({ phoneNumber });
   if (userNumber) {
-    return res.status(409).json({ message: "Phone number already exists" });
+    return res.status(500).json({ message: "Phone number already exists" });
   }
   // Hash the password
   console.log("Hashing Password");
