@@ -43,7 +43,7 @@ exports.signup = async (req, res) => {
   // Hash the password
   console.log("Hashing Password");
 
-  const saltRounds = 15;
+  const saltRounds = 5;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
   // Create the User
   console.log("Creating User");
@@ -126,7 +126,7 @@ exports.setPin = async (req, res) => {
     if (!user) {
       return res.status(500).json({ message: "User not found" });
     }
-    const saltRounds = 15;
+    const saltRounds = 5;
     const hashedPin = await bcrypt.hash(pin, saltRounds);
     await Account.updateOne(
       { ID: userId },

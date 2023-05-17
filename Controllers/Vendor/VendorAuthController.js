@@ -39,7 +39,7 @@ exports.signup = async (req, res) => {
       .json({ message: "Phone Number has been used already" });
   }
   // Hash the password
-  const saltRounds = 15;
+  const saltRounds = 5;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
   // Create the Vendor
   const vendor = new Vendor({
@@ -153,7 +153,7 @@ exports.setPin = async (req, res) => {
     if (!vendor) {
       return res.status(500).json({ message: "Vendor not found" });
     }
-    const saltRounds = 15;
+    const saltRounds = 5;
     const hashedPin = await bcrypt.hash(pin, saltRounds);
     await Account.updateOne({ ID: vendorId }, { pin: hashedPin });
     await Vendor.updateOne(
