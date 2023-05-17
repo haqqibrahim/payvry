@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Vendor = require("../../Models/Vendor");
 const Account = require("../../Models/Account");
+const Transaction = require("../../Models/Transaction")
 const { sendOTP, verifyOTP } = require("../../HelperFunctions/OTP");
 
 // create json web token
@@ -179,7 +180,7 @@ exports.getVendor = async (req, res) => {
       return res.status(500).json({ message: "Vendor not found" });
     }
     const vendorAccount = await Account.findOne({ ID: vendor._id });
-    if (!userAccount) {
+    if (!vendorAccount) {
       return res.status(500).json({ message: "Account not found" });
     }
     const vendorTransaction = await Transaction.find({ ID: vendorAccount._id });
