@@ -280,6 +280,9 @@ const Home = () => {
         </button>
       </div>
 
+
+
+
       <HistoryPanel history={history} />
     </main>
   );
