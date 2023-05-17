@@ -10,7 +10,6 @@ const flw = new Flutterwave(
   process.env.FLW_SECRET_KEY
 );
 
-
 function generateRandomString(length) {
   const chars =
     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -66,34 +65,35 @@ exports.deposit = async (req, res) => {
 
 exports.withdraw = async (req, res) => {
   try {
-    const { account_bank, account_number, amount, token } = req.body;
-     const details = {
-       account_number,
-       account_bank,
-     };
-     await flw.Misc.verify_Account(details).then((response) => {
-       console.log(response);
-       if (response.status === "error") {
-         res.status(500).json({ message: response.message });
-       }
+    const { account_bank, account_number, account_name, amount, token } =
+      req.body;
+    const details = {
+      account_number,
+      account_bank,
+    };
+    await flw.Misc.verify_Account(details).then((response) => {
+      console.log(response);
+      if (response.status === "error") {
+        res.status(500).json({ message: response.message });
+      }
 
-       const account_nameFound = response.data.account_name;
+      const account_nameFound = response.data.account_name;
 
-       // Example usage:
+      // Example usage:
 
-       if (
-         compareNames(
-           account_name.toLowerCase(),
-           account_nameFound.toLowerCase()
-         )
-       ) {
-         console.log("The names are the same");
-       } else {
-         res
-           .status(500)
-           .json({ message: `Account Name not correct: ${account_nameFound}` });
-       }
-     });
+      if (
+        compareNames(
+          account_name.toLowerCase(),
+          account_nameFound.toLowerCase()
+        )
+      ) {
+        console.log("The names are the same");
+      } else {
+        res
+          .status(500)
+          .json({ message: `Account Name not correct: ${account_nameFound}` });
+      }
+    });
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const userId = decoded.id;
     const user = await Student.findById(userId);
@@ -109,7 +109,7 @@ exports.withdraw = async (req, res) => {
       return res.status(500).json({ message: "Insufficient Funds" });
     }
 
-    const reference = generateRandomString(10)
+    const reference = generateRandomString(10);
 
     const detailsB = {
       account_bank,
@@ -122,8 +122,8 @@ exports.withdraw = async (req, res) => {
       debit_currency: "NGN",
     };
     const response = await flw.Transfer.initiate(detailsB);
-    if(response.status === 'error') {
-      res.status(500).json({message: response.message})
+    if (response.status === "error") {
+      res.status(500).json({ message: response.message });
     }
     console.log(response);
     const oldBalance = userAccount.balance;
@@ -150,8 +150,9 @@ exports.withdraw = async (req, res) => {
         lastTransactionAmount: amount,
       }
     );
-    return res.status(200).json({ message: "Transaction Successful", transaction });
-
+    return res
+      .status(200)
+      .json({ message: "Transaction Successful", transaction });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: err });
@@ -199,7 +200,6 @@ exports.history = async (req, res) => {
     res.status(500).json({ message: err });
   }
 };
-
 
 exports.verifyBank = async (req, res) => {
   try {
