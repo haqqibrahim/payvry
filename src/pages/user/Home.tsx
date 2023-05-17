@@ -275,7 +275,7 @@ const Home = () => {
           Add money
         </button>
 
-        <button className='py-[14px] px-5 bg-[rgba(190,161,161,0.2)] rounded-[30px]'>
+        <button className='py-[14px] px-5 bg-[rgba(190,161,161,0.2)] rounded-[30px]' onClick={() => navigate("/user/withdraw")}>
           Withdraw money
         </button>
       </div>

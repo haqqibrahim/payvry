@@ -487,7 +487,7 @@ const Withdraw = () => {
         // */}
       <section className='mt-[180px] border-[1px] border-alto rounded-[30px] p-[30px] max-w-[400px]'>
         <h2 className='font-medium text-[16px] leading-[27px] text-[rgba(0,0,0,0.5)]'>
-          Verify student's ID before proceeding to complete the payment
+        we get your payments to you, any time you like
         </h2>
 
         <input
