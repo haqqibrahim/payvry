@@ -116,7 +116,7 @@ exports.setPin = async (req, res) => {
   try {
     const { pin, token } = req.body;
     if (pin.length < 6) {
-      return res.status(400).json({ message: "Pin must be 6 digit" });
+      return res.status(500).json({ message: "Pin must be 6 digit" });
     }
 
     // const token = req.cookies.jwt; // getting the token from the cookies
@@ -124,7 +124,7 @@ exports.setPin = async (req, res) => {
     const userId = decoded.id;
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(500).json({ message: "User not found" });
     }
     const saltRounds = 15;
     const hashedPin = await bcrypt.hash(pin, saltRounds);

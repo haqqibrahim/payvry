@@ -24,17 +24,17 @@ exports.signup = async (req, res) => {
     !password ||
     password === ""
   ) {
-    return res.status(409).json({ message: "All fields must be field" });
+    return res.status(500).json({ message: "All fields must be field" });
   }
   // Check if Vendor already exists
   const existingVendor = await Vendor.findOne({ vendorUsername });
   if (existingVendor) {
-    return res.status(409).json({ message: "Vednor already exists" });
+    return res.status(500).json({ message: "Vednor already exists" });
   }
   const existingNumber = await Vendor.findOne({ phoneNumber });
   if (existingNumber) {
     return res
-      .status(409)
+      .status(500)
       .json({ message: "Phone Number has been used already" });
   }
   // Hash the password
@@ -78,7 +78,7 @@ exports.otpSend = async (req, res) => {
   const vendorId = decoded.id;
   const vendor = await Vendor.findById(vendorId);
   if (!vendor) {
-    return res.status(400).json({ message: "Vendor not found" });
+    return res.status(500).json({ message: "Vendor not found" });
   }
   const phoneNumber = vendor.phoneNumber;
   sendOTP(vendorId, phoneNumber);
@@ -108,7 +108,7 @@ exports.login = async (req, res) => {
     !password ||
     password === ""
   ) {
-    return res.status(409).json({ message: "All fields must be field" });
+    return res.status(500).json({ message: "All fields must be field" });
   }
   // Check if Vendor exists
   const vendor = await Vendor.findOne({ vendorUsername });
@@ -118,17 +118,17 @@ exports.login = async (req, res) => {
 
   const vendorAccount = await Account.findOne({ ID: vendor._id });
   if (!vendorAccount) {
-    return res.status(409).json({ message: "Account not found" });
+    return res.status(500).json({ message: "Account not found" });
   }
 
   if (!vendor.setPin) {
-    return res.status(409).json({ message: "Transaction Pin not set!" });
+    return res.status(500).json({ message: "Transaction Pin not set!" });
   }
 
   // Check if password is correct
   const passwordMatch = await bcrypt.compare(password, vendor.password);
   if (!passwordMatch) {
-    return res.status(409).json({ message: "Invalid password" });
+    return res.status(500).json({ message: "Invalid password" });
   }
 
   // Generate a JSON web token
@@ -150,7 +150,7 @@ exports.setPin = async (req, res) => {
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
-      return res.status(400).json({ message: "Vendor not found" });
+      return res.status(500).json({ message: "Vendor not found" });
     }
     const saltRounds = 15;
     const hashedPin = await bcrypt.hash(pin, saltRounds);
@@ -164,7 +164,7 @@ exports.setPin = async (req, res) => {
     return res.status(200).json({ message: "Pin set Successful" });
   } catch (err) {
     console.log(err);
-    res.status(409).json({ message: err });
+    res.status(500).json({ message: err });
   }
 };
 
@@ -176,11 +176,11 @@ exports.getVendor = async (req, res) => {
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
-      return res.status(400).json({ message: "Vendor not found" });
+      return res.status(500).json({ message: "Vendor not found" });
     }
     const vendorAccount = await Account.findOne({ ID: vendor._id });
     if (!userAccount) {
-      return res.status(409).json({ message: "Account not found" });
+      return res.status(500).json({ message: "Account not found" });
     }
     const vendorTransaction = await Transaction.find({ ID: vendorAccount._id });
 
@@ -189,7 +189,7 @@ exports.getVendor = async (req, res) => {
       .json({ message: "found vendor", vendor, vendorTransaction });
   } catch (err) {
     console.log(err);
-    res.status(409).json({ message: err });
+    res.status(500).json({ message: err });
   }
 };
 
@@ -208,12 +208,12 @@ exports.updateVendor = async (req, res) => {
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
-      return res.status(400).json({ message: "Vendor not found" });
+      return res.status(500).json({ message: "Vendor not found" });
     }
     if (vendor.vendorUsername !== vendorUsername) {
       const existingVendor = await Vendor.findOne({ vendorUsername });
       if (existingVendor) {
-        return res.status(409).json({ message: "Vednor already exists" });
+        return res.status(500).json({ message: "Vednor already exists" });
       }
     }
     if (vendor.phoneNumber != phoneNumber) {
@@ -222,7 +222,7 @@ exports.updateVendor = async (req, res) => {
       const existingNumber = await Vendor.findOne({ phoneNumber });
       if (existingNumber) {
         return res
-          .status(409)
+          .status(500)
           .json({ message: "Phone Number has been used already" });
       }
     }
@@ -246,7 +246,7 @@ exports.updateVendor = async (req, res) => {
       .json({ message: "Vendor Details Updated", vendor: vendorUpdates });
   } catch (err) {
     console.log(err);
-    res.status(409).json({ message: err });
+    res.status(500).json({ message: err });
   }
 };
 
@@ -257,17 +257,17 @@ exports.balance = async (req, res) => {
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
-      return res.status(409).json({ message: "User not found" });
+      return res.status(500).json({ message: "User not found" });
     }
     const vendorAccount = await Account.findOne({ ID: vendor._id });
     if (!vendorAccount) {
-      return res.status(409).json({ message: "Account not found" });
+      return res.status(500).json({ message: "Account not found" });
     }
     const balance = vendorAccount.balance;
     return res.status(200).json({ message: balance });
   } catch (err) {
     console.log(err);
-    res.status(409).json({ message: err });
+    res.status(500).json({ message: err });
   }
 };
 
@@ -278,7 +278,7 @@ exports.update = async (req, res) => {
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
-      return res.status(409).json({ message: "User not found" });
+      return res.status(500).json({ message: "User not found" });
     }
 
     // update vendor fields
