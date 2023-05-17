@@ -6,6 +6,7 @@ const Vendor = require("../../Models/Vendor");
 const User = require("../../Models/User");
 const Account = require("../../Models/Account");
 const Transaction = require("../../Models/Transaction");
+const { compareNames } = require("../../HelperFunctions/Name");
 
 const Flutterwave = require("flutterwave-node-v3");
 const flw = new Flutterwave(
@@ -369,7 +370,17 @@ exports.withdraw = async (req, res) => {
       }
 
       const account_nameFound = response.data.account_name;
-      if (account_name !== account_nameFound) {
+
+      // Example usage:
+
+      if (
+        compareNames(
+          account_name.toLowerCase(),
+          account_nameFound.toLowerCase()
+        )
+      ) {
+        console.log("The names are the same");
+      } else {
         res
           .status(500)
           .json({ message: `Account Name not correct: ${account_nameFound}` });
@@ -392,11 +403,11 @@ exports.withdraw = async (req, res) => {
       return res.status(500).json({ message: "Insufficient Funds" });
     }
 
-    // if (amount < 2500) {
-    //   return res
-    //     .status(500)
-    //     .json({ message: "The minimum you can withdraw is 2500" });
-    // }
+    if (amount < 2500) {
+      return res
+        .status(500)
+        .json({ message: "The minimum you can withdraw is 2500" });
+    }
 
     if (account_bank.length > 3) {
       return res.status(500).json({ message: "Bank not supported" });

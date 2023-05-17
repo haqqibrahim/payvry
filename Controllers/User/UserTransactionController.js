@@ -67,6 +67,33 @@ exports.deposit = async (req, res) => {
 exports.withdraw = async (req, res) => {
   try {
     const { account_bank, account_number, amount, token } = req.body;
+     const details = {
+       account_number,
+       account_bank,
+     };
+     await flw.Misc.verify_Account(details).then((response) => {
+       console.log(response);
+       if (response.status === "error") {
+         res.status(500).json({ message: response.message });
+       }
+
+       const account_nameFound = response.data.account_name;
+
+       // Example usage:
+
+       if (
+         compareNames(
+           account_name.toLowerCase(),
+           account_nameFound.toLowerCase()
+         )
+       ) {
+         console.log("The names are the same");
+       } else {
+         res
+           .status(500)
+           .json({ message: `Account Name not correct: ${account_nameFound}` });
+       }
+     });
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const userId = decoded.id;
     const user = await Student.findById(userId);
@@ -84,7 +111,7 @@ exports.withdraw = async (req, res) => {
 
     const reference = generateRandomString(10)
 
-    const details = {
+    const detailsB = {
       account_bank,
       account_number,
       amount,
@@ -94,7 +121,7 @@ exports.withdraw = async (req, res) => {
       callback_url: "https://webhook.site/b3e505b0-fe02-430e-a538-22bbbce8ce0d",
       debit_currency: "NGN",
     };
-    const response = await flw.Transfer.initiate(details);
+    const response = await flw.Transfer.initiate(detailsB);
     if(response.status === 'error') {
       res.status(500).json({message: response.message})
     }
