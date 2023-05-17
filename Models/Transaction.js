@@ -16,11 +16,19 @@ const TransactionSchema = new mongoose.Schema({
   amount: {
     type: Number,
   },
+  vendor: {
+    type: String,
+    default: "Null",
+  },
+  user: {
+    type: String,
+    default: "Null",
+  },
   transaction_ref: {
     type: String,
   },
   transaction_fee: {
-    type: Number
+    type: Number,
   },
   balance: {
     type: Number,
