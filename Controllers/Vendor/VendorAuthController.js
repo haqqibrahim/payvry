@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Vendor = require("../../Models/Vendor");
 const Account = require("../../Models/Account");
-const Transaction = require("../../Models/Transaction")
+const Transaction = require("../../Models/Transaction");
 const { sendOTP, verifyOTP } = require("../../HelperFunctions/OTP");
 
 // create json web token
@@ -297,3 +297,4 @@ exports.update = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+

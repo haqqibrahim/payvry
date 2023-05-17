@@ -172,3 +172,26 @@ exports.history = async (req, res) => {
     res.status(500).json({ message: err });
   }
 };
+
+
+exports.verifyBank = async (req, res) => {
+  try {
+    const details = {
+      account_number: req.body.account_number,
+      account_bank: req.body.account_bank,
+    };
+    await flw.Misc.verify_Account(details).then((response) => {
+      console.log(response);
+      if (response.status === "error") {
+        res.status(500).json({ message: response.message });
+      }
+
+      const account_name = response.data.account_name;
+
+      res.status(200).json({ message: account_name });
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err });
+  }
+};

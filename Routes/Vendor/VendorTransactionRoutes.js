@@ -9,4 +9,5 @@ router.post("/acceptpayment", vendorTransactionController.acceptPayment)
 router.post("/refund", vendorTransactionController.refund)
 router.post("/history", vendorTransactionController.history)
 router.post("/withdraw", vendorTransactionController.withdraw)
+router.post("/bank", vendorTransactionController.verifyBank);
 module.exports = router
