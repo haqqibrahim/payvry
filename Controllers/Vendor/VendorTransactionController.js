@@ -133,8 +133,9 @@ exports.acceptPayment = async (req, res) => {
     if (!userAccount) {
       return res.status(500).json({ message: "Account not found" });
     }
+    const debitAmount = Number(amount) + 10;
 
-    if (userAccount.balance < amount) {
+    if (userAccount.balance < debitAmount) {
       return res.status(500).json({ message: "Insufficient Funds" });
     }
     const vendorAccount = await Account.findOne({ ID: vendor._id });
@@ -148,7 +149,7 @@ exports.acceptPayment = async (req, res) => {
     if (!pinMatch) {
       return res.status(500).json({ message: "Invalid pin" });
     }
-    const transaction_ref = generateRandomString(20);
+    const transaction_ref = generateRandomString(10);
     const oldVendorBalance = vendorAccount.balance;
     const newVendorBalance = Number(oldVendorBalance) + Number(amount);
 
@@ -165,7 +166,6 @@ exports.acceptPayment = async (req, res) => {
       created_at: Date.now(),
     });
     const oldUserBalance = userAccount.balance;
-    const debitAmount = Number(amount) + 10;
     const newUserBalance = Number(oldUserBalance) - Number(debitAmount);
 
     const userTransaction = new Transaction({
