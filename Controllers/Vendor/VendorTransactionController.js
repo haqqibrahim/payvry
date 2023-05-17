@@ -79,13 +79,13 @@ exports.balance = async (req, res) => {
     }
     const userAccount = await Account.findOne({ ID: vendorId });
     if (!userAccount) {
-      return res.status(409).json({ message: "Account not found" });
+      return res.status(500).json({ message: "Account not found" });
     }
     const balance = userAccount.balance;
     return res.status(200).json({ message: balance });
   } catch (err) {
     console.log(err);
-    res.status(409).json({ message: err });
+    res.status(500).json({ message: err });
   }
 };
 
@@ -96,12 +96,12 @@ exports.getStudent = async (req, res) => {
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
-      return res.status(409).json({ message: "Vendor not found" });
+      return res.status(500).json({ message: "Vendor not found" });
     }
     console.log("Vendor found");
     const student = await User.find({ matricNumber });
     if (student.length == []) {
-      return res.status(409).json({ message: "Matric Number not found" });
+      return res.status(500).json({ message: "Matric Number not found" });
     }
     console.log(student[0]);
     const studentName = student[0].fullName;
@@ -120,33 +120,33 @@ exports.acceptPayment = async (req, res) => {
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
-      return res.status(409).json({ message: "Vendor not found" });
+      return res.status(500).json({ message: "Vendor not found" });
     }
     const user = await User.findOne({ matricNumber });
     if (!user) {
-      return res.status(409).json({ message: "Matric Number not found" });
+      return res.status(500).json({ message: "Matric Number not found" });
     }
 
     console.log(user);
 
     const userAccount = await Account.findOne({ ID: user._id });
     if (!userAccount) {
-      return res.status(409).json({ message: "Account not found" });
+      return res.status(500).json({ message: "Account not found" });
     }
 
     if (userAccount.balance < amount) {
-      return res.status(409).json({ message: "Insufficient Funds" });
+      return res.status(500).json({ message: "Insufficient Funds" });
     }
     const vendorAccount = await Account.findOne({ ID: vendor._id });
 
     if (!vendorAccount) {
-      return res.status(409).json({ message: "Vendor Account not found" });
+      return res.status(500).json({ message: "Vendor Account not found" });
     }
 
     // Check if password is correct
     const pinMatch = await bcrypt.compare(pin, userAccount.pin);
     if (!pinMatch) {
-      return res.status(409).json({ message: "Invalid pin" });
+      return res.status(500).json({ message: "Invalid pin" });
     }
     const transaction_ref = generateRandomString(20);
     const oldVendorBalance = vendorAccount.balance;
@@ -221,33 +221,33 @@ exports.refund = async (req, res) => {
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
-      return res.status(409).json({ message: "Vendor not found" });
+      return res.status(500).json({ message: "Vendor not found" });
     }
     const user = await User.findOne({ matricNumber });
     if (!user) {
-      return res.status(409).json({ message: "Matric Number not found" });
+      return res.status(500).json({ message: "Matric Number not found" });
     }
 
     console.log(user);
 
     const userAccount = await Account.findOne({ ID: user._id });
     if (!userAccount) {
-      return res.status(409).json({ message: "Account not found" });
+      return res.status(500).json({ message: "Account not found" });
     }
 
     const vendorAccount = await Account.findOne({ ID: vendor._id });
 
     if (!vendorAccount) {
-      return res.status(409).json({ message: "Vendor Account not found" });
+      return res.status(500).json({ message: "Vendor Account not found" });
     }
 
     const tx = await Transaction.findOne({ transaction_ref });
     if (!tx) {
-      return res.status(409).json({ message: "Transaction not found" });
+      return res.status(500).json({ message: "Transaction not found" });
     }
 
     if (vendorAccount.balance < amount) {
-      return res.status(409).json({ message: "Insufficient Funds" });
+      return res.status(500).json({ message: "Insufficient Funds" });
     }
 
     const oldVendorBalance = vendorAccount.balance;
@@ -326,7 +326,7 @@ exports.history = async (req, res) => {
     const vendorAccount = await Account.findOne({ ID: vendor._id });
 
     if (!vendorAccount) {
-      return res.status(409).json({ message: "Vendor Account not found" });
+      return res.status(500).json({ message: "Vendor Account not found" });
     }
     console.log(vendorAccount);
     const transactions = await Transaction.find({ ID: vendorAccount._id });
@@ -366,27 +366,27 @@ exports.withdraw = async (req, res) => {
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
-      return res.status(409).json({ message: "Vendor not found" });
+      return res.status(500).json({ message: "Vendor not found" });
     }
 
     const vendorAccount = await Account.findOne({ ID: vendor._id });
 
     if (!vendorAccount) {
-      return res.status(409).json({ message: "Vendor Account not found" });
+      return res.status(500).json({ message: "Vendor Account not found" });
     }
 
     if (vendorAccount.balance < amount) {
-      return res.status(409).json({ message: "Insufficient Funds" });
+      return res.status(500).json({ message: "Insufficient Funds" });
     }
 
     if (amount < 2500) {
       return res
-        .status(409)
+        .status(500)
         .json({ message: "The minimum you can withdraw is 2500" });
     }
 
     if (account_bank.length > 3) {
-      return res.status(409).json({message: "Bank not supported"})
+      return res.status(500).json({message: "Bank not supported"})
     }
 
     
@@ -404,7 +404,7 @@ exports.withdraw = async (req, res) => {
     };
     const response = await flw.Transfer.initiate(details);
     if (response.status === "error") {
-      res.status(409).json({ message: response.message });
+      res.status(500).json({ message: response.message });
     }
     console.log(response);
 

@@ -28,11 +28,11 @@ exports.deposit = async (req, res) => {
     const userId = decoded.id;
     const user = await Student.findById(userId);
     if (!user) {
-      return res.status(409).json({ message: "User not found" });
+      return res.status(500).json({ message: "User not found" });
     }
     const userAccount = await Account.findOne({ ID: userId });
     if (!userAccount) {
-      return res.status(409).json({ message: "Account not found" });
+      return res.status(500).json({ message: "Account not found" });
     }
     const oldBalance = userAccount.balance;
     const balance = Number(oldBalance) + Number(amount);
@@ -60,7 +60,7 @@ exports.deposit = async (req, res) => {
     return res.status(200).json({ message: "Transaction Saved", transaction });
   } catch (err) {
     console.log(err);
-    res.status(409).json({ message: err });
+    res.status(500).json({ message: err });
   }
 };
 
@@ -71,15 +71,15 @@ exports.withdraw = async (req, res) => {
     const userId = decoded.id;
     const user = await Student.findById(userId);
     if (!user) {
-      return res.status(409).json({ message: "User not found" });
+      return res.status(500).json({ message: "User not found" });
     }
     const userAccount = await Account.findOne({ ID: userId });
     if (!userAccount) {
-      return res.status(409).json({ message: "Account not found" });
+      return res.status(500).json({ message: "Account not found" });
     }
 
     if (userAccount.balance < amount) {
-      return res.status(409).json({ message: "Insufficient Funds" });
+      return res.status(500).json({ message: "Insufficient Funds" });
     }
 
     const reference = generateRandomString(10)
@@ -96,7 +96,7 @@ exports.withdraw = async (req, res) => {
     };
     const response = await flw.Transfer.initiate(details);
     if(response.status === 'error') {
-      res.status(409).json({message: response.message})
+      res.status(500).json({message: response.message})
     }
     console.log(response);
     const oldBalance = userAccount.balance;
@@ -127,7 +127,7 @@ exports.withdraw = async (req, res) => {
 
   } catch (err) {
     console.log(err);
-    res.status(409).json({ message: err });
+    res.status(500).json({ message: err });
   }
 };
 
@@ -138,17 +138,17 @@ exports.balance = async (req, res) => {
     const userId = decoded.id;
     const user = await Student.findById(userId);
     if (!user) {
-      return res.status(409).json({ message: "User not found" });
+      return res.status(500).json({ message: "User not found" });
     }
     const userAccount = await Account.findOne({ ID: userId });
     if (!userAccount) {
-      return res.status(409).json({ message: "Account not found" });
+      return res.status(500).json({ message: "Account not found" });
     }
     const balance = userAccount.balance;
     return res.status(200).json({ message: balance });
   } catch (err) {
     console.log(err);
-    res.status(409).json({ message: err });
+    res.status(500).json({ message: err });
   }
 };
 
@@ -159,16 +159,16 @@ exports.history = async (req, res) => {
     const userId = decoded.id;
     const user = await Student.findById(userId);
     if (!user) {
-      return res.status(409).json({ message: "User not found" });
+      return res.status(500).json({ message: "User not found" });
     }
     const userAccount = await Account.findOne({ ID: userId });
     if (!userAccount) {
-      return res.status(409).json({ message: "Account not found" });
+      return res.status(500).json({ message: "Account not found" });
     }
     const userTx = await Transaction.find({ ID: userAccount._id });
     return res.status(200).json({ message: userTx });
   } catch (err) {
     console.log(err);
-    res.status(409).json({ message: err });
+    res.status(500).json({ message: err });
   }
 };
