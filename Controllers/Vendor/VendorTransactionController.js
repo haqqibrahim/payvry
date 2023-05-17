@@ -145,7 +145,7 @@ exports.acceptPayment = async (req, res) => {
     }
 
     // Check if password is correct
-    const pinMatch = await bcrypt.compare(pin, userAccount.pin);
+    const pinMatch = bcrypt.compare(pin, userAccount.pin);
     if (!pinMatch) {
       return res.status(500).json({ message: "Invalid pin" });
     }
