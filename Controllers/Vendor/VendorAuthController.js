@@ -114,7 +114,7 @@ exports.login = async (req, res) => {
   // Check if Vendor exists
   const vendor = await Vendor.findOne({ vendorUsername });
   if (!vendor) {
-    return res.status(4019).json({ message: "Vendor not found" });
+    return res.status(500).json({ message: "Vendor not found" });
   }
 
   const vendorAccount = await Account.findOne({ ID: vendor._id });
