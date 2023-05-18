@@ -169,7 +169,7 @@ const ReceiveMoney = () => {
             type='text'
             placeholder='Matric number'
             onChange={e => {
-              setMatricNumber(e.target.value);
+              setMatricNumber(e.target.value.toLowerCase());
               setAccountVerified(false);
               setVerifiedOwnerName('');
             }}
