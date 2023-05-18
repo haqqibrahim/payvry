@@ -53,7 +53,7 @@ const HistoryCard: React.FC<Props> = ({
       token,
       transaction_ref: transactionRef,
       amount: transactionAmount.toString(),
-      matricNumber: matricRef.current!.value,
+      matricNumber: matricRef.current!.value.toLocaleLowerCase(),
     };
 
     axios
@@ -63,8 +63,18 @@ const HistoryCard: React.FC<Props> = ({
         showAlert({ msg: response.message });
         showInfo({});
       })
-      .catch((error: AxiosError) => showAlert({ msg: error.message }));
-  };
+      .catch((error: AxiosError) => {
+        console.log("5")
+        const errorCode = error.response!.status;
+        const msg = (error.response!.data as { message: string }).message;
+        console.log("6")
+
+        if (errorCode === 500) {
+          showAlert({ msg: msg });
+        } else {
+          showAlert({ msg: error.message });
+        }
+      });  };
 
   return (
     <div
