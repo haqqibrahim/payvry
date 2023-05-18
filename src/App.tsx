@@ -24,13 +24,11 @@ import WithdrawVendor from "./pages/vendor/Withdraw"
 
 import Admin from './pages/admin/Admin';
 import HomeAdmin from './pages/admin/Home';
-
 const App = () => {
   return (
     <Router>
       <Routes>
         <Route path='/' element={<Landing />}></Route>
-
         <Route path='/user' element={<HomeUser />}></Route>
         <Route path='/user/login' element={<LoginUser />}></Route>
         <Route path='/user/sign-up' element={<SignUpUser />}></Route>

@@ -22,30 +22,42 @@ const Login = () => {
 
   const login = () => {
     setIsLoading(true);
-
+    console.log("1")
     const generalInfoConfig: AxiosRequestConfig = {
       baseURL: process.env.REACT_APP_VENDOR_API!,
     };
 
     const payload: VendorLoginPayload = {
       password: passwordRef.current!.value,
-      vendorUsername: usernameRef.current!.value,
+      vendorUsername: usernameRef.current!.value.toLowerCase(),
     };
+    console.log("2")
 
     axios
       .post('/login', payload, generalInfoConfig)
       .then(res => {
         const response: VendorTokenResponse = res.data;
+        console.log("3")
+
         Cookies.set('token-payvry', response.token);
+        console.log("4")
+
         navigate('/vendor');
       })
       .catch((error: AxiosError) => {
+        console.log("5")
+        setIsLoading(false);
         const errorCode = error.response!.status;
         const msg = (error.response!.data as { message: string }).message;
+        console.log("6")
 
         if (errorCode === 500) {
+          console.log("7")
+
           showAlert({ msg: msg });
         } else {
+          console.log("8")
+
           showAlert({ msg: error.message });
         }
         setIsLoading(false);

@@ -422,7 +422,7 @@ const Withdraw = () => {
       .then(res => {
         const response: PaymentResponse = res.data;
         showAlert({ msg: response.message });
-        navigate("/vendor")
+        navigate("/user")
         // setPaymentSuccessful(true);
       })
 

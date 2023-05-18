@@ -14,8 +14,6 @@ import { UserHistoryData, UserResponse, UserTokenResponse } from '../../interfac
 
 import HistoryPanel from '../../components/user/HistoryPanel';
 
-const PaystackPop = require('@paystack/inline-js');
-
 
 const Home = () => {
   const navigate = useNavigate();
@@ -54,8 +52,16 @@ const Home = () => {
         setPhoneNumber(phoneNumber)
         setHistory(userTransaction);
       })
-      .catch((error: AxiosError) => showAlert({ msg: error.message }));
+      .catch((error: AxiosError) => {
+        const errorCode = error.response!.status;
+        const msg = (error.response!.data as { message: string }).message;
 
+        if (errorCode === 500) {
+          showAlert({ msg: msg });
+        } else {
+          showAlert({ msg: error.message });
+        }
+      });
     axios
       .post('/balance', payload, generalInfoConfig)
       .then(res => {
@@ -163,11 +169,12 @@ const Home = () => {
 
         onSubmit={(e) => {
           e.preventDefault()
-         
+
           handleFlutterPayment({
             callback: (response) => {
               console.log(response);
-              if (response.status === 'completed') {
+              if (response.status === 'completed' || response.status === 'successful'
+              ) {
                 const generalInfoConfig: AxiosRequestConfig = {
                   baseURL: process.env.REACT_APP_USER_API!,
                 };
@@ -204,8 +211,8 @@ const Home = () => {
               navigate('/user', { replace: true });
             },
             onClose: () => {
-              showAlert({msg: "Deposit Cancelled"})
-             },
+              showAlert({ msg: "Deposit Cancelled" })
+            },
           });
         }} className='info-bubble pay-modal text-center hidden bg-white w-[370px] fixed z-[1] p-[30px] rounded-[30px] border-[1px] border-alto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
       >

@@ -7,9 +7,7 @@ import { showAlert } from '../../utils';
 import BackButton from '../../components/BackButton';
 
 import { VendorSignupPayload, VendorTokenResponse } from '../../interfaces';
-type Props = {
-  children: React.ReactNode;
-};
+
 const SignUp = () => {
   const navigate = useNavigate();
 
@@ -30,7 +28,7 @@ const SignUp = () => {
     const payload: VendorSignupPayload = {
       password: passwordRef.current!.value,
       vendorName: vendorNameRef.current!.value,
-      vendorUsername: usernameRef.current!.value,
+      vendorUsername: usernameRef.current!.value.toLowerCase(),
       phoneNumber: phoneNumberRef.current!.value,
       vendorOwner: vendorOwnerRef.current!.value,
     };

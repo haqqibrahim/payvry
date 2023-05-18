@@ -97,6 +97,7 @@ const ReceiveMoney = () => {
         const response: PaymentResponse = res.data;
         showAlert({ msg: response.message });
         setPaymentSuccessful(true);
+        setPaymentMade(true);
       })
 
       .catch((error: AxiosError) => {
@@ -107,17 +108,19 @@ const ReceiveMoney = () => {
 
           showAlert({ msg: msg });
           // setPaymentSuccessful(false);
+        setIsLoading(false);
 
         } else {
 
           showAlert({ msg: msg });
           setPaymentSuccessful(false);
+          setPaymentMade(false);
+        setIsLoading(false);
+
 
         }
-        // setIsLoading(false);
 
       });
-    setPaymentMade(true);
   };
 
   return (

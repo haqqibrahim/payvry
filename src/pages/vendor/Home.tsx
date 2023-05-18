@@ -57,7 +57,16 @@ const Home = () => {
 
         balanceRef.current!.value = `C${balance.toLocaleString()}`;
       })
-      .catch((error: AxiosError) => showAlert({ msg: error.message }));
+      .catch((error: AxiosError) => {
+        const errorCode = error.response!.status;
+        const msg = (error.response!.data as { message: string }).message;
+
+        if (errorCode === 500) {
+          showAlert({ msg: msg });
+        } else {
+          showAlert({ msg: error.message });
+        }
+      });
   }, []);
 
   return (
