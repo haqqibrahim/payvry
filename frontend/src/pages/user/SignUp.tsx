@@ -237,7 +237,7 @@ const SignUp = () => {
               <button
                 type='button'
                 onClick={verifyNumber}
-                className='absolute right-0 bg-mine-shaft rounded-r-[30px] text-white font-semibold py-[15px] px-5 top-1/2 -translate-y-1/2'
+                className='absolute h-full right-0 bg-mine-shaft rounded-r-[30px] text-white font-semibold py-[15px] px-5'
               >
                 Verify
               </button>
