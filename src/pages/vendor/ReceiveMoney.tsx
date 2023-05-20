@@ -25,7 +25,7 @@ const ReceiveMoney = () => {
   const [accountVerified, setAccountVerified] = useState(false);
   const [verifiedOwnerName, setVerifiedOwnerName] = useState('');
   const [paymentSuccessful, setPaymentSuccessful] = useState(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const newDate = useMemo(() => new Date(), [paymentSuccessful]);
   const paymentID = useMemo(() => 'D32SASFGD243DF', [paymentSuccessful]);
@@ -60,11 +60,9 @@ const ReceiveMoney = () => {
         const errorCode = error.response!.status;
         const msg = (error.response!.data as { message: string }).message;
 
-        if (errorCode === 500) {
-          showAlert({ msg: msg });
-        } else {
-          showAlert({ msg: error.message });
-        }
+        if (errorCode === 500) showAlert({ msg });
+        else showAlert({ msg: error.message });
+
         setIsLoading(false);
       });
   };
@@ -103,23 +101,17 @@ const ReceiveMoney = () => {
       .catch((error: AxiosError) => {
         const errorCode = error.response!.status;
         const msg = (error.response!.data as { message: string }).message;
-        console.log(error)
+        console.log(error);
         if (errorCode === 500) {
-
-          showAlert({ msg: msg });
+          showAlert({ msg });
           // setPaymentSuccessful(false);
-        setIsLoading(false);
-
+          setIsLoading(false);
         } else {
-
-          showAlert({ msg: msg });
+          showAlert({ msg });
           setPaymentSuccessful(false);
           setPaymentMade(false);
-        setIsLoading(false);
-
-
+          setIsLoading(false);
         }
-
       });
   };
 
@@ -144,16 +136,18 @@ const ReceiveMoney = () => {
               src={paymentSuccessful ? paySuccessImage : payFailImage}
             />
             <p
-              className={`col-start-1 col-end-4 text-center font-semibold text-[24px] leading-10 ${paymentSuccessful ? 'text-mountain-meadow' : 'text-carnation'
-                }`}
+              className={`col-start-1 col-end-4 text-center font-semibold text-[24px] leading-10 ${
+                paymentSuccessful ? 'text-mountain-meadow' : 'text-carnation'
+              }`}
             >
               C{amount.toLocaleString()}
             </p>
 
             <p className='col-start-1 col-end-3 text-[14px] leading-6'>{matricNumber}</p>
             <p
-              className={`text-right text-[14px] leading-6 ${paymentSuccessful ? 'text-mountain-meadow' : 'text-carnation'
-                }`}
+              className={`text-right text-[14px] leading-6 ${
+                paymentSuccessful ? 'text-mountain-meadow' : 'text-carnation'
+              }`}
             >
               {paymentSuccessful ? 'Payment Successful' : 'Payment Unsuccessful'}
             </p>
@@ -209,21 +203,13 @@ const ReceiveMoney = () => {
             </>
           )}
 
-          {isLoading ? (
-            <p>   <button
-              disabled className='bg-mine-shaft rounded-[100px] py-[15px] px-[88px] whitespace-nowrap text-white mt-[30px] font-medium text-[15px] leading-[18px] tracking-[0.06em] w-full'
-            >
-              Loading...
-            </button></p>
-          ) : (
-            <div>  <button
-              onClick={accountVerified ? makePayment : verifyAccount}
-              className='bg-mine-shaft rounded-[100px] py-[15px] px-[88px] whitespace-nowrap text-white mt-[30px] font-medium text-[15px] leading-[18px] tracking-[0.06em] w-full'
-            >
-              {accountVerified ? 'Confirm Payment' : 'Verify Account'}
-            </button></div>
-          )}
-
+          <button
+            disabled={isLoading}
+            onClick={accountVerified ? makePayment : verifyAccount}
+            className='bg-mine-shaft rounded-[100px] py-[15px] px-[88px] whitespace-nowrap text-white mt-[30px] font-medium text-[15px] leading-[18px] tracking-[0.06em] w-full'
+          >
+            {isLoading ? 'Loading...' : accountVerified ? 'Confirm Payment' : 'Verify Account'}
+          </button>
         </section>
       )}
     </main>

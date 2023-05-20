@@ -3,12 +3,12 @@ import { PaymentResponseMessage, PaymentType, TransactionStatus, TransactionType
 interface HistoryData {
   _id: string;
   __v?: number;
+  date: string;
   amount: number;
   user_id: string;
-  date: string;
-  transactionType: TransactionType;
   transaction_ref: string;
   status: TransactionStatus;
+  transactionType: TransactionType;
 }
 
 interface BaseUser {
@@ -89,10 +89,18 @@ export interface VendorLoginPayload {
   vendorUsername: string;
 }
 
-export interface UserSignupPayload {
+export interface UserSignupPayload1 {
+  otp: number;
+  email: string;
   fullName: string;
   password: string;
   phoneNumber: string;
+}
+
+export interface UserSignupPayload2 {
+  token: string;
+  level: string;
+  department: string;
   matricNumber: string;
 }
 
@@ -129,6 +137,14 @@ export interface PaymentPayload {
   token: string;
   amount: string;
   matricNumber: string;
+}
+
+export interface PaymentPayLoad {
+  token: string;
+  amount: number;
+  account_bank: string;
+  account_name: string;
+  account_number: string;
 }
 
 export interface VerifyAccountPayload {
@@ -172,4 +188,26 @@ export interface FormatInputText {
 
 export interface OtpHashMap {
   [key: string]: string;
+}
+
+export interface Bank {
+  id: number;
+  code: string;
+  name: string;
+}
+
+export interface DataResponse {
+  data: Bank[];
+  status: string;
+  message: string;
+}
+
+export interface CountryCode {
+  name: string;
+  code: string;
+  dial_code: string;
+}
+
+export interface VerifyNumberPayload {
+  phoneNumber: string;
 }

@@ -1,4 +1,4 @@
-import { AlertProps, FormatInputText, OtpHashMap, InfoProps } from './interfaces';
+import { AlertProps, FormatInputText, OtpHashMap, InfoProps, CountryCode } from './interfaces';
 
 export const formatInputText = ({
   text,
@@ -145,4 +145,11 @@ export const decryptOtp = (otp: string): string => {
   }
 
   return decryptedOtp;
+};
+
+export const ascendingCountryCodes = (a: CountryCode, b: CountryCode) => {
+  const codeNumber1 = Number(a.dial_code.substring(1));
+  const codeNumber2 = Number(b.dial_code.substring(1));
+
+  return codeNumber1 - codeNumber2;
 };

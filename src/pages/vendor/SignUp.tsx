@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
 import Cookies from 'js-cookie';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 
@@ -16,7 +16,7 @@ const SignUp = () => {
   const vendorNameRef = useRef<HTMLInputElement>(null);
   const phoneNumberRef = useRef<HTMLInputElement>(null);
   const vendorOwnerRef = useRef<HTMLInputElement>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const signUp = () => {
     setIsLoading(true);
@@ -28,9 +28,9 @@ const SignUp = () => {
     const payload: VendorSignupPayload = {
       password: passwordRef.current!.value,
       vendorName: vendorNameRef.current!.value,
-      vendorUsername: usernameRef.current!.value.toLowerCase(),
       phoneNumber: phoneNumberRef.current!.value,
       vendorOwner: vendorOwnerRef.current!.value,
+      vendorUsername: usernameRef.current!.value.toLowerCase(),
     };
 
     axios
@@ -40,17 +40,14 @@ const SignUp = () => {
         Cookies.set('token-payvry', response.token);
         navigate('/vendor/create-pin');
         setIsLoading(false);
-
       })
       .catch((error: AxiosError) => {
         const errorCode = error.response!.status;
         const msg = (error.response!.data as { message: string }).message;
 
-        if (errorCode === 500) {
-          showAlert({ msg: msg });
-        } else {
-          showAlert({ msg: error.message });
-        }
+        if (errorCode === 500) showAlert({ msg });
+        else showAlert({ msg: error.message });
+
         setIsLoading(false);
       });
   };
@@ -106,20 +103,13 @@ const SignUp = () => {
           className='placeholder:text-mine-shaft bg-grey-200 w-full rounded-[100px] py-[15px] px-5 mt-5'
         />
 
-        {isLoading ? (
-          <p>  <button disabled
-            className='bg-mine-shaft text-white w-full py-[15px] rounded-[100px] mt-5'
-          >
-            Loading...
-          </button></p>
-        ) : (
-          <div>  <button
-            onClick={signUp}
-            className='bg-mine-shaft text-white w-full py-[15px] rounded-[100px] mt-5'
-          >
-            Sign up
-          </button></div>
-        )}
+        <button
+          onClick={signUp}
+          disabled={isLoading}
+          className='bg-mine-shaft text-white w-full py-[15px] rounded-[100px] mt-5'
+        >
+          {isLoading ? 'Loading...' : 'Sign up'}
+        </button>
 
         <p className='mt-5 font-normal text-[14px] leading-7 tracking-[0.06em] text-mine-shaft text-center'>
           Already have an account?{' '}

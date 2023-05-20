@@ -9,7 +9,7 @@ import { formatInputText, showAlert } from '../../utils';
 const CreatePin = () => {
   const navigate = useNavigate();
   const [pin, setPin] = useState('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const signIn = (e: React.FormEvent<HTMLFormElement>) => {
     setIsLoading(true);
@@ -37,17 +37,14 @@ const CreatePin = () => {
         showAlert({ msg: response.message });
         navigate('/vendor');
         setIsLoading(false);
-
       })
       .catch((error: AxiosError) => {
         const errorCode = error.response!.status;
         const msg = (error.response!.data as { message: string }).message;
 
-        if (errorCode === 500) {
-          showAlert({ msg: msg });
-        } else {
-          showAlert({ msg: error.message });
-        }
+        if (errorCode === 500) showAlert({ msg });
+        else showAlert({ msg: error.message });
+
         setIsLoading(false);
       });
   };
@@ -81,21 +78,12 @@ const CreatePin = () => {
           className='placeholder:text-mine-shaft bg-grey-200 w-full rounded-[100px] py-[15px] px-5'
         />
 
-        {isLoading ? (
-          <p>   <input
-            type='submit'
-            disabled
-            value='Loading...'
-            className='cursor-pointer bg-mine-shaft text-white w-full py-[15px] rounded-[100px] mt-5 font-medium text-[15px] leading-[18px] tracking-[0.06em]'
-          /></p>
-        ) : (
-          <div>  <input
-            type='submit'
-            value='Sign in'
-            className='cursor-pointer bg-mine-shaft text-white w-full py-[15px] rounded-[100px] mt-5 font-medium text-[15px] leading-[18px] tracking-[0.06em]'
-          /></div>
-        )}
-
+        <input
+          type='submit'
+          disabled={isLoading}
+          value={isLoading ? 'Loading...' : 'Sign in'}
+          className='cursor-pointer bg-mine-shaft text-white w-full py-[15px] rounded-[100px] mt-5 font-medium text-[15px] leading-[18px] tracking-[0.06em]'
+        />
       </form>
     </main>
   );

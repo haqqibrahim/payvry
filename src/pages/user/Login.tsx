@@ -12,13 +12,9 @@ import BackButton from '../../components/BackButton';
 
 import { UserLoginPayload, UserTokenResponse } from '../../interfaces';
 
-type Props = {
-  children: React.ReactNode;
-};
-
 const Login = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [pwdHidden, setPwdHidden] = useState(true);
   const matricRef = useRef<HTMLInputElement>(null);
@@ -26,22 +22,22 @@ const Login = () => {
 
   const login = () => {
     setIsLoading(true);
-    console.log("1")
+    console.log('1');
     const generalInfoConfig: AxiosRequestConfig = {
       baseURL: process.env.REACT_APP_USER_API!,
     };
-    console.log("2")
+    console.log('2');
 
     const payload: UserLoginPayload = {
       password: passwordRef.current!.value,
       matricNumber: matricRef.current!.value.toLowerCase(),
     };
-    console.log("3")
+    console.log('3');
 
     axios
       .post('/login', payload, generalInfoConfig)
       .then(res => {
-        console.log("4")
+        console.log('4');
 
         const response: UserTokenResponse = res.data;
         Cookies.set('token-payvry', response.token);
@@ -51,13 +47,11 @@ const Login = () => {
       .catch((error: AxiosError) => {
         const errorCode = error.response!.status;
         const msg = (error.response!.data as { message: string }).message;
-        console.log("5")
+        console.log('5');
 
-        if (errorCode === 500) {
-          showAlert({ msg: msg });
-        } else {
-          showAlert({ msg: error.message });
-        }
+        if (errorCode === 500) showAlert({ msg });
+        else showAlert({ msg: error.message });
+
         setIsLoading(false);
       });
   };
@@ -107,22 +101,13 @@ const Login = () => {
           Forgot Password
         </Link>
 
-        {isLoading ? (
-          <p>  <button disabled
-            className='bg-mine-shaft text-white w-full py-[15px] rounded-[100px] mt-[22px] font-medium text-[15px] leading-[18px] tracking-[0.06em]'
-          >
-            Loading...
-          </button></p>
-        ) : (
-          <div>  <button
-            onClick={login}
-            className='bg-mine-shaft text-white w-full py-[15px] rounded-[100px] mt-[22px] font-medium text-[15px] leading-[18px] tracking-[0.06em]'
-          >
-            Login
-          </button></div>
-        )}
-
-
+        <button
+          onClick={login}
+          disabled={isLoading}
+          className='bg-mine-shaft text-white w-full py-[15px] rounded-[100px] mt-[22px] font-medium text-[15px] leading-[18px] tracking-[0.06em]'
+        >
+          {isLoading ? 'Loading...' : 'Login'}
+        </button>
 
         <p className='mt-5 font-normal text-[14px] leading-7 tracking-[0.06em] text-mine-shaft text-center'>
           Don't have an account?{' '}
