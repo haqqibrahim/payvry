@@ -36,9 +36,7 @@ exports.verifyOTP = async (reciever, code) => {
   const FIFTEEN_MINUTES_IN_MS = 15 * 60 * 1000;
   const currentTime = new Date(); // Get the current time
   const createdAtTime = otpReference.created_at.getTime();
-  console.log(createdAtTime);
   const differenceInMs = currentTime.getTime() - createdAtTime;
-  console.log(differenceInMs);
 
   if (differenceInMs > FIFTEEN_MINUTES_IN_MS) {
     await OTP.deleteOne({ ID: reciever });
