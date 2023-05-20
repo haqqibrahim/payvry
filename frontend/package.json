@@ -1,4 +1,35 @@
 {
+<<<<<<< HEAD
+  "dependencies": {
+    "africastalking": "^0.6.2",
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "flutterwave-node-v3": "^1.1.5",
+    "jsonwebtoken": "^9.0.0",
+    "messagebird": "^4.0.1",
+    "mongoose": "^7.0.3",
+    "nodemailer": "^6.9.1",
+    "nodemon": "^2.0.22",
+    "qrcode": "^1.5.3",
+    "request": "^2.88.2",
+    "twilio": "^4.9.0"
+  },
+  "name": "quickpay",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+=======
   "name": "payvry",
   "version": "0.1.0",
   "private": true,
@@ -62,4 +93,5 @@
     "postcss": "^8.4.21",
     "tailwindcss": "^3.3.1"
   }
+>>>>>>> fb721bc4864055dcdb59341ba59a3b8870cf1c41
 }
