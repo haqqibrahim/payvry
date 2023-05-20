@@ -3,7 +3,16 @@ import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 
-import { ascendingCountryCodes, formatInputText, getOtp, showAlert } from '../../utils';
+import eyeImage from '../../assets/svgs/eye.svg';
+import eyeSlashImage from '../../assets/svgs/eye-slash.svg';
+
+import {
+  getOtp,
+  showAlert,
+  togglePassword,
+  formatInputText,
+  ascendingCountryCodes,
+} from '../../utils';
 
 import {
   CreatePinPayload,
@@ -21,9 +30,11 @@ import RegLevelIndicator from '../../components/RegLevelIndicator';
 const SignUp = () => {
   const navigate = useNavigate();
   const [regLevel, setRegLevel] = useState(1);
+  const [otpSent, setOtpSent] = useState(false);
+  const [pinHidden, setPinHidden] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [numberVerified, setNumberVerified] = useState(false);
 
+  const pinRef = useRef<HTMLInputElement>(null);
   const otpRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -38,7 +49,7 @@ const SignUp = () => {
   const [otp] = useState<number>(Number(getOtp(6)));
 
   const signUp1 = () => {
-    if (!numberVerified) {
+    if (!otpSent) {
       showAlert({ msg: 'Please verify your phone number' });
       return;
     }
@@ -161,8 +172,8 @@ const SignUp = () => {
     axios
       .post('/verify-number', payload, generalInfoConfig)
       .then(() => {
-        setNumberVerified(true);
-        showAlert({ msg: 'Phone Number verified ✅' });
+        setOtpSent(true);
+        showAlert({ msg: 'Enter OTP sent to your number' });
       })
       .catch(() => showAlert({ msg: 'An error has occured' }));
   };
@@ -176,7 +187,7 @@ const SignUp = () => {
 
       <form
         onSubmit={signUp}
-        className='font-light text-[13px] leading-4 tracking-[0.06em] mt-[54px] max-w-[400px]'
+        className='font-light text-[13px] leading-4 tracking-[0.06em] mt-[54px] max-w-[400px] relative'
       >
         <RegLevelIndicator regLevel={regLevel} />
 
@@ -220,7 +231,7 @@ const SignUp = () => {
                 autoComplete='off'
                 ref={phoneNumberRef}
                 placeholder='Phone number'
-                onChange={() => setNumberVerified(false)}
+                onChange={() => setOtpSent(false)}
                 className='placeholder:text-mine-shaft px-20 bg-grey-200 w-full rounded-[100px] py-[15px]'
               />
               <button
@@ -285,20 +296,32 @@ const SignUp = () => {
         )}
 
         {regLevel === 3 && (
-          <input
-            required
-            value={pin}
-            minLength={6}
-            maxLength={6}
-            type='password'
-            autoCorrect='off'
-            autoComplete='off'
-            placeholder='Enter your 6-digit pin'
-            onChange={e =>
-              setPin(formatInputText({ text: e.target.value, allowedChars: '0123456789' }))
-            }
-            className='placeholder:text-mine-shaft bg-grey-200 w-full rounded-[100px] py-[15px] px-5'
-          />
+          <>
+            <input
+              required
+              value={pin}
+              ref={pinRef}
+              minLength={6}
+              maxLength={6}
+              type='password'
+              autoCorrect='off'
+              autoComplete='off'
+              placeholder='Enter your 6-digit pin'
+              onChange={e =>
+                setPin(formatInputText({ text: e.target.value, allowedChars: '0123456789' }))
+              }
+              className='placeholder:text-mine-shaft bg-grey-200 w-full rounded-[100px] py-[15px] px-5'
+            />
+            <img
+              alt=''
+              onClick={() => {
+                setPinHidden(!pinHidden);
+                togglePassword(pinRef);
+              }}
+              src={pinHidden ? eyeImage : eyeSlashImage}
+              className='absolute top-[22%] right-[5%] w-[19px] h-[13px] cursor-pointer'
+            />
+          </>
         )}
 
         <input
