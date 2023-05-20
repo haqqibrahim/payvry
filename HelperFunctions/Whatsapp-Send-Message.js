@@ -20,6 +20,7 @@ exports.sendMessage = (message, reciever) => {
       }
       console.log(body);
     });
+    return "Transaction Link sent to user";
   } catch (error) {
     console.log(`Error at sendMessage --> ${error}`);
   }

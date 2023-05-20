@@ -15,8 +15,8 @@ const AccountSchema = new mongoose.Schema({
   pin: {
     type: String,
   },
-  transaction_ref: {
-    type: String
+  lastTransaction_ref: {
+    type: String,
   },
   lastTransactionType: {
     type: String,

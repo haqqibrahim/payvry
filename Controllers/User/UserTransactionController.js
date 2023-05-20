@@ -1,6 +1,6 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const Student = require("../../Models/User");
+const User = require("../../Models/User");
 const Transaction = require("../../Models/Transaction");
 const Account = require("../../Models/Account");
 const { compareNames } = require("../../HelperFunctions/Name");
@@ -26,7 +26,7 @@ exports.deposit = async (req, res) => {
     const { amount, transaction_ref, token } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const userId = decoded.id;
-    const user = await Student.findById(userId);
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(500).json({ message: "User not found" });
     }
@@ -43,6 +43,7 @@ exports.deposit = async (req, res) => {
       accountType: "User",
       amount,
       transaction_ref,
+      transaction_status: "completed",
       balance,
       date: Date.now(),
       created_at: Date.now(),
@@ -97,7 +98,7 @@ exports.withdraw = async (req, res) => {
     });
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const userId = decoded.id;
-    const user = await Student.findById(userId);
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(500).json({ message: "User not found" });
     }
@@ -119,6 +120,8 @@ exports.withdraw = async (req, res) => {
       narration: "Payvry Withdrawal",
       currency: "NGN",
       reference,
+      transaction_status: "completed",
+
       callback_url: "https://webhook.site/b3e505b0-fe02-430e-a538-22bbbce8ce0d",
       debit_currency: "NGN",
     };
@@ -137,6 +140,7 @@ exports.withdraw = async (req, res) => {
       amount,
       transaction_ref: reference,
       transaction_fee: 0,
+      transaction_status: "completed",
       balance,
       date: Date.now(),
       created_at: Date.now(),
@@ -165,7 +169,7 @@ exports.balance = async (req, res) => {
     const { token } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const userId = decoded.id;
-    const user = await Student.findById(userId);
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(500).json({ message: "User not found" });
     }
@@ -186,7 +190,7 @@ exports.history = async (req, res) => {
     const { token } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const userId = decoded.id;
-    const user = await Student.findById(userId);
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(500).json({ message: "User not found" });
     }

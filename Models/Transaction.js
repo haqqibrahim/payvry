@@ -24,6 +24,10 @@ const TransactionSchema = new mongoose.Schema({
     type: String,
     default: "Null",
   },
+  transaction_status: {
+    type: String,
+    enum: ["completed", "pending", "failed"]
+  },
   transaction_ref: {
     type: String,
   },

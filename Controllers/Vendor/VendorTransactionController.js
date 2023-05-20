@@ -32,6 +32,7 @@ function generateCsv(transactions) {
     "Account",
     "Transaction fee",
     "Transaction Type",
+    "status",
     "ID",
   ];
   const rows = transactions.map(
@@ -43,6 +44,8 @@ function generateCsv(transactions) {
       accountType,
       transaction_fee,
       transactionType,
+      transaction_status,
+
       ID,
     }) => [
       date,
@@ -52,6 +55,7 @@ function generateCsv(transactions) {
       transaction_fee,
       accountType,
       transactionType,
+      transaction_status,
       ID,
     ]
   );
