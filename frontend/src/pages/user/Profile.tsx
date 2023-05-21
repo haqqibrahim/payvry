@@ -152,6 +152,11 @@ const Profile = () => {
         >
           Update your pin
         </Link>
+        <p onClick={() => {
+          Cookies.set('token-payvry', "");
+          navigate('/user/login');
+        }} className='font-normal cursor-pointer text-[14px] leading-7 tracking-[0.06em] text-red-500 text-center'
+        >Signout</p>
       </div>
     </main>
   );

@@ -22,7 +22,6 @@ const Login = () => {
 
   const login = () => {
     setIsLoading(true);
-    console.log('1');
     const generalInfoConfig: AxiosRequestConfig = {
       baseURL: process.env.REACT_APP_USER_API!,
     };

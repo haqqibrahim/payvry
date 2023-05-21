@@ -13,6 +13,7 @@ import { showAlert, showInfo, togglePassword } from '../../utils';
 import { UserHistoryData, UserResponse, UserTokenResponse } from '../../interfaces';
 
 import HistoryPanel from '../../components/user/HistoryPanel';
+import { BsQrCode } from 'react-icons/bs';
 
 
 const Home = () => {
@@ -26,6 +27,7 @@ const Home = () => {
   const [fullName, setFullName] = useState('');
   const [history, setHistory] = useState<UserHistoryData[]>([]);
   const [phoneNumber, setPhoneNumber] = useState('')
+  const [qrCode, setQrCode] = useState('')
   // componentDidMount
   useEffect(() => {
     const generalInfoConfig: AxiosRequestConfig = {
@@ -34,7 +36,7 @@ const Home = () => {
     const token: string | undefined = Cookies.get('token-payvry');
 
     if (!token) {
-      showAlert({ msg: 'An error occured while getting your details' });
+      showAlert({ msg: 'Hmm, seems like you are not logged in!' });
       navigate('/user/login');
       return;
     }
@@ -113,7 +115,6 @@ const Home = () => {
 
 
   const payment = (amount: number, transaction_ref: string) => (e: React.FormEvent<HTMLFormElement>) => {
-    console.log(transaction_ref)
     const generalInfoConfig: AxiosRequestConfig = {
       baseURL: process.env.REACT_APP_USER_API!,
     };
@@ -145,6 +146,38 @@ const Home = () => {
       });
   }
 
+  const QRCode = () => {
+    const generalInfoConfig: AxiosRequestConfig = {
+      baseURL: process.env.REACT_APP_USER_API!,
+    };
+    const token: string | undefined = Cookies.get('token-payvry');
+
+    interface QrCodePayload {
+      token?: String
+    }
+
+    const payload: QrCodePayload = {
+      token
+    };
+
+    axios
+      .post('/qrcode', payload, generalInfoConfig)
+      .then(res => {
+        const response: any = res.data;
+        setQrCode(response.qrCode)
+      })
+      .catch((error: AxiosError) => {
+        const errorCode = error.response!.status;
+        const msg = (error.response!.data as { message: string }).message;
+
+        if (errorCode === 500) {
+          showAlert({ msg: msg });
+        } else {
+          showAlert({ msg: error.message });
+        }
+      });
+  }
+
   return (
     <main className='px-5 pt-[59px] tracking-[0.04em] pb-[57px]'>
       <header className='flex items-center justify-between text-center'>
@@ -157,18 +190,20 @@ const Home = () => {
 
         <h1 className='font-semibold text-[18px] leading-[30px]'>Hello {fullName}</h1>
 
-        <Link
-          to='/user/profile'
-          className='w-[50px] h-[50px] rounded-full grid place-items-center border-[1px] border-alto'
+        <div
+          onClick={() => {
+            QRCode()
+            showInfo({ classTarget: '.qr-code-modal' })
+          }}
+          className='w-[50px] h-[50px] cursor-pointer rounded-full grid place-items-center border-[1px] border-alto'
         >
-          <img src={chatImage} alt='' />
-        </Link>
+         <BsQrCode />
+        </div>
       </header>
 
       <form
 
         onSubmit={(e) => {
-          console.log("Clicked")
           e.preventDefault()
 
           handleFlutterPayment({
@@ -251,6 +286,10 @@ const Home = () => {
           className='bg-mine-shaft text-white w-full py-[15px] rounded-[100px] mt-[22px] font-medium text-[15px] leading-[18px] tracking-[0.06em] cursor-pointer'
         />
       </form>
+
+      <div className="qr-code-modal info-bubble hidden bg-white w-[60%] fixed z-[1] p-[30px] rounded-[30px] border-[1px] border-alto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <img src={qrCode} alt="QR Code" />
+      </div>
 
       <div className='flex flex-col items-center gap-y-5 mt-[10px]'>
         <p className='font-medium text-[16px] leading-[27px] text-[rgba(0,0,0,0.5)]'>

@@ -1,6 +1,5 @@
 const express = require("express");
 
-
 const  { signout } =  require("../../Controllers/User/Auth/Signout");
 const  { signup } =  require("../../Controllers/User/Auth/Signup");
 const  { otpVerification } =  require("../../Controllers/User/Auth/OTPVerification");
@@ -26,4 +25,5 @@ router.post("/setpin", setPin);
 router.post("/user", getUser);
 router.post("/balance", balance);
 router.put("/update", update);
+
 module.exports = router;
