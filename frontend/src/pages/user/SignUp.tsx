@@ -59,12 +59,13 @@ const SignUp = () => {
     };
 
     const payload: UserSignupPayload1 = {
-      otp,
+      otp:Number( otpRef.current!.value),
       email: emailRef.current!.value,
       fullName: fullNameRef.current!.value,
       password: passwordRef.current!.value,
       phoneNumber: phoneNumberRef.current!.value,
     };
+
 
     axios
       .post('/signup', payload, generalInfoConfig)

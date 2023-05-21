@@ -168,6 +168,7 @@ const Home = () => {
       <form
 
         onSubmit={(e) => {
+          console.log("Clicked")
           e.preventDefault()
 
           handleFlutterPayment({
@@ -193,7 +194,9 @@ const Home = () => {
                     const response: any = res.data;
                     showAlert({ msg: response.message })
                     showInfo({})
-                    navigate('/user', { replace: true });
+                    window.location.reload();
+
+
                   })
                   .catch((error: AxiosError) => {
                     const errorCode = error.response!.status;
