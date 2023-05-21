@@ -160,7 +160,7 @@ const ReceiveMoney = () => {
               className={`text-right text-[14px] leading-6 ${paymentSuccessful ? 'text-mountain-meadow' : 'text-carnation'
                 }`}
             >
-              {paymentSuccessful ? 'Payment Successful' : 'Payment Unsuccessful'}
+              {paymentSuccessful ? 'Request Successful' : 'Request Unsuccessful'}
             </p>
           </div>
         </section>
@@ -219,7 +219,7 @@ const ReceiveMoney = () => {
             onClick={accountVerified ? makePayment : verifyAccount}
             className='bg-mine-shaft rounded-[100px] py-[15px] px-[88px] whitespace-nowrap text-white mt-[30px] font-medium text-[15px] leading-[18px] tracking-[0.06em] w-full'
           >
-            {isLoading ? 'Loading...' : accountVerified ? 'Confirm Payment' : 'Verify Account'}
+            {isLoading ? 'Loading...' : accountVerified ? 'Request Payment' : 'Verify Account'}
           </button>
         </section>
       )}

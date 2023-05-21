@@ -256,7 +256,7 @@ const SignUp = () => {
               required
               type='text'
               ref={otpRef}
-              placeholder='OTP'
+              placeholder='OTP from WhatsApp'
               className='placeholder:text-mine-shaft bg-grey-200 w-full rounded-[100px] py-[15px] px-5 mt-5'
             />
           </>
