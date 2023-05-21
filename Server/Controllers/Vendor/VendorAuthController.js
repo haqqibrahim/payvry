@@ -183,7 +183,9 @@ exports.getVendor = async (req, res) => {
     if (!vendorAccount) {
       return res.status(500).json({ message: "Account not found" });
     }
-    const vendorTransaction = await Transaction.find({ ID: vendorAccount._id });
+    const vendorTransaction = await Transaction.find({
+      ID: vendorAccount._id,
+    }).sort({ date: -1 });;
 
     return res
       .status(200)
