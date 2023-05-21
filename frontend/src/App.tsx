@@ -21,6 +21,7 @@ import ProfileVendor from './pages/vendor/Profile';
 import CreatePinVendor from './pages/vendor/CreatePin';
 import ReceiveMoneyVendor from './pages/vendor/ReceiveMoney';
 import WithdrawVendor from "./pages/vendor/Withdraw"
+import Payment from './pages/vendor/Payment';
 
 import Admin from './pages/admin/Admin';
 import HomeAdmin from './pages/admin/Home';
@@ -48,6 +49,7 @@ const App = () => {
         <Route path='/vendor/create-pin' element={<CreatePinVendor />}></Route>
         <Route path='/vendor/receive-money' element={<ReceiveMoneyVendor />}></Route>
         <Route path="/vendor/withdraw" element={<WithdrawVendor />}></Route>
+        <Route path="/vendor/payment" element={<Payment />}></Route>
 
         <Route path='/admin' element={<Admin />}></Route>
         <Route path='/admin/home' element={<HomeAdmin />}></Route>

@@ -105,12 +105,13 @@ const HistoryCard: React.FC<Props> = ({
         {newDate.toDateString()} {newDate.toLocaleTimeString()}
       </p>
       <p className='text-right'>{id}</p>
+      {/* Here */}
       <img
         alt=''
         className='row-start-2 row-end-4 w-[30px] h-[30px] mt-[10%]'
         src={transactionType === 'credit' ? receivedImage : paidImage}
       />
-      <p className='capitalize text-left font-normal'>{description}</p>
+      <p className='capitalize text-left font-normal'>Status: {description}</p>
       <p
         className={`text-right ${
           transactionType === 'credit' ? 'text-mountain-meadow' : 'text-carnation'

@@ -31,6 +31,7 @@ const ReceiveMoney = () => {
   const paymentID = useMemo(() => 'D32SASFGD243DF', [paymentSuccessful]);
 
   const verifyAccount = () => {
+    console.log(matricNumber)
     setIsLoading(true);
     const generalInfoConfig: AxiosRequestConfig = {
       baseURL,
@@ -82,15 +83,27 @@ const ReceiveMoney = () => {
       return;
     }
 
-    const payload: PaymentPayload = {
+    // const payload: PaymentPayload = {
+    //   token,
+    //   matricNumber,
+    //   amount: amount.toString(),
+    //   pin: pinRef.current!.value,
+    // };
+
+    interface pays {
+      token?: string,
+      matricNumber?: string,
+      amount?: Number
+    }
+
+    const payload: pays = {
       token,
       matricNumber,
-      amount: amount.toString(),
-      pin: pinRef.current!.value,
-    };
+      amount
+    }
 
     axios
-      .post('/acceptpayment', payload, generalInfoConfig)
+      .post('/initiate', payload, generalInfoConfig)
       .then(res => {
         const response: PaymentResponse = res.data;
         showAlert({ msg: response.message });
@@ -136,18 +149,16 @@ const ReceiveMoney = () => {
               src={paymentSuccessful ? paySuccessImage : payFailImage}
             />
             <p
-              className={`col-start-1 col-end-4 text-center font-semibold text-[24px] leading-10 ${
-                paymentSuccessful ? 'text-mountain-meadow' : 'text-carnation'
-              }`}
+              className={`col-start-1 col-end-4 text-center font-semibold text-[24px] leading-10 ${paymentSuccessful ? 'text-mountain-meadow' : 'text-carnation'
+                }`}
             >
               C{amount.toLocaleString()}
             </p>
 
             <p className='col-start-1 col-end-3 text-[14px] leading-6'>{matricNumber}</p>
             <p
-              className={`text-right text-[14px] leading-6 ${
-                paymentSuccessful ? 'text-mountain-meadow' : 'text-carnation'
-              }`}
+              className={`text-right text-[14px] leading-6 ${paymentSuccessful ? 'text-mountain-meadow' : 'text-carnation'
+                }`}
             >
               {paymentSuccessful ? 'Payment Successful' : 'Payment Unsuccessful'}
             </p>
@@ -183,7 +194,7 @@ const ReceiveMoney = () => {
                 {verifiedOwnerName}
               </p>
 
-              <div className='relative mt-[30px]'>
+              {/* <div className='relative mt-[30px]'>
                 <input
                   type='password'
                   ref={pinRef}
@@ -199,7 +210,7 @@ const ReceiveMoney = () => {
                   src={pinHidden ? eyeImage : eyeSlashImage}
                   className='w-5 h-5 absolute top-[30%] right-5 cursor-pointer'
                 />
-              </div>
+              </div> */}
             </>
           )}
 

@@ -12,6 +12,7 @@ import { VendorHistoryData, VendorResponse } from '../../interfaces';
 import { showAlert, togglePassword } from '../../utils';
 
 import HistoryPanel from '../../components/vendor/HistoryPanel';
+import { FiLogOut } from 'react-icons/fi';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -42,9 +43,9 @@ const Home = () => {
       .then(res => {
         const response: VendorResponse = res.data;
         const { vendor, vendorTransaction } = response;
-        const { vendorOwner } = vendor;
+        const { vendorUsername } = vendor;
 
-        setFullName(vendorOwner);
+        setFullName(vendorUsername);
         setHistory(vendorTransaction);
       })
       .catch((error: AxiosError) => showAlert({ msg: error.message }));
@@ -81,12 +82,15 @@ const Home = () => {
 
         <h1 className='font-semibold text-[18px] leading-[30px]'>Hello {fullName}</h1>
 
-        <Link
-          to='/vendor/profile'
-          className='w-[50px] h-[50px] rounded-full grid place-items-center border-[1px] border-alto'
+        <div
+          onClick={() => {
+            Cookies.set('token-payvry', "");
+            navigate('/vendor/login');
+          }}
+          className='w-[50px] h-[50px] cursor-pointer rounded-full grid place-items-center border-[1px] border-alto'
         >
-          <img src={chatImage} alt='' />
-        </Link>
+         <FiLogOut style={{color: "red"}}/>
+        </div>
       </header>
 
       <div className='flex flex-col items-center gap-y-5 mt-[10px]'>

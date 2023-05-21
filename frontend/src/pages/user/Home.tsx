@@ -13,7 +13,7 @@ import { showAlert, showInfo, togglePassword } from '../../utils';
 import { UserHistoryData, UserResponse, UserTokenResponse } from '../../interfaces';
 
 import HistoryPanel from '../../components/user/HistoryPanel';
-import { BsQrCode } from 'react-icons/bs';
+import { FiLogOut } from 'react-icons/fi';
 
 
 const Home = () => {
@@ -192,12 +192,12 @@ const Home = () => {
 
         <div
           onClick={() => {
-            QRCode()
-            showInfo({ classTarget: '.qr-code-modal' })
+            Cookies.set('token-payvry', "");
+            navigate('/user/login');
           }}
           className='w-[50px] h-[50px] cursor-pointer rounded-full grid place-items-center border-[1px] border-alto'
         >
-         <BsQrCode />
+         <FiLogOut style={{color: "red"}}/>
         </div>
       </header>
 

@@ -15,9 +15,8 @@ const HistoryPanel: React.FC<Props> = ({ history, panelExpanded, extraStyles }) 
   return (
     <section
       style={extraStyles}
-      className={`relative bg-alto rounded-[30px] text-center mt-[55px] ${
-        panelExpanded ? 'p-[10px]' : 'py-5 px-[15px]'
-      }`}
+      className={`relative bg-alto rounded-[30px] text-center mt-[55px] ${panelExpanded ? 'p-[10px]' : 'py-5 px-[15px]'
+        }`}
     >
       {panelExpanded || (
         <>
@@ -34,11 +33,12 @@ const HistoryPanel: React.FC<Props> = ({ history, panelExpanded, extraStyles }) 
       {history
         .slice(0, MAX_HISTORY)
         .map(({ _id, date, amount, transactionType, vendor, status }, index) => {
+          const reversedIndex = MAX_HISTORY - index - 1;
           return (
             <HistoryCard
               id={_id}
               key={_id}
-              index={index}
+              index={reversedIndex}
               title={vendor}
               date={date}
               description={status}
