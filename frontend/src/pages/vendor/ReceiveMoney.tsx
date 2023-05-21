@@ -130,7 +130,7 @@ const ReceiveMoney = () => {
 
   return (
     <main className='min-h-screen px-5 mb-[100px] flex flex-col items-center justify-center'>
-      <h1 className='font-semibold text-[20px] leading-[26px] text-center pt-14'>
+      <h1 className='font-semibold text-[20px] leading-[26px] text-center pt-5'>
         Receive payment
       </h1>
       <BackButton />
@@ -165,7 +165,7 @@ const ReceiveMoney = () => {
           </div>
         </section>
       ) : (
-        <section className='mt-[180px] border-[1px] border-alto rounded-[30px] p-[30px] max-w-[400px]'>
+        <section className='mt-[100px] border-[1px] border-alto rounded-[30px] p-[30px] max-w-[400px]'>
           <h2 className='font-medium text-[16px] leading-[27px] text-[rgba(0,0,0,0.5)]'>
             Verify student's ID before proceeding to complete the payment
           </h2>

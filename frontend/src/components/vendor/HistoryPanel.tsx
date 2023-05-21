@@ -24,7 +24,7 @@ const HistoryPanel: React.FC<Props> = ({ history, panelExpanded, extraStyles }) 
           <h3 className='font-semibold text-[18px] leading-[23px]'>History</h3>
           <Link
             to='/vendor/history'
-            className='absolute right-[25px] top-5 font-normal text-[17px] leading-[17px]'
+            className='absolute right-[25px] top-5 font-normal text-[17px] leading-[16px]'
           >
             View all
           </Link>
