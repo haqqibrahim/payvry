@@ -35,7 +35,7 @@ const HistoryCard: React.FC<Props> = ({
       <p className='col-start-1 col-end-3 text-left'>
         {newDate.toDateString()} {newDate.toLocaleTimeString()}
       </p>
-      <p className='text-right'>{id}</p>
+      <p className='text-right'>{ id.slice(0, 10)}</p>
       <img
         alt=''
         className='row-start-2 row-end-4 w-[30px] h-[30px] mt-[10%]'
