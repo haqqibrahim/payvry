@@ -11,7 +11,7 @@ exports.confirmTransaction = async (req, res) => {
     const transaction_ref = req.params.id;
     await Transaction.updateMany(
       { transaction_ref: transaction_ref },
-      { transaction_status: "completed" }
+      { status: "completed" }
     );
 
     const tx = await Transaction.find({ transaction_ref });

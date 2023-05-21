@@ -58,7 +58,7 @@ exports.initiateTx = async (req, res) => {
       amount,
       transaction_ref,
       transaction_fee: 0,
-      transaction_status: "pending",
+      status: "pending",
       user: matricNumber,
       balance: newVendorBalance,
       date: Date.now(),
@@ -83,7 +83,7 @@ exports.initiateTx = async (req, res) => {
     await vendorTransaction.save();
     await userTransaction.save();
 
-    const link = `https://cd31-154-113-158-227.ngrok-free.app/user/api/confirm/${transaction_ref}`;
+    const link = `https://payvry.onrender.com/user/api/confirm/${transaction_ref}`;
 
 
     const template = `Confirm ${vendor.vendorName}'s charge of ${amount} naira, ${link}`;

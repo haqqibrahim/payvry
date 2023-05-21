@@ -6,6 +6,7 @@ const Vendor = require("../../Models/Vendor");
 const User = require("../../Models/User");
 const Account = require("../../Models/Account");
 const Transaction = require("../../Models/Transaction");
+const Student = require("../../Models/Student")
 const { compareNames } = require("../../HelperFunctions/Name");
 
 const Flutterwave = require("flutterwave-node-v3");
@@ -96,6 +97,7 @@ exports.balance = async (req, res) => {
 exports.getStudent = async (req, res) => {
   try {
     const { matricNumber, token } = req.body;
+    console.log(matricNumber)
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
     const vendorId = decoded.id;
     const vendor = await Vendor.findById(vendorId);
@@ -103,12 +105,19 @@ exports.getStudent = async (req, res) => {
       return res.status(500).json({ message: "Vendor not found" });
     }
     console.log("Vendor found");
-    const student = await User.find({ matricNumber });
-    if (student.length == []) {
+    const student = await Student.findOne({ matricNumber });
+    if (!student) {
+      console.log(`The student: ${student}`)
       return res.status(500).json({ message: "Matric Number not found" });
     }
-    console.log(student[0]);
-    const studentName = student[0].fullName;
+    console.log(student);
+    const stdID = student.ID
+    const user = await User.findById({ _id: stdID });
+    if(!user) {
+            return res.status(500).json({ message: "User not found" });
+
+    }
+    const studentName = user.fullName;
     return res.status(200).json({ message: studentName });
   } catch (err) {
     console.log(err);
@@ -126,7 +135,7 @@ exports.acceptPayment = async (req, res) => {
     if (!vendor) {
       return res.status(500).json({ message: "Vendor not found" });
     }
-    const user = await User.findOne({ matricNumber });
+    const user = await Student.findOne({ matricNumber });
     if (!user) {
       return res.status(500).json({ message: "Matric Number not found" });
     }
@@ -225,7 +234,7 @@ exports.refund = async (req, res) => {
     if (!vendor) {
       return res.status(500).json({ message: "Vendor not found" });
     }
-    const user = await User.findOne({ matricNumber });
+    const user = await Student.findOne({ matricNumber });
     if (!user) {
       return res.status(500).json({ message: "Matric Number not found" });
     }
