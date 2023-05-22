@@ -49,7 +49,7 @@ exports.verifyOTP = async (reciever, code) => {
   if (code !== otpReference.code) {
     await OTP.deleteMany({ ID: reciever });
     
-    return { code: 500, message: "OTP is not correct" };
+    return { code: 500, message: "OTP is not correct, request for another OTP" };
   }
 
   await OTP.deleteOne({ ID: reciever });

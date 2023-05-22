@@ -231,7 +231,7 @@ const SignUp = () => {
                 autoCorrect='off'
                 autoComplete='off'
                 ref={phoneNumberRef}
-                placeholder='Phone number'
+                placeholder='WhatsApp Phone number'
                 onChange={() => setOtpSent(false)}
                 className='placeholder:text-mine-shaft px-20 bg-grey-200 w-full rounded-[100px] py-[15px]'
               />
