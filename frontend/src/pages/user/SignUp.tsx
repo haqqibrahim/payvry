@@ -180,8 +180,8 @@ const SignUp = () => {
   };
 
   return (
-    <main className='w-screen min-h-screen px-[35px] flex flex-col items-center justify-center'>
-      <h1 className='font-semibold text-[34px] leading-[44px] tracking-[0.04em] text-black'>
+    <main className='w-screen bg-yellow-500 min-h-screen px-[35px] flex flex-col items-center justify-center'>
+      <h1 className='font-semibold text-[34px] bg-green-300 h-20 w-20 leading-[44px] tracking-[0.04em] text-black'>
         Let's set up your account to get started
       </h1>
       <BackButton />
