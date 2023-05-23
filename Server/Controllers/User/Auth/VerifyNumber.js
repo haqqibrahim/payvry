@@ -8,7 +8,7 @@ exports.verifyNumber = async (req, res) => {
   const { phoneNumber } = req.body;
   const user = await User.findOne({phoneNumber});
   if (user) {
-    return res.status(400).json({ message: "Phone Number has been used" });
+    return res.status(500).json({ message: "Phone Number has been used" });
   }
   sendOTP( phoneNumber);
   res.status(200).json({ message: "OTP Sent to WhatsApp" });
