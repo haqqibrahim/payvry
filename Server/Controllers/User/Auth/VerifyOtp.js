@@ -16,9 +16,5 @@ exports.verifyOTP = async (req, res) => {
   }
 
   return res.status(200).json({message})
-
-  // Hash the password
-  console.log("Hashing Password");
-
  
 };
