@@ -16,7 +16,7 @@ const router = express.Router();
 
 
 router.post("/verify-number", verifyNumber)
-router.post("/verify-otp", verifyOtp)
+router.post("/verify-otp", verifyOTP)
 router.post("/signup", signup);
 router.post("/create-student", createStudent)
 router.post("/verify-otp", otpVerification);
