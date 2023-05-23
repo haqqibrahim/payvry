@@ -121,7 +121,6 @@ exports.withdraw = async (req, res) => {
       currency: "NGN",
       reference,
       transaction_status: "completed",
-
       callback_url: "https://webhook.site/b3e505b0-fe02-430e-a538-22bbbce8ce0d",
       debit_currency: "NGN",
     };
