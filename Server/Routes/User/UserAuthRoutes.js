@@ -11,7 +11,7 @@ const  { update } =  require("../../Controllers/User/Auth/Update");
 const  { createStudent } =  require("../../Controllers/User/Auth/CreateStudent");
 const {login} = require("../../Controllers/User/Auth/Login")
 const  { verifyNumber } = require("../../Controllers/User/Auth/VerifyNumber")
-const {verifyOtp} = require("../../Controllers/User/Auth/VerifyOtp")
+const {verifyOTP} = require("../../Controllers/User/Auth/VerifyOtp")
 const router = express.Router();
 
 
