@@ -33,6 +33,7 @@ const SignUp = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [pinHidden, setPinHidden] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [number, setNumber] = useState('')
 
   const pinRef = useRef<HTMLInputElement>(null);
   const otpRef = useRef<HTMLInputElement>(null);
@@ -49,21 +50,20 @@ const SignUp = () => {
   const [otp] = useState<number>(Number(getOtp(6)));
 
   const signUp1 = () => {
-    if (!otpSent) {
-      showAlert({ msg: 'Please verify your phone number' });
-      return;
-    }
+    verifyNumber()
+  }
+
+  const signUp2 = () => {
 
     const generalInfoConfig: AxiosRequestConfig = {
       baseURL: process.env.REACT_APP_USER_API!,
     };
 
     const payload: UserSignupPayload1 = {
-      otp:Number( otpRef.current!.value),
       email: emailRef.current!.value,
       fullName: fullNameRef.current!.value,
       password: passwordRef.current!.value,
-      phoneNumber: phoneNumberRef.current!.value,
+      phoneNumber: number,
     };
 
 
@@ -73,18 +73,21 @@ const SignUp = () => {
         const response: UserTokenResponse = res.data;
         Cookies.set('token-payvry', response.token);
 
-        setRegLevel(2);
+        setRegLevel(3);
         setIsLoading(false);
       })
       .catch((error: AxiosError) => {
+        const errorCode = error.response!.status;
         const msg = (error.response!.data as { message: string }).message;
 
-        showAlert({ msg });
+        if (errorCode === 500) showAlert({ msg });
+        else showAlert({ msg: error.message });
+
         setIsLoading(false);
       });
   };
 
-  const signUp2 = () => {
+  const signUp3 = () => {
     const generalInfoConfig: AxiosRequestConfig = {
       baseURL: process.env.REACT_APP_USER_API!,
     };
@@ -107,7 +110,7 @@ const SignUp = () => {
     axios
       .post('/create-student', payload, generalInfoConfig)
       .then(() => {
-        setRegLevel(3);
+        setRegLevel(4);
         setIsLoading(false);
       })
       .catch((error: AxiosError) => {
@@ -118,7 +121,7 @@ const SignUp = () => {
       });
   };
 
-  const signUp3 = () => {
+  const signUp4 = () => {
     const generalInfoConfig: AxiosRequestConfig = {
       baseURL: process.env.REACT_APP_USER_API!,
     };
@@ -156,9 +159,15 @@ const SignUp = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    if (regLevel === 1) signUp1();
+    if (otpSent) {
+      verifyOtp()
+    } else if
+
+      (regLevel === 1) signUp1();
     else if (regLevel === 2) signUp2();
     else if (regLevel === 3) signUp3();
+    else if (regLevel === 4) signUp4();
+
   };
 
   const verifyNumber = () => {
@@ -172,16 +181,64 @@ const SignUp = () => {
 
     axios
       .post('/verify-number', payload, generalInfoConfig)
-      .then(() => {
+      .then(res => {
         setOtpSent(true);
-        showAlert({ msg: 'Enter OTP sent to your number' });
+        const response: { message: string } = res.data;
+        showAlert({ msg: response.message });
+        setIsLoading(false);
+
       })
-      .catch(() => showAlert({ msg: 'An error has occured' }));
+      .catch((error: AxiosError) => {
+        const errorCode = error.response!.status;
+        const msg = (error.response!.data as { message: string }).message;
+
+        if (errorCode === 500) showAlert({ msg });
+        else showAlert({ msg: error.message });
+
+        setOtpSent(false);
+        setIsLoading(false);
+
+      });
   };
 
+  const verifyOtp = () => {
+    const generalInfoConfig: AxiosRequestConfig = {
+      baseURL: process.env.REACT_APP_USER_API!,
+    };
+
+    interface payloadOtp {
+      phoneNumber?: string,
+      otp: Number
+    }
+    const payload: payloadOtp = {
+      phoneNumber: phoneNumberRef.current!.value,
+      otp: Number(otpRef.current!.value),
+    }
+    axios
+      .post('/verify-otp', payload, generalInfoConfig)
+      .then(res => {
+        const response: { message: string } = res.data;
+        showAlert({ msg: response.message });
+        setIsLoading(false);
+        setRegLevel(2)
+        setOtpSent(false)
+        setNumber(phoneNumberRef.current!.value)
+      })
+      .catch((error: AxiosError) => {
+        const errorCode = error.response!.status;
+        const msg = (error.response!.data as { message: string }).message;
+
+        if (errorCode === 500) showAlert({ msg });
+        else showAlert({ msg: error.message });
+
+        setIsLoading(false);
+
+      });
+  }
+
   return (
-    <main className='w-screen bg-yellow-500 min-h-screen px-[35px] flex flex-col items-center justify-center'>
-      <h1 className='font-semibold text-[34px] bg-green-300 h-20 w-20 leading-[44px] tracking-[0.04em] text-black'>
+    <main className='w-screen min-h-screen px-[35px] flex flex-col items-center justify-center'>
+      <h1 className='font-semibold text-[34px] leading-[44px] tracking-[0.04em] text-black'>
         Let's set up your account to get started
       </h1>
       <BackButton />
@@ -192,7 +249,32 @@ const SignUp = () => {
       >
         <RegLevelIndicator regLevel={regLevel} />
 
-        {regLevel === 1 && (
+        {
+          regLevel === 1 && (
+            <>
+              <input
+                required
+                type='text'
+                autoCorrect='off'
+                autoComplete='off'
+                ref={phoneNumberRef}
+                placeholder='WhatsApp Number'
+                className='placeholder:text-mine-shaft text-center placeholder:text-center bg-grey-200 w-full rounded-[100px] py-[15px] px-5 mt-5'
+              />
+              {otpSent && (
+                <input
+                  required
+                  type='text'
+                  ref={otpRef}
+                  placeholder='OTP from WhatsApp'
+                  className='placeholder:text-mine-shaft bg-grey-200 w-full rounded-[100px] py-[15px] px-5 mt-5'
+                />
+              )}
+            </>
+          )
+        }
+
+        {regLevel === 2 && (
           <>
             <input
               required
@@ -214,35 +296,6 @@ const SignUp = () => {
               className='placeholder:text-mine-shaft bg-grey-200 w-full rounded-[100px] py-[15px] px-5 mt-5'
             />
 
-            <div className='relative mt-5'>
-              <select
-                defaultValue='+234'
-                className='absolute py-[15px] px-2 rounded-l-[30px] bg-transparent text-center'
-              >
-                {countryInfo.codes.sort(ascendingCountryCodes).map(({ dial_code, code }) => (
-                  <option key={code} value={dial_code}>
-                    {dial_code}
-                  </option>
-                ))}
-              </select>
-              <input
-                required
-                type='text'
-                autoCorrect='off'
-                autoComplete='off'
-                ref={phoneNumberRef}
-                placeholder='WhatsApp Phone number'
-                onChange={() => setOtpSent(false)}
-                className='placeholder:text-mine-shaft px-20 bg-grey-200 w-full rounded-[100px] py-[15px]'
-              />
-              <button
-                type='button'
-                onClick={verifyNumber}
-                className='absolute h-full right-0 bg-mine-shaft rounded-r-[30px] text-white font-semibold py-[15px] px-5'
-              >
-                Verify
-              </button>
-            </div>
 
             <input
               required
@@ -252,17 +305,10 @@ const SignUp = () => {
               className='placeholder:text-mine-shaft bg-grey-200 w-full rounded-[100px] py-[15px] px-5 mt-5'
             />
 
-            <input
-              required
-              type='text'
-              ref={otpRef}
-              placeholder='OTP from WhatsApp'
-              className='placeholder:text-mine-shaft bg-grey-200 w-full rounded-[100px] py-[15px] px-5 mt-5'
-            />
           </>
         )}
 
-        {regLevel === 2 && (
+        {regLevel === 3 && (
           <>
             <input
               required
@@ -296,7 +342,7 @@ const SignUp = () => {
           </>
         )}
 
-        {regLevel === 3 && (
+        {regLevel === 4 && (
           <>
             <input
               required
@@ -328,7 +374,7 @@ const SignUp = () => {
         <input
           type='submit'
           disabled={isLoading}
-          value={isLoading ? 'Loading...' : regLevel < 3 ? 'Next' : 'Sign up'}
+          value={isLoading ? 'Loading...' : regLevel < 4 ? 'Next' : 'Sign up'}
           className='bg-mine-shaft text-white w-full py-[15px] rounded-[100px] mt-5 cursor-pointer duration-500 disabled:cursor-default disabled:bg-opacity-40'
         />
 

@@ -90,7 +90,6 @@ export interface VendorLoginPayload {
 }
 
 export interface UserSignupPayload1 {
-  otp: number;
   email: string;
   fullName: string;
   password: string;

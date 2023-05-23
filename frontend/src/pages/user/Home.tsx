@@ -69,7 +69,6 @@ const Home = () => {
       .then(res => {
         const response: { message: number } = res.data;
         const balance: number = response.message;
-        console.log(balance)
         balanceRef.current!.value = `C${balance.toLocaleString()}`;
         console.log(balanceRef.current!.value)
       })
@@ -129,7 +128,6 @@ const Home = () => {
     axios
       .post('/deposit', payload, generalInfoConfig)
       .then(res => {
-        console.log("4")
         const response: any = res.data;
         showAlert({ msg: response.message })
         navigate("/user")
@@ -188,7 +186,7 @@ const Home = () => {
           <img src={userImage} alt='' />
         </Link>
 
-        <h1 className='font-semibold text-[18px] leading-[30px]'>Hello {fullName}</h1>
+        <h1 className='font-semibold text-[18px]  px-5 leading-[30px]'>Hello {fullName}</h1>
 
         <div
           onClick={() => {
@@ -293,7 +291,7 @@ const Home = () => {
 
       <div className='flex flex-col items-center gap-y-5 mt-[10px]'>
         <p className='font-medium text-[16px] leading-[27px] text-[rgba(0,0,0,0.5)]'>
-          Coin Balance
+          Balance
         </p>
 
         <img
