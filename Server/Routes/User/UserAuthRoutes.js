@@ -11,10 +11,12 @@ const  { update } =  require("../../Controllers/User/Auth/Update");
 const  { createStudent } =  require("../../Controllers/User/Auth/CreateStudent");
 const {login} = require("../../Controllers/User/Auth/Login")
 const  { verifyNumber } = require("../../Controllers/User/Auth/VerifyNumber")
+const {verifyOtp} = require("../../Controllers/User/Auth/VerifyOtp")
 const router = express.Router();
 
 
 router.post("/verify-number", verifyNumber)
+router.post("/verify-otp", verifyOtp)
 router.post("/signup", signup);
 router.post("/create-student", createStudent)
 router.post("/verify-otp", otpVerification);

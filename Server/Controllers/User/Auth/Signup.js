@@ -4,11 +4,10 @@ const jwt = require("jsonwebtoken");
 const User = require("../../../Models/User");
 const Account = require("../../../Models/Account");
 const { createToken } = require("../../../HelperFunctions/Token");
-const { verifyOTP } = require("../../../HelperFunctions/OTP");
 const maxAge = 3 * 24 * 60 * 60;
 
 exports.signup = async (req, res) => {
-  const { email, fullName, phoneNumber, password, otp } = req.body;
+  const { email, fullName, phoneNumber, password } = req.body;
   console.log("Checking for empty fields");
   if (
     !email ||
@@ -38,12 +37,6 @@ exports.signup = async (req, res) => {
   const userNumber = await User.findOne({ phoneNumber });
   if (userNumber) {
     return res.status(500).json({ message: "Phone number already exists" });
-  }
-
-  const { code, message } = await verifyOTP(phoneNumber, otp);
-
-  if (code === 500) {
-    return res.status(500).json({ message });
   }
 
   // Hash the password
