@@ -25,6 +25,7 @@ import Payment from './pages/vendor/Payment';
 
 import Admin from './pages/admin/Admin';
 import HomeAdmin from './pages/admin/Home';
+import ForgotPassword from './pages/user/ForgotPassword';
 const App = () => {
   return (
     <Router>
@@ -40,6 +41,7 @@ const App = () => {
         <Route path='/user/update-pin' element={<UpdatePinUser />}></Route>
         <Route path='/user/receive-money' element={<ReceiveMoneyUser />}></Route>
         <Route path="/user/withdraw" element={<WithdrawUser />}></Route>
+        <Route path="/user/forgot-password" element={<ForgotPassword />}></Route>
 
         <Route path='/vendor' element={<HomeVendor />}></Route>
         <Route path='/vendor/login' element={<LoginVendor />}></Route>

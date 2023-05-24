@@ -245,21 +245,22 @@ const SignUp = () => {
 
       <form
         onSubmit={signUp}
-        className='font-light text-[13px] leading-4 tracking-[0.06em] mt-[54px] max-w-[400px] relative'
+        className='font-light text-[13px] leading-4 tracking-[0.06em] mt-[54px] max-w-[400px] relative' style={{marginBottom: "40px"}}
       >
-        <RegLevelIndicator regLevel={regLevel} />
 
         {
           regLevel === 1 && (
             <>
+            <label htmlFor="number" className="text-mine-shaft mt-20"style={{paddingLeft: "18px", paddingTop: "5px"}}>Phone number</label>
               <input
                 required
+                id="number"
                 type='text'
                 autoCorrect='off'
                 autoComplete='off'
                 ref={phoneNumberRef}
-                placeholder='WhatsApp Number'
-                className='placeholder:text-mine-shaft text-left placeholder:text-left bg-grey-200 w-full rounded-[100px] py-[15px] px-5 mt-5'
+                placeholder='Enter your whatsApp number'
+                className='placeholder:text-mine-shaft/50 text-left placeholder:text-left bg-grey-200 w-full rounded-[100px] py-[15px] px-5 mt-1'
               />
               {otpSent && (
                 <input
@@ -385,6 +386,8 @@ const SignUp = () => {
           </Link>
         </p>
       </form>
+              <RegLevelIndicator regLevel={regLevel} />
+
     </main>
   );
 };

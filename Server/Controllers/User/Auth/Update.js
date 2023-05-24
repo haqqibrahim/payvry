@@ -1,6 +1,7 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const User = require("../../../Models/User");
+const bcrypt = require("bcrypt");
 
 exports.update = async (req, res) => {
   try {
@@ -12,14 +13,17 @@ exports.update = async (req, res) => {
       return res.status(409).json({ message: "User not found" });
     }
 
-    // update user fields
     user.fullName = req.body.fullName || user.fullName;
-    user.matricNumber = req.body.matricNumber || user.matricNumber;
-    user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
-    user.password = req.body.password || user.password;
-    user.updatedAt = Date.now();
+user.matricNumber = req.body.matricNumber || user.matricNumber;
+user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
 
-    const updatedUser = await user.save();
+if (req.body.password) {
+  const saltRounds = 2;
+  const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+  user.password = hashedPassword;
+}
+
+user.updatedAt = Date.now();
 
     res.status(200).json(updatedUser);
   } catch (error) {

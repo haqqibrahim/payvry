@@ -94,7 +94,7 @@ const Login = () => {
         />
 
         <Link
-          to='/forgot-password'
+          to='/user/forgot-password'
           className='block mr-auto ml-5 mt-[10px] font-light text-[12px] leading-[14px] text-mine-shaft cursor-pointer'
         >
           Forgot Password
