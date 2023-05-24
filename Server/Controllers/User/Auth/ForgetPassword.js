@@ -40,7 +40,7 @@ exports.VerifyOTP = async (req, res) => {
 
 exports.ChangePassword = async (req, res) => {
   try {
-    const { matricNumber } = req.body;
+    const { matricNumber, password } = req.body;
     const student = await Student.findOne({ matricNumber });
     if (!student) return res.status(500).json({ error: "Student not found" });
     const user = await User.findOne({ _id: student.ID });
