@@ -17,9 +17,8 @@ exports.sendMessage = (message, reciever) => {
     request(options, (error, response, body) => {
       if (error) {
         console.log(`Error at sendMessage Request --> ${error}`);
-        return false
+        return "error"
       }
-      return true
       console.log(body);
     });
   } catch (error) {
