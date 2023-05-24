@@ -28,10 +28,12 @@ exports.sendOTP = async (reciever) => {
 };
 
 exports.verifyOTP = async (reciever, code) => {
-  const otpReference = await OTP.findOne({ ID: reciever });
-  if (!otpReference) {
+  const otpRef = await OTP.find({ ID: reciever });
+  if (!otpRef) {
     return { code: 500, message: "OTP not found" };
   }
+
+  const otpReference = otpRef[otpRef.length - 1]
   console.log(otpReference);
   const FIFTEEN_MINUTES_IN_MS = 15 * 60 * 1000;
   const currentTime = new Date(); // Get the current time
