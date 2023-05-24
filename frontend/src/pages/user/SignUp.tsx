@@ -103,7 +103,7 @@ const SignUp = () => {
     const payload: UserSignupPayload2 = {
       token,
       level: levelRef.current!.value,
-      matricNumber: matricRef.current!.value,
+      matricNumber: matricRef.current!.value.toLowerCase(),
       department: departmentRef.current!.value,
     };
 
@@ -259,7 +259,7 @@ const SignUp = () => {
                 autoComplete='off'
                 ref={phoneNumberRef}
                 placeholder='WhatsApp Number'
-                className='placeholder:text-mine-shaft text-center placeholder:text-center bg-grey-200 w-full rounded-[100px] py-[15px] px-5 mt-5'
+                className='placeholder:text-mine-shaft text-left placeholder:text-left bg-grey-200 w-full rounded-[100px] py-[15px] px-5 mt-5'
               />
               {otpSent && (
                 <input
