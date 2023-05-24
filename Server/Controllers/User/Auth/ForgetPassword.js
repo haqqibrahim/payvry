@@ -10,7 +10,11 @@ exports.SendOTP = async (req, res) => {
     const user = await User.findOne({ _id: student.ID });
     if (!user) return res.status(500).json({ error: "User not found" });
     const phoneNumber = user.phoneNumber;
-    sendOTP(phoneNumber);
+    const respond = await sendOTP(phoneNumber);
+    if(!respond) {
+      res.status(500).json({ message: "WhatsApp Error" });
+
+    }
     res.status(200).json({ message: "OTP Sent to WhatsApp" });
   } catch (err) {
     res.status(501).json({ message: err });

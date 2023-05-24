@@ -17,10 +17,11 @@ exports.sendMessage = (message, reciever) => {
     request(options, (error, response, body) => {
       if (error) {
         console.log(`Error at sendMessage Request --> ${error}`);
+        return false
       }
+      return true
       console.log(body);
     });
-    return "Transaction Link sent to user";
   } catch (error) {
     console.log(`Error at sendMessage --> ${error}`);
   }
