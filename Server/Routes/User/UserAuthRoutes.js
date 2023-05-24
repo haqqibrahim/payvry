@@ -33,8 +33,8 @@ router.post("/setpin", setPin);
 router.post("/user", getUser);
 router.post("/balance", balance);
 router.put("/update", update);
-router.put("/update/send-otp", SendOTP);
-router.put("/update/verify-otp", VerifyOTP);
-router.post("/update/change-password", ChangePassword);
+router.post("/update/send-reset-otp", SendOTP);
+router.post("/update/verify-otp", VerifyOTP);
+router.put("/update/change-password", ChangePassword);
 
 module.exports = router;
