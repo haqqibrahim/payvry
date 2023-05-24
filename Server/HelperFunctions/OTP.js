@@ -39,7 +39,7 @@ exports.verifyOTP = async (reciever, code) => {
   const differenceInMs = currentTime.getTime() - createdAtTime;
 
   if (differenceInMs > FIFTEEN_MINUTES_IN_MS) {
-    await OTP.deleteOne({ ID: reciever });
+    await OTP.deleteMany({ ID: reciever });
     console.log("OTP has expired, request for anothe OTP");
     return { code: 500, message: "OTP has expired, request for anothe OTP" };
   }
