@@ -35,6 +35,7 @@ exports.VerifyOTP = async (req, res) => {
     if (code === 500) {
       return res.status(500).json({ message });
     }
+    res.status(200).json({"User Verified"})
   } catch (err) {
     res.status(501).json({ message: err });
     console.log(err);
