@@ -33,12 +33,11 @@ const HistoryPanel: React.FC<Props> = ({ history, panelExpanded, extraStyles }) 
       {history
         .slice(0, MAX_HISTORY)
         .map(({ _id, date, amount, transactionType, vendor, status }, index) => {
-          const reversedIndex = MAX_HISTORY - index - 1;
           return (
             <HistoryCard
               id={_id}
               key={_id}
-              index={reversedIndex}
+              index={index}
               title={vendor}
               date={date}
               description={status}
