@@ -7,14 +7,17 @@
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="viewport"
+      content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Payvry" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
     </style>
     <title>Payvry</title>
 
@@ -22,14 +25,16 @@
       window.onbeforeunload = () => window.scrollTo(0, 0);
 
       const removeInfoBubbles = () => {
-        const infoBubbles = document.querySelectorAll('.info-bubble');
-        const infoBubblesContainer = document.querySelector('.info-bubbles-container');
+        const infoBubbles = document.querySelectorAll(".info-bubble");
+        const infoBubblesContainer = document.querySelector(
+          ".info-bubbles-container"
+        );
 
-        infoBubbles.forEach(infoBubble => {
-          infoBubble.classList.add('hidden');
+        infoBubbles.forEach((infoBubble) => {
+          infoBubble.classList.add("hidden");
         });
 
-        infoBubblesContainer.classList.add('hidden');
+        infoBubblesContainer.classList.add("hidden");
       };
     </script>
   </head>
