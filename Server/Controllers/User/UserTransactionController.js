@@ -39,7 +39,7 @@ exports.deposit = async (req, res) => {
 
     const transaction = new Transaction({
       ID: userAccount._id,
-      transactionType: "deposit",
+      transactionType: "credit",
       accountType: "User",
       amount,
       transaction_ref,
