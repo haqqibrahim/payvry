@@ -19,7 +19,7 @@ exports.getUser = async (req, res) => {
     if (!userAccount) {
       return res.status(409).json({ message: "Account not found" });
     }
-    const userTransaction = await Transaction.find({ ID: userAccount._id });
+    const userTransaction = await Transaction.find({ ID: userAccount._id }).sort({ date: -1 });
 
     return res
       .status(200)
