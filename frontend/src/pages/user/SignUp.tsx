@@ -258,8 +258,8 @@ const SignUp = () => {
                 autoCorrect='off'
                 autoComplete='off'
                 ref={phoneNumberRef}
-                placeholder='WhatsApp Number'
-                className='placeholder:text-mine-shaft text-left placeholder:text-center bg-grey-200 w-full rounded-[100px] py-[15px] px-5 mt-5'
+                placeholder='Enter your whatsApp number'
+                className='placeholder:text-mine-shaft/50 text-left placeholder:text-left bg-grey-200 w-full rounded-[100px] py-[15px] px-5 mt-1'
               />
               {otpSent && (
                 <input
