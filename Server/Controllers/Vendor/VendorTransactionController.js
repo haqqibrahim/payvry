@@ -151,7 +151,7 @@ exports.acceptPayment = async (req, res) => {
     if (!userAccount) {
       return res.status(500).json({ message: "Account not found" });
     }
-    const debitAmount = Number(amount) + 10;
+    const debitAmount = Number(amount) + 0;
 
     if (userAccount.balance < debitAmount) {
       return res.status(500).json({ message: "Insufficient Funds" });
@@ -262,7 +262,7 @@ exports.refund = async (req, res) => {
     }
 
     const oldVendorBalance = vendorAccount.balance;
-    const debitAmount = Number(amount) + 10;
+    const debitAmount = Number(amount) + 0;
     const newVendorBalance = Number(oldVendorBalance) - Number(debitAmount);
 
     const vendorTransaction = new Transaction({
@@ -418,11 +418,11 @@ exports.withdraw = async (req, res) => {
       return res.status(500).json({ message: "Insufficient Funds" });
     }
 
-    if (amount < 2500) {
-      return res
-        .status(500)
-        .json({ message: "The minimum you can withdraw is 2500" });
-    }
+    // if (amount < 2500) {
+    //   return res
+    //     .status(500)
+    //     .json({ message: "The minimum you can withdraw is 2500" });
+    // }
 
     if (account_bank.length > 3) {
       return res.status(500).json({ message: "Bank not supported" });
