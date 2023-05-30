@@ -1,9 +1,9 @@
 require("dotenv").config();
-const Vendor = require("../../../Models/Vendor");
-const User = require("../../../Models/User");
-const Student = require("../../../Models/Student");
 const Account = require("../../../Models/Account");
 const Transaction = require("../../../Models/Transaction");
+var Mixpanel = require("mixpanel");
+
+var mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
 
 // Aolcls
 exports.confirmTransaction = async (req, res) => {
@@ -47,6 +47,14 @@ exports.confirmTransaction = async (req, res) => {
         lastTransactionAmount: tx[1].amount,
       }
     );
+    mixpanel.track("Confirm Transaction", {
+      "id": transaction_ref,
+      "vendor": vendorId,
+      "User ID": userId,
+    });
+    mixpanel.track("Payment Processed", {
+      "amount": tx[0].amount
+    })
     res.status(200).json({ message: "Transactions Competed." });
   } catch (error) {
     console.error(error);

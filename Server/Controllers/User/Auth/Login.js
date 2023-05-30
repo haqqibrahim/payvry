@@ -4,6 +4,11 @@ const User = require("../../../Models/User");
 const Student = require("../../../Models/Student");
 const Account = require("../../../Models/Account");
 const { createToken } = require("../../../HelperFunctions/Token");
+var Mixpanel = require("mixpanel");
+
+var mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
+
+
 const maxAge = 3 * 24 * 60 * 60;
 
 
@@ -41,6 +46,10 @@ exports.login = async (req, res) => {
   // Generate a JSON web token
   const token = createToken(user._id);
   res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+  mixpanel.track("Login", {
+    "id": user._id,
+    "Type": "User",
+  });
   res.json({ token, user });
 };
 

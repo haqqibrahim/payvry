@@ -8,6 +8,9 @@ const Account = require("../../Models/Account");
 const Transaction = require("../../Models/Transaction");
 const Student = require("../../Models/Student")
 const { compareNames } = require("../../HelperFunctions/Name");
+var Mixpanel = require("mixpanel");
+
+var mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
 
 const Flutterwave = require("flutterwave-node-v3");
 const flw = new Flutterwave(
@@ -118,6 +121,7 @@ exports.getStudent = async (req, res) => {
 
     }
     const studentName = user.fullName;
+    
     return res.status(200).json({ message: studentName });
   } catch (err) {
     console.log(err);
@@ -212,7 +216,14 @@ exports.acceptPayment = async (req, res) => {
         lastTransactionAmount: amount,
       }
     );
-
+      mixpanel.track("Accept Payment", {
+        "id": transaction_ref,
+        "User ID": user._id,
+        "Vendor ID": vendor._id
+      })
+      mixpanel.track("Payment", {
+        amount
+      })
     return res.status(200).json({
       message: "Transaction Completed",
       vendorTransaction,
@@ -271,7 +282,7 @@ exports.refund = async (req, res) => {
       accountType: "Vendor",
       amount,
       transaction_ref: `refund-${transaction_ref}`,
-      transaction_fee: 10,
+      transaction_fee: 0,
       status: "completed",
       user: user.matricNumber,
       balance: newVendorBalance,
@@ -313,7 +324,14 @@ exports.refund = async (req, res) => {
         lastTransactionAmount: amount,
       }
     );
-
+      mixpanel.track("Refund Payment", {
+        "id":`refund-${transaction_ref}`,
+        "Vendor ID": vendor._id,
+        "User ID": user._id
+      })
+      mixpanel.track("Refund", {
+        amount
+      })
     return res.status(200).json({
       message: "Refund Completed",
       vendorTransaction,
@@ -470,6 +488,14 @@ exports.withdraw = async (req, res) => {
         lastTransactionAmount: amount,
       }
     );
+    mixpanel.track("Withdraw Funds", {
+      "id": reference,
+      "Vendor ID": vendor._id,
+      "Type": "Vendor"
+    })
+    mixpanel.track("Withdraw", {
+      amount
+    })
     return res.status(200).json({ message: "Withdraw Succesful" });
   } catch (err) {
     console.log(err);

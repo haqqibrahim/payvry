@@ -4,6 +4,9 @@ const jwt = require("jsonwebtoken");
 const User = require("../../../Models/User");
 const Account = require("../../../Models/Account");
 const { createToken } = require("../../../HelperFunctions/Token");
+var Mixpanel = require("mixpanel");
+
+var mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
 const maxAge = 3 * 24 * 60 * 60;
 
 exports.signup = async (req, res) => {
@@ -58,6 +61,10 @@ exports.signup = async (req, res) => {
   });
 
   await user.save();
+  mixpanel.track("Signed Up", {
+    'id': user._id,
+      'Type': "User"
+  });
   console.log("New User Created");
 
   // Create new Account

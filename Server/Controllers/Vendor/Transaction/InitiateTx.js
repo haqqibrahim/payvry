@@ -5,6 +5,10 @@ const User = require("../../../Models/User");
 const Student = require("../../../Models/Student");
 const Account = require("../../../Models/Account");
 const Transaction = require("../../../Models/Transaction");
+var Mixpanel = require("mixpanel");
+
+var mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
+
 const {
   sendMessage,
 } = require("../../../HelperFunctions/Whatsapp-Send-Message");
@@ -89,6 +93,14 @@ exports.initiateTx = async (req, res) => {
     const template = `Confirm ${vendor.vendorName}'s charge of ${amount} naira, ${link}`;
     
     const message = await sendMessage(template, user.phoneNumber);
+    mixpanel.track("Initiate Transaction", {
+      "id": transaction_ref,
+      "User ID": user._id,
+      "Vendor ID": vendor._id
+    })
+    mixpanel.track("Payment Pending", {
+      amount
+    })
     res.status(200).json({ message });
   } catch (error) {
     console.error(error);

@@ -5,6 +5,9 @@ const Vendor = require("../../Models/Vendor");
 const Account = require("../../Models/Account");
 const Transaction = require("../../Models/Transaction");
 const { sendOTP, verifyOTP } = require("../../HelperFunctions/OTP");
+var Mixpanel = require("mixpanel");
+
+var mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
 
 // create json web token
 const maxAge = 3 * 24 * 60 * 60;
@@ -65,6 +68,10 @@ exports.signup = async (req, res) => {
 
   await account.save();
   console.log("New Account Created");
+  mixpanel.track("Sign Up", {
+    "id": vendor._id,
+    "Type": "Vendor"
+  })
   // Generate a JSON web token
   const token = createToken(vendor._id);
   res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
@@ -135,11 +142,16 @@ exports.login = async (req, res) => {
   // Generate a JSON web token
   const token = createToken(vendor._id);
   res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+   mixpanel.track("Login", {
+    "id": vendor._id,
+    "Type": "Vendor"
+  })
   res.json({ token, vendor });
 };
 
 exports.signout = async (req, res) => {
   res.cookie("jwt", "", { maxAge: 1 }); // deleting the token from the cookies
+ 
   res.status(200).json({ message: "User logged out successfully" });
 };
 

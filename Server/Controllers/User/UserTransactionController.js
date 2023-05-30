@@ -4,6 +4,9 @@ const User = require("../../Models/User");
 const Transaction = require("../../Models/Transaction");
 const Account = require("../../Models/Account");
 const { compareNames } = require("../../HelperFunctions/Name");
+var Mixpanel = require("mixpanel");
+
+var mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
 
 const Flutterwave = require("flutterwave-node-v3");
 const flw = new Flutterwave(
@@ -58,6 +61,14 @@ exports.deposit = async (req, res) => {
         lastTransactionAmount: amount,
       }
     );
+    mixpanel.track("Deposit Funds", {
+      "id": transaction_ref,
+      "type": "User",
+      "User ID": userId,
+    });
+    mixpanel.track("Deposit", {
+      amount
+    })
     return res.status(200).json({ message: "Transaction Saved", transaction });
   } catch (err) {
     console.log(err);
@@ -153,6 +164,14 @@ exports.withdraw = async (req, res) => {
         lastTransactionAmount: amount,
       }
     );
+    mixpanel.track("Withdraw Funds", {
+      "id": reference,
+      "Type": "User",
+      "User ID": userId
+    })
+    mixpanel.track("Withdraw", {
+      amount
+    })
     return res
       .status(200)
       .json({ message: "Transaction Successful", transaction });
