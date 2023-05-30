@@ -56,7 +56,7 @@ const Home = () => {
         const response: { message: number } = res.data;
         const balance: number = response.message;
 
-        balanceRef.current!.value = `C${balance.toLocaleString()}`;
+        balanceRef.current!.value = `N${balance.toLocaleString()}`;
       })
       .catch((error: AxiosError) => {
         const errorCode = error.response!.status;

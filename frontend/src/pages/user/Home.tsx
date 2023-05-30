@@ -69,7 +69,7 @@ const Home = () => {
       .then(res => {
         const response: { message: number } = res.data;
         const balance: number = response.message;
-        balanceRef.current!.value = `C${balance.toLocaleString()}`;
+        balanceRef.current!.value = `N${balance.toLocaleString()}`;
         console.log(balanceRef.current!.value)
       })
       .catch((error: AxiosError) => showAlert({ msg: error.message }));
@@ -250,7 +250,7 @@ const Home = () => {
               showAlert({ msg: "Deposit Cancelled" })
             },
           });
-        }} className='info-bubble pay-modal text-center hidden bg-white w-[370px] fixed z-[1] p-[30px] rounded-[30px] border-[1px] border-alto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
+        }} className='info-bubble pay-modal text-center hidden bg-white w-[90%] fixed z-[1] p-[30px] rounded-[30px] border-[1px] border-alto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
       >
         <h4 className='font-semibold text-[18px]'>Payvry Deposit</h4>
 
@@ -262,7 +262,7 @@ const Home = () => {
             id='email'
             name='email'
             onChange={e => setEmail(e.target.value)}
-            className='placeholder:text-mine-shaft bg-grey-200 w-full rounded-[100px] py-[10px] px-5 mt-1'
+            className='placeholder:text-mine-shaft bg-grey-200 w-[90%] rounded-[100px] py-[10px] px-5 mt-1'
           />
         </label>
 
@@ -274,7 +274,7 @@ const Home = () => {
             id='amount'
             name='amount'
             onChange={e => setAmount(e.target.value)}
-            className='placeholder:text-mine-shaft bg-grey-200 w-full rounded-[100px] py-[10px] px-5 mt-1'
+            className='placeholder:text-mine-shaft bg-grey-200 w-[90%] rounded-[100px] py-[10px] px-5 mt-1'
           />
         </label>
 

@@ -117,7 +117,7 @@ const HistoryCard: React.FC<Props> = ({
           transactionType === 'credit' ? 'text-mountain-meadow' : 'text-carnation'
         }`}
       >
-        C{transactionAmount.toLocaleString()}
+        N{transactionAmount.toLocaleString()}
       </p>
       <p className='text-left text-[14px] leading-6 font-medium capitalize'>{title}</p>
       <p

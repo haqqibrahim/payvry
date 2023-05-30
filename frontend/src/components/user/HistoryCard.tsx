@@ -38,7 +38,7 @@ const HistoryCard: React.FC<Props> = ({
       <p className='text-right'>{ id.slice(0, 10)}</p>
       <img
         alt=''
-        className='row-start-2 row-end-4 w-[30px] h-[30px] mt-[10%]'
+        className='row-start-2 row-end-4 w-[30px] h-[30px]' style={{marginTop: "30%"}}
         src={transactionType === 'credit' ? receivedImage : paidImage}
       />
       <p className='capitalize text-left font-normal'>{description}</p>
@@ -47,7 +47,7 @@ const HistoryCard: React.FC<Props> = ({
           transactionType === 'credit' ? 'text-mountain-meadow' : 'text-carnation'
         }`}
       >
-        C{transactionAmount.toLocaleString()}
+        N{transactionAmount.toLocaleString()}
       </p>
       <p className='text-left text-[14px] leading-6 font-medium capitalize'>{title}</p>
       <p
