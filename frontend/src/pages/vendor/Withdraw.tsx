@@ -113,11 +113,14 @@ const Withdraw = () => {
       });
   };
 
-  const options = banksResponse.data.map((bank: any) => (
+  const options = banksResponse.data
+  .sort((a, b) => a.name.localeCompare(b.name)) // Sort the array alphabetically by bank name
+  .map((bank) => (
     <option key={bank.id} value={bank.code}>
       {bank.name}
     </option>
   ));
+
 
   return (
     <main className='h-screen flex flex-col' style={{ justifyContent: "center", alignItems: "center",width: "100vw" }}>
