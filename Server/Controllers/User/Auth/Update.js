@@ -34,7 +34,7 @@ exports.update = async (req, res) => {
       await student.save(); // Save the updated student
     }
 
-    res.status(200).json(updatedUser);
+  return  res.status(200).json({message: "Profile update successful"});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
