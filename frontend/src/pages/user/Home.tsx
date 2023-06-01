@@ -207,7 +207,7 @@ const Home = () => {
           handleFlutterPayment({
             callback: (response) => {
               console.log(response);
-              if (response.status === 'completed' || response.status === 'successful'
+              if (response.status != 'error'
               ) {
                 const generalInfoConfig: AxiosRequestConfig = {
                   baseURL: process.env.REACT_APP_USER_API!,
