@@ -111,8 +111,7 @@ const Home = () => {
   const getlwAcct = () => {
     setIsLoading(true)
     const generalInfoConfig: AxiosRequestConfig = {
-      // baseURL: process.env.REACT_APP_USER_API!,
-      baseURL: 'https://ae9b-154-113-158-227.ngrok-free.app/user/api'
+      baseURL: process.env.REACT_APP_USER_API!,
     };
     const token: string | undefined = Cookies.get('token-payvry');
 
