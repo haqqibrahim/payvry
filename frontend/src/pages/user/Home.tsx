@@ -13,7 +13,7 @@ import { UserHistoryData, UserResponse } from '../../interfaces';
 
 import HistoryPanel from '../../components/user/HistoryPanel';
 import { FiLogOut } from 'react-icons/fi';
-
+import { AiFillCopy } from 'react-icons/ai'
 
 const Home = () => {
   const navigate = useNavigate();
@@ -153,6 +153,19 @@ const Home = () => {
       });
   }
 
+  const copyToClipboard = (value: any) => {
+    if (value) {
+      navigator.clipboard.writeText(value)
+        .then(() => {
+          showAlert({ msg: "Text copied to clipboard" })
+        })
+        .catch((error) => {
+          showAlert({ msg: `Failed to copy text to clipboard: ${error}` })
+        });
+    }
+  };
+
+
   return (
     <main className='px-5 pt-[59px] tracking-[0.04em] pb-[57px]'>
       <header className='flex items-center justify-between text-center'>
@@ -194,42 +207,66 @@ const Home = () => {
 
           <label htmlFor='account' className='text-left mt-5 block'>
             <span className='block mx-3'>Account Number</span>
-            <input
-              disabled
-              style={{ marginLeft: "auto", marginRight: "auto", width: "100%" }}
+            <span className='flex relative'>
+              <input
+                onClick={() => { copyToClipboard(aza) }}
+                readOnly
+                style={{ marginLeft: "auto", marginRight: "auto", width: "100%", color: "black" }}
+                type='number'
+                id='account'
+                name='account'
+                value={aza}
+                className='text-black bg-grey-200 w-[90%] rounded-[100px] py-[10px] px-5 mt-1'
+              />
+              <AiFillCopy
+                onClick={() => { copyToClipboard(aza) }}
 
-              type='number'
-              id='account'
-              name='account'
-              value={aza}
-              className='placeholder:text-mine-shaft bg-grey-200 w-[90%] rounded-[100px] py-[10px] px-5 mt-1'
-            />
+                style={{ color: "grey", position: "absolute", right: "15px", top: "50%", transform: "translateY(-50%)" }}
+                className='justify-end'
+              />
+            </span>
+
           </label>
           <label htmlFor='bank' className='text-left mt-5 block'>
             <span className='block mx-3'>Account Bank</span>
-            <input
-              style={{ marginLeft: "auto", marginRight: "auto", width: "100%" }}
+            <span className='flex relative'>
+              <input
+                style={{ marginLeft: "auto", marginRight: "auto", width: "100%", color: "black" }}
+                readOnly
+                type='text'
+                id='bank'
+                name='bank'
+                value={bank}
+                className='placeholder:text-black bg-grey-200 w-[90%] rounded-[100px] py-[10px] px-5 mt-1'
+              />
+              <AiFillCopy
+                onClick={() => { copyToClipboard(bank) }}
+                style={{ color: "grey", position: "absolute", right: "15px", top: "50%", transform: "translateY(-50%)" }}
+                className='justify-end'
+              />
+            </span>
 
-              disabled
-              type='text'
-              id='bank'
-              name='bank'
-              value={bank}
-              className='placeholder:text-mine-shaft bg-grey-200 w-[90%] rounded-[100px] py-[10px] px-5 mt-1'
-            />
           </label>
           <label htmlFor='amount' className='text-left mt-5 block'>
             <span className='block mx-3'>Amount</span>
-            <input
-              style={{ marginLeft: "auto", marginRight: "auto", width: "100%" }}
+            <span className='flex relative'>
+              <input
+                style={{ marginLeft: "auto", marginRight: "auto", width: "100%", color: "black" }}
+                readOnly
+                type='number'
+                id='amount'
+                name='amount'
+                value={tfAmount}
+                className='placeholder:text-black bg-grey-200 w-[90%] rounded-[100px] py-[10px] px-5 mt-1'
+              />
+              <AiFillCopy
+                onClick={() => { copyToClipboard(tfAmount) }}
 
-              disabled
-              type='number'
-              id='amount'
-              name='amount'
-              value={tfAmount}
-              className='placeholder:text-mine-shaft bg-grey-200 w-[90%] rounded-[100px] py-[10px] px-5 mt-1'
-            />
+                style={{ color: "grey", position: "absolute", right: "15px", top: "50%", transform: "translateY(-50%)" }}
+                className='justify-end'
+              />
+            </span>
+
           </label>
 
           <input
