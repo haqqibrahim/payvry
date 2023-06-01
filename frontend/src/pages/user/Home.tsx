@@ -188,7 +188,7 @@ const Home = () => {
             settfAmount('')
             setBank('')
           }}
-          className='info-bubble pay-modal text-center hidden bg-alto w-[90%] fixed z-[1] p-[30px] rounded-[30px] border-[1px] border-alto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
+          className='info-bubble pay-modal text-center hidden bg-white w-[90%] fixed z-[1] p-[30px] rounded-[30px] border-[1px] border-alto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
         >
           <h4 className='font-semibold text-[18px]'>Payvry Deposit</h4>
 
