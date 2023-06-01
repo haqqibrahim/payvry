@@ -2,15 +2,14 @@ import Cookies from 'js-cookie';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
-import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3';
 
 import eyeImage from '../../assets/svgs/eye.svg';
 import userImage from '../../assets/svgs/user.svg';
-import chatImage from '../../assets/svgs/chat.svg';
+// import chatImage from '../../assets/svgs/chat.svg';
 import eyeSlashImage from '../../assets/svgs/eye-slash.svg';
 
 import { showAlert, showInfo, togglePassword } from '../../utils';
-import { UserHistoryData, UserResponse, UserTokenResponse } from '../../interfaces';
+import { UserHistoryData, UserResponse } from '../../interfaces';
 
 import HistoryPanel from '../../components/user/HistoryPanel';
 import { FiLogOut } from 'react-icons/fi';
@@ -21,13 +20,16 @@ const Home = () => {
 
   const balanceRef = useRef<HTMLInputElement>(null);
   const [balanceHidden, setBalanceHidden] = useState(true);
-
-  const [email, setEmail] = useState('');
   const [amount, setAmount] = useState('');
   const [fullName, setFullName] = useState('');
   const [history, setHistory] = useState<UserHistoryData[]>([]);
   const [phoneNumber, setPhoneNumber] = useState('')
   const [qrCode, setQrCode] = useState('')
+  const [aza, setAza] = useState('')
+  const [bank, setBank] = useState('')
+  const [tfAmount, settfAmount] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [dtls, setDtls] = useState(false)
   // componentDidMount
   useEffect(() => {
     const generalInfoConfig: AxiosRequestConfig = {
@@ -70,79 +72,9 @@ const Home = () => {
         const response: { message: number } = res.data;
         const balance: number = response.message;
         balanceRef.current!.value = `N${balance.toLocaleString()}`;
-        console.log(balanceRef.current!.value)
       })
       .catch((error: AxiosError) => showAlert({ msg: error.message }));
   }, []);
-
-  function generateRandomString(length: any) {
-    const chars =
-      "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    let result = "";
-    for (let i = length; i > 0; --i) {
-      result += chars[Math.floor(Math.random() * chars.length)];
-    }
-    return result;
-  }
-  const transaction_ref: string = generateRandomString(10)
-  const config = {
-    public_key: process.env.REACT_APP_FLW_PUBLIC_KEY as string,
-    tx_ref: transaction_ref,
-    amount: Number(amount),
-    currency: 'NGN',
-    payment_options: 'card,mobilemoney,ussd,banktransfer,credit',
-    customer: {
-      email,
-      phone_number: phoneNumber,
-      name: fullName,
-    },
-    customizations: {
-      title: 'Payvry Deposit',
-      description: `Payvry Deposit for ${fullName}`,
-      logo: ""
-    },
-  };
-
-  interface UserDepositPayload {
-    amount?: number,
-    transaction_ref?: string,
-    token?: string
-  }
-
-  const handleFlutterPayment = useFlutterwave(config);
-
-
-
-  const payment = (amount: number, transaction_ref: string) => (e: React.FormEvent<HTMLFormElement>) => {
-    const generalInfoConfig: AxiosRequestConfig = {
-      baseURL: process.env.REACT_APP_USER_API!,
-    };
-
-    const token: string | undefined = Cookies.get('token-payvry');
-
-    const payload: UserDepositPayload = {
-      amount: Number(amount),
-      transaction_ref,
-      token
-    };
-    axios
-      .post('/deposit', payload, generalInfoConfig)
-      .then(res => {
-        const response: any = res.data;
-        showAlert({ msg: response.message })
-        navigate("/user")
-      })
-      .catch((error: AxiosError) => {
-        const errorCode = error.response!.status;
-        const msg = (error.response!.data as { message: string }).message;
-
-        if (errorCode === 500) {
-          showAlert({ msg: msg });
-        } else {
-          showAlert({ msg: error.message });
-        }
-      });
-  }
 
   const QRCode = () => {
     const generalInfoConfig: AxiosRequestConfig = {
@@ -162,7 +94,7 @@ const Home = () => {
       .post('/qrcode', payload, generalInfoConfig)
       .then(res => {
         const response: any = res.data;
-        setQrCode(response.qrCode)
+
       })
       .catch((error: AxiosError) => {
         const errorCode = error.response!.status;
@@ -173,6 +105,52 @@ const Home = () => {
         } else {
           showAlert({ msg: error.message });
         }
+      });
+  }
+
+  const getlwAcct = () => {
+    setIsLoading(true)
+    const generalInfoConfig: AxiosRequestConfig = {
+      // baseURL: process.env.REACT_APP_USER_API!,
+      baseURL: 'https://ae9b-154-113-158-227.ngrok-free.app/user/api'
+    };
+    const token: string | undefined = Cookies.get('token-payvry');
+
+    interface accountPayload {
+      token?: String,
+      amount?: Number
+    }
+
+    const payload: accountPayload = {
+      token,
+      amount: Number(amount)
+    };
+
+    axios
+      .post('/deposit', payload, generalInfoConfig)
+      .then(res => {
+        const response: any = res.data;
+        const { message, transfer_details } = response;
+        const { transfer_account, transfer_bank, transfer_amount } = transfer_details;
+        setBank(transfer_bank)
+        console.log(`bank ${bank}`)
+        console.log(`transfer_bank ${transfer_bank}`)
+        showAlert({ msg: message })
+        setAza(transfer_account)
+        settfAmount(transfer_amount)
+        setIsLoading(false)
+        setDtls(true)
+      })
+      .catch((error: AxiosError) => {
+        const errorCode = error.response!.status;
+        const msg = (error.response!.data as { message: string }).message;
+
+        if (errorCode === 500) {
+          showAlert({ msg: msg });
+        } else {
+          showAlert({ msg: error.message });
+        }
+        setIsLoading(false)
       });
   }
 
@@ -195,95 +173,107 @@ const Home = () => {
           }}
           className='w-[50px] h-[50px] cursor-pointer rounded-full grid place-items-center border-[1px] border-alto'
         >
-         <FiLogOut style={{color: "red"}}/>
+          <FiLogOut style={{ color: "red" }} />
         </div>
       </header>
 
-      <form
+      {dtls ? (
+        <form
+          style={{ width: "90%" }}
 
-        onSubmit={(e) => {
-          e.preventDefault()
+          onSubmit={(e) => {
+            e.preventDefault()
+            setDtls(false)
+            setAmount('')
+            setAza('')
+            settfAmount('')
+            setBank('')
+          }}
+          className='info-bubble pay-modal text-center hidden bg-alto w-[90%] fixed z-[1] p-[30px] rounded-[30px] border-[1px] border-alto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
+        >
+          <h4 className='font-semibold text-[18px]'>Payvry Deposit</h4>
 
-          handleFlutterPayment({
-            callback: (response) => {
-              console.log(response);
-              if (response.status === 'completed' || response.status === 'successful'
-              ) {
-                const generalInfoConfig: AxiosRequestConfig = {
-                  baseURL: process.env.REACT_APP_USER_API!,
-                };
+          <label htmlFor='account' className='text-left mt-5 block'>
+            <span className='block mx-3'>Account Number</span>
+            <input
+              disabled
+              style={{ marginLeft: "auto", marginRight: "auto", width: "100%" }}
 
-                const token: string | undefined = Cookies.get('token-payvry');
+              type='number'
+              id='account'
+              name='account'
+              value={aza}
+              className='placeholder:text-mine-shaft bg-grey-200 w-[90%] rounded-[100px] py-[10px] px-5 mt-1'
+            />
+          </label>
+          <label htmlFor='bank' className='text-left mt-5 block'>
+            <span className='block mx-3'>Account Bank</span>
+            <input
+              style={{ marginLeft: "auto", marginRight: "auto", width: "100%" }}
 
-                const payload: UserDepositPayload = {
-                  amount: response.amount,
-                  transaction_ref: response.flw_ref,
-                  token
-                };
-                axios
-                  .post('/deposit', payload, generalInfoConfig)
-                  .then(res => {
-                    console.log("4")
-                    const response: any = res.data;
-                    showAlert({ msg: response.message })
-                    showInfo({})
-                    window.location.reload();
+              disabled
+              type='text'
+              id='bank'
+              name='bank'
+              value={bank}
+              className='placeholder:text-mine-shaft bg-grey-200 w-[90%] rounded-[100px] py-[10px] px-5 mt-1'
+            />
+          </label>
+          <label htmlFor='amount' className='text-left mt-5 block'>
+            <span className='block mx-3'>Amount</span>
+            <input
+              style={{ marginLeft: "auto", marginRight: "auto", width: "100%" }}
 
+              disabled
+              type='number'
+              id='amount'
+              name='amount'
+              value={tfAmount}
+              className='placeholder:text-mine-shaft bg-grey-200 w-[90%] rounded-[100px] py-[10px] px-5 mt-1'
+            />
+          </label>
 
-                  })
-                  .catch((error: AxiosError) => {
-                    const errorCode = error.response!.status;
-                    const msg = (error.response!.data as { message: string }).message;
-
-                    if (errorCode === 500) {
-                      showAlert({ msg: msg });
-                    } else {
-                      showAlert({ msg: error.message });
-                    }
-                  });
-              }
-              closePaymentModal()
-              // this will close the modal programmatically
-              navigate('/user', { replace: true });
-            },
-            onClose: () => {
-              showAlert({ msg: "Deposit Cancelled" })
-            },
-          });
-        }} className='info-bubble pay-modal text-center hidden bg-white w-[90%] fixed z-[1] p-[30px] rounded-[30px] border-[1px] border-alto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
-      >
-        <h4 className='font-semibold text-[18px]'>Payvry Deposit</h4>
-
-        <label htmlFor='email' className='text-left mt-5 block'>
-          <span className='block mx-3'>Email</span>
           <input
-            required
-            type='email'
-            id='email'
-            name='email'
-            onChange={e => setEmail(e.target.value)}
-            className='placeholder:text-mine-shaft bg-grey-200 w-[90%] rounded-[100px] py-[10px] px-5 mt-1'
+            type='submit'
+            value='Done'
+            style={{ marginLeft: "auto", marginRight: "auto" }}
+            className='bg-mine-shaft mx-auto text-center text-white w-full py-[15px] rounded-[100px] mt-[22px] font-medium text-[15px] leading-[18px] tracking-[0.06em] cursor-pointer'
           />
-        </label>
+        </form>
+      ) : (
+        <form
+          style={{ width: "90%" }}
+          onSubmit={(e) => {
+            e.preventDefault()
+            getlwAcct()
+          }}
+          className='info-bubble pay-modal text-center hidden bg-white w-[90%] fixed z-[1] p-[30px] rounded-[30px] border-[1px] border-alto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
+        >
+          <h4 className='font-semibold text-[18px]'>Payvry Deposit</h4>
 
-        <label htmlFor='amount' className='text-left mt-5 block'>
-          <span className='block mx-3'>Amount paid</span>
+          <label htmlFor='amounts' className='text-left mt-5 block'>
+            <span className='block mx-3'>Amount to deposit</span>
+            <input
+              style={{ marginLeft: "auto", marginRight: "auto", width: "100%" }}
+              required
+              type='number'
+              id='amounts'
+              name='amounts'
+              value={amount}
+              onChange={e => setAmount(e.target.value)}
+              className='placeholder:text-mine-shaft mx-auto bg-grey-200 rounded-[100px] py-[10px] px-5 mt-1'
+            />
+          </label>
+
           <input
-            required
-            type='text'
-            id='amount'
-            name='amount'
-            onChange={e => setAmount(e.target.value)}
-            className='placeholder:text-mine-shaft bg-grey-200 w-[90%] rounded-[100px] py-[10px] px-5 mt-1'
+            disabled={isLoading}
+            type='submit'
+            value={isLoading ? 'Loading...' : 'Proceed'}
+            style={{ marginLeft: "auto", marginRight: "auto" }}
+            className='bg-mine-shaft mx-auto text-center text-white w-full py-[15px] rounded-[100px] mt-[22px] font-medium text-[15px] leading-[18px] tracking-[0.06em] cursor-pointer'
           />
-        </label>
-
-        <input
-          type='submit'
-          value='Deposit'
-          className='bg-mine-shaft text-white w-full py-[15px] rounded-[100px] mt-[22px] font-medium text-[15px] leading-[18px] tracking-[0.06em] cursor-pointer'
-        />
-      </form>
+        </form>
+      )}
 
       <div className="qr-code-modal info-bubble hidden bg-white w-[60%] fixed z-[1] p-[30px] rounded-[30px] border-[1px] border-alto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <img src={qrCode} alt="QR Code" />
