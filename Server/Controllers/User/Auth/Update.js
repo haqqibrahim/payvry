@@ -11,7 +11,7 @@ exports.update = async (req, res) => {
     const userId = decoded.id;
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(409).json({ message: "User not found" });
+      return res.status(500).json({ message: "User not found" });
     }
 
     user.fullName = req.body.fullName || user.fullName;

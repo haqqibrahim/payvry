@@ -4,7 +4,7 @@ exports.sendMessage = (message, reciever) => {
   try {
     var options = {
       method: "POST",
-      url: "https://api.ultramsg.com/instance46339/messages/chat",
+      url: "https://api.ultramsg.com/instance49300/messages/chat",
       headers: { "content-type": "application/x-www-form-urlencoded" },
       form: {
         token: process.env.ULTRA_MSG_TOKEN,
@@ -19,6 +19,7 @@ exports.sendMessage = (message, reciever) => {
         console.log(`Error at sendMessage Request --> ${error}`);
         return "error"
       }
+      console.log(response)
       console.log(body);
     });
   } catch (error) {
