@@ -7,7 +7,7 @@ import eyeImage from '../../assets/svgs/eye.svg';
 import eyeSlashImage from '../../assets/svgs/eye-slash.svg';
 
 import { showAlert, togglePassword } from '../../utils';
-import { User, UserProfileUpdatePayload, UserResponse } from '../../interfaces';
+import { User, UserProfileUpdatePayload, GetUserResponse } from '../../interfaces';
 
 import BackButton from '../../components/BackButton';
 
@@ -26,21 +26,32 @@ const Profile = () => {
     const generalInfoConfig: AxiosRequestConfig = {
       baseURL,
     };
+    const token: string | undefined = Cookies.get('token-payvry');
 
     const payload: UserProfileUpdatePayload = {
       fullName: fullNameRef.current!.value,
       password: passwordRef.current!.value,
       phoneNumber: phoneNumberRef.current!.value,
       matricNumber: matricRef.current!.value.toLowerCase(),
+      token
     };
 
     axios
       .put('/update', payload, generalInfoConfig)
       .then(res => {
-        showAlert({ msg: 'Your details have been updated!' });
-        navigate('/user');
+        const response: { message: string } = res.data;
+        showAlert({ msg: response.message });
+        navigate("/user")
       })
-      .catch((error: AxiosError) => showAlert({ msg: error.message }));
+      .catch((error: AxiosError) => {
+        const errorCode = error.response!.status;
+        const msg = (error.response!.data as { message: string }).message;
+
+        if (errorCode === 500) showAlert({ msg });
+        else showAlert({ msg: error.message });
+
+
+      });
   };
 
   // componentDidMount
@@ -61,10 +72,11 @@ const Profile = () => {
     axios
       .post('/user', payload, generalInfoConfig)
       .then(res => {
-        const response: UserResponse = res.data;
-        const { user } = response;
-        const { fullName, matricNumber, phoneNumber } = user;
-
+        const response: GetUserResponse = res.data;
+        const { user, student } = response;
+        const { fullName, phoneNumber } = user;
+        const { matricNumber } = student
+        console.log(fullName, matricNumber, phoneNumber)
         fullNameRef.current!.defaultValue = fullName;
         matricRef.current!.defaultValue = matricNumber;
         phoneNumberRef.current!.defaultValue = phoneNumber;

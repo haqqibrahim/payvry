@@ -73,6 +73,13 @@ export interface UserResponse {
   userTransaction: UserHistoryData[];
 }
 
+export interface GetUserResponse {
+  user: User;
+  message: string;
+  student: any,
+  userTransaction: UserHistoryData[];
+}
+
 export interface VendorResponse {
   vendor: Vendor;
   message: string;
@@ -121,6 +128,7 @@ export interface UserProfileUpdatePayload {
   password?: string;
   phoneNumber?: string;
   matricNumber?: string;
+  token?: string
 }
 
 export interface VendorProfileUpdatePayload {
