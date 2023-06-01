@@ -24,6 +24,6 @@ router.post("/bank", userTransactionController.verifyBank);
 
 router.post("/qrcode", createQRcode);
 router.get("/confirm/:id", confirmTransaction);
-router.get("/deposit", deposit)
+router.post("/deposit", deposit)
 router.post("/flw-webhook", confirmDeposit)
 module.exports = router;
