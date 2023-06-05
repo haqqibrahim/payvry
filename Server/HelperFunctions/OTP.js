@@ -19,7 +19,7 @@ exports.sendOTP = async (reciever) => {
     // Sending OTP
     console.log(`Sending OTP: ${otp}`);
     sendMessage(
-      `Your Payvry verification code is: ${code}. NOTE CODE EXPIRES IN 15 MINUTES`,
+      `Your Payvry verification code is: ${Number(code)}. NOTE CODE EXPIRES IN 15 MINUTES`,
       reciever
     );
   } catch (error) {

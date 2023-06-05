@@ -89,21 +89,112 @@ exports.initiateTx = async (req, res) => {
 
     const link = `https://payvry.onrender.com/user/api/confirm/${transaction_ref}`;
 
-
     const template = `Confirm ${vendor.vendorName}'s charge of ${amount} naira, ${link}`;
-    
+
     const message = await sendMessage(template, user.phoneNumber);
     mixpanel.track("Initiate Transaction", {
-      "id": transaction_ref,
+      id: transaction_ref,
       "User ID": user._id,
-      "Vendor ID": vendor._id
-    })
+      "Vendor ID": vendor._id,
+    });
     mixpanel.track("Payment Pending", {
-      amount
-    })
+      amount,
+    });
     res.status(200).json({ message });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Something went wrong" });
+  }
+};
+
+exports.initiateTxAI = async (vendorUsername, phoneNumber, amount) => {
+  try {
+    const vendor = await Vendor.findOne({ vendorUsername });
+    if (!vendor) {
+      await sendMessage("Error in making payments", phoneNumber);
+      console.log("Vendor not found");
+      return;
+    }
+    const vendorAccount = await Account.findOne({ ID: vendor._id });
+    if (!vendorAccount) {
+      await sendMessage("Error in making payments", phoneNumber);
+      return;
+    }
+    const user = await User.findOne({ phoneNumber });
+    if (!user) {
+      await sendMessage("Opps i couldn't find your account", phoneNumber);
+      return;
+    }
+    const userAccount = await Account.findOne({ ID: user._id });
+    if (!userAccount) {
+      await sendMessage("Opps i couldn't find your account", phoneNumber);
+
+      return;
+    }
+    const student = await Student.findOne({ ID: user._id });
+    if (!student) {
+      await sendMessage("Opps i couldn't find your account", phoneNumber);
+      return;
+    }
+
+    const debitAmount = Number(amount) + 10;
+
+    if (userAccount.balance < debitAmount) {
+      await sendMessage("Opps, Insufficient Funds", phoneNumber);
+      return;
+    }
+
+    const transaction_ref = generateRandomString(10);
+    const oldVendorBalance = vendorAccount.balance;
+    const newVendorBalance = Number(oldVendorBalance) + Number(amount);
+
+    const vendorTransaction = new Transaction({
+      ID: vendorAccount._id,
+      transactionType: "credit",
+      accountType: "Vendor",
+      amount,
+      transaction_ref,
+      transaction_fee: 0,
+      status: "pending",
+      user: student.matricNumber,
+      balance: newVendorBalance,
+      date: Date.now(),
+      created_at: Date.now(),
+    });
+    const oldUserBalance = userAccount.balance;
+    const newUserBalance = Number(oldUserBalance) - Number(debitAmount);
+
+    const userTransaction = new Transaction({
+      ID: userAccount._id,
+      transactionType: "debit",
+      accountType: "User",
+      amount,
+      transaction_ref,
+      transaction_fee: 0,
+      vendor: vendor.vendorUsername,
+      balance: newUserBalance,
+      transaction_status: "pending",
+      date: Date.now(),
+      created_at: Date.now(),
+    });
+    await vendorTransaction.save();
+    await userTransaction.save();
+
+    const link = `https://payvry.onrender.com/user/api/confirm/${transaction_ref}`;
+
+    const template = `Confirm the payment of Naira ${amount} to ${vendor.vendorName} ${link}`;
+
+    await sendMessage(template, user.phoneNumber);
+    mixpanel.track("Initiate Transaction", {
+      id: transaction_ref,
+      "User ID": user._id,
+      "Vendor ID": vendor._id,
+    });
+    mixpanel.track("Payment Pending", {
+      amount,
+    });
+  } catch (error) {
+    console.error(error);
+    await sendMessage("Something went wrong", phoneNumber);
   }
 };

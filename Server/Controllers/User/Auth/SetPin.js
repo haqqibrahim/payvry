@@ -3,7 +3,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../../../Models/User");
 const Account = require("../../../Models/Account");
-
+const {
+  sendMessage,
+} = require("../../../HelperFunctions/Whatsapp-Send-Message");
 exports.setPin = async (req, res) => {
   try {
     const { pin, token } = req.body;
@@ -29,6 +31,12 @@ exports.setPin = async (req, res) => {
         setPin: true,
       }
     );
+
+      await sendMessage(
+        `Welcome ${user.fullName}, embrace the future of finance with payvry.`,
+        user.phoneNumber
+      );
+    
     return res.status(200).json({ message: "Pin set Successful" });
   } catch (err) {
     console.log(err);

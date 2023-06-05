@@ -21,9 +21,13 @@ exports.charge = async (amount, email,  phone_number, tx_ref) => {
   if (response.status != "success") {
     return { code: 500, message: response.message };
   }
+  const { transfer_account, transfer_bank, transfer_amount } =
+    response.meta.authorization;
   return {
     code: 200,
     message: response.message,
-    transfer_details: response.meta.authorization,
+    transfer_account,
+    transfer_bank,
+    transfer_amount,
   };
 };

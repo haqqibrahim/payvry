@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../../../Models/User");
 const Account = require("../../../Models/Account");
 const { createToken } = require("../../../HelperFunctions/Token");
+
 var Mixpanel = require("mixpanel");
 
 var mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
@@ -62,8 +63,8 @@ exports.signup = async (req, res) => {
 
   await user.save();
   mixpanel.track("Signed Up", {
-    'id': user._id,
-      'Type': "User"
+    id: user._id,
+    Type: "User",
   });
   console.log("New User Created");
 
@@ -85,6 +86,7 @@ exports.signup = async (req, res) => {
   // Generate a JSON web token
   const token = createToken(user._id);
   res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+
   //   sendOTP(user._id, phoneNumber);
   res.status(200).json({ token, user });
 };

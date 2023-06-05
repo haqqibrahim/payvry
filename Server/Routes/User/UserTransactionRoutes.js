@@ -5,7 +5,7 @@ const {
   createQRcode,
 } = require("../../Controllers/User/Transaction/CreateQRCode");
 const {
-  confirmTransaction,
+  confirmTransaction,confirmTransactionPage
 } = require("../../Controllers/User/Transaction/ConfirmTransaction");
 
 const {
@@ -23,7 +23,8 @@ router.post("/withdraw", userTransactionController.withdraw);
 router.post("/bank", userTransactionController.verifyBank);
 
 router.post("/qrcode", createQRcode);
-router.get("/confirm/:id", confirmTransaction);
+router.post("/confirm", confirmTransaction);
+router.get("/confirm/:id", confirmTransactionPage);
 router.post("/deposit", deposit)
 router.post("/flw-webhook", confirmDeposit)
 module.exports = router;
