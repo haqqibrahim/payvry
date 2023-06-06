@@ -195,7 +195,7 @@ exports.initiateTxAI = async (vendorUsername, phoneNumber, amount) => {
       amount,
     });
   } catch (error) {
-    console.error(error);
+    console.error(`Initiate error: ${error}`);
     await sendMessage("Something went wrong", phoneNumber);
   }
 };
