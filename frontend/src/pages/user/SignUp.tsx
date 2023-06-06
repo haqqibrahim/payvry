@@ -249,7 +249,7 @@ const SignUp = () => {
       >
 
         {
-          regLevel === 1 && (
+          regLevel === 4 && (
             <>
             <label htmlFor="number" className="text-mine-shaft mt-20"style={{paddingLeft: "18px", paddingTop: "5px"}}>Phone number</label>
               <input
@@ -343,14 +343,14 @@ const SignUp = () => {
           </>
         )}
 
-        {regLevel === 4 && (
+        {regLevel === 1 && (
           <>
             <input
               required
               value={pin}
               ref={pinRef}
-              minLength={6}
-              maxLength={6}
+              minLength={4}
+              maxLength={4}
               type='password'
               autoCorrect='off'
               autoComplete='off'
@@ -367,7 +367,8 @@ const SignUp = () => {
                 togglePassword(pinRef);
               }}
               src={pinHidden ? eyeImage : eyeSlashImage}
-              className='absolute top-[22%] right-[5%] w-[19px] h-[13px] cursor-pointer'
+              style={{top: "10%"}}
+              className='absolute right-[5%] w-[19px] h-[13px] cursor-pointer'
             />
           </>
         )}

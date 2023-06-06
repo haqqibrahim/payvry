@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
-import {  useState } from 'react';
+import { useState } from 'react';
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 
 import BackButton from '../../components/BackButton';
@@ -79,8 +79,15 @@ const Withdraw = () => {
       return;
     }
 
-    const payload: PaymentPayLoad = {
-      token,
+    interface PaymentPayLoad2 {
+      amount: number;
+      account_bank: string;
+      account_name: string;
+      account_number: string;
+    }
+
+
+    const payload: PaymentPayLoad2 = {
       amount,
       account_bank,
       account_name: verifiedOwnerName,
@@ -115,12 +122,12 @@ const Withdraw = () => {
   };
 
   const options = banksResponse.data
-  .sort((a, b) => a.name.localeCompare(b.name)) // Sort the array alphabetically by bank name
-  .map((bank) => (
-    <option key={bank.id} value={bank.code}>
-      {bank.name}
-    </option>
-  ));
+    .sort((a, b) => a.name.localeCompare(b.name)) // Sort the array alphabetically by bank name
+    .map((bank) => (
+      <option key={bank.id} value={bank.code}>
+        {bank.name}
+      </option>
+    ));
 
 
   return (
@@ -128,7 +135,7 @@ const Withdraw = () => {
       <h1 className='font-semibold text-[20px]  leading-[26px] text-center pt-14'>Withdraw Funds</h1>
       <BackButton />
 
-      <section className='p-[30px] flex flex-col w-[90%]' style={{width: "100vw"}}>
+      <section className='p-[30px] flex flex-col w-[90%]' style={{ width: "100vw" }}>
         <h2 className='font-medium text-[16px] text-center mt-20 mb-20 leading-[27px] text-[rgba(0,0,0,0.5)]'>
           We get your payments to you, any time you like
         </h2>
@@ -145,7 +152,7 @@ const Withdraw = () => {
         />
 
         <select
-        style={{height: "50px", paddingLeft: "20px"}}
+          style={{ height: "50px", paddingLeft: "20px" }}
           className='mt-5  bg-gallery rounded-[100px] placeholder:font-light text-[13px] leading-4 placeholder:text-mine-shaft tracking-[0.06em]'
 
           value={selectedBank}
@@ -169,7 +176,7 @@ const Withdraw = () => {
                 type='text'
                 placeholder='Amount to withdraw'
                 onChange={e => setAmount(Number(e.target.value))}
-          className='mt-[30px] w-full   bg-gallery rounded-[100px] py-[15px] px-5  placeholder:font-light text-[13px] leading-4 placeholder:text-mine-shaft tracking-[0.06em]'
+                className='mt-[30px] w-full   bg-gallery rounded-[100px] py-[15px] px-5  placeholder:font-light text-[13px] leading-4 placeholder:text-mine-shaft tracking-[0.06em]'
               />
             </div>
           </>
