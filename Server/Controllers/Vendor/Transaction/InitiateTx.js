@@ -111,13 +111,14 @@ exports.initiateTxAI = async (vendorUsername, phoneNumber, amount) => {
   try {
     const vendor = await Vendor.findOne({ vendorUsername });
     if (!vendor) {
-      await sendMessage("Error in making payments", phoneNumber);
+      await sendMessage("Error in making payments, vendor not found", phoneNumber);
       console.log("Vendor not found");
       return;
     }
     const vendorAccount = await Account.findOne({ ID: vendor._id });
     if (!vendorAccount) {
-      await sendMessage("Error in making payments", phoneNumber);
+      console.log("Could not find vendor")
+      await sendMessage("Error in making payments, could not find vendor", phoneNumber);
       return;
     }
     const user = await User.findOne({ phoneNumber });
