@@ -183,7 +183,7 @@ exports.initiateTxAI = async (vendorUsername, phoneNumber, amount) => {
 
     const link = `https://payvry.onrender.com/user/api/confirm/${transaction_ref}`;
 
-    const template = `Confirm the payment of Naira ${amount} to ${vendor.vendorName} ${link}`;
+    const template = `Confirm the payment of Naira ${amount} to ${vendor.vendorUsername} ${link}`;
 
     await sendMessage(template, user.phoneNumber);
     mixpanel.track("Initiate Transaction", {
