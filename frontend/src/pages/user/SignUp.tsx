@@ -249,7 +249,7 @@ const SignUp = () => {
       >
 
         {
-          regLevel === 4 && (
+          regLevel === 1 && (
             <>
             <label htmlFor="number" className="text-mine-shaft mt-20"style={{paddingLeft: "18px", paddingTop: "5px"}}>Phone number</label>
               <input
@@ -343,7 +343,7 @@ const SignUp = () => {
           </>
         )}
 
-        {regLevel === 1 && (
+        {regLevel === 4 && (
           <>
             <input
               required
@@ -354,7 +354,7 @@ const SignUp = () => {
               type='password'
               autoCorrect='off'
               autoComplete='off'
-              placeholder='Enter your 6-digit pin'
+              placeholder='Enter your 4-digit pin'
               onChange={e =>
                 setPin(formatInputText({ text: e.target.value, allowedChars: '0123456789' }))
               }
