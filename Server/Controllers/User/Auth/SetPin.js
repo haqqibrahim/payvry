@@ -9,7 +9,7 @@ const {
 exports.setPin = async (req, res) => {
   try {
     const { pin, token } = req.body;
-    if (pin.length < 6) {
+    if (pin.length < 4) {
       return res.status(500).json({ message: "Pin must be 6 digit" });
     }
 
