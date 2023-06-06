@@ -49,7 +49,7 @@ exports.ReceiveMsg = async (req, res) => {
     await SaveMemory(
       phoneNumber,
       "user",
-      `This is my current balance: ${userAccount.balance}`
+      `This is my **current** balance: ${userAccount.balance}`
     );
     console.log("Adding User Message to Memory.....");
     await SaveMemory(phoneNumber, "user", message);
