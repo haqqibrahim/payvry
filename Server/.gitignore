@@ -1,6 +1,7 @@
 <<<<<<< HEAD
 .env
 node_modules
+payvry-ec2.pem
 =======
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
