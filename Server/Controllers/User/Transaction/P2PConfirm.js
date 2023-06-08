@@ -32,8 +32,10 @@ exports.P2PConfirmPage = async (req, res) => {
     console.log("Status is not completed.");
 
     const tx = await Transaction.find({ transaction_ref });
+    console.log(tx)
 
     const recieverId = tx[0].ID;
+
 
     const receiverAccount = await Account.findById({ _id: recieverId });
     if (!receiverAccount) {
