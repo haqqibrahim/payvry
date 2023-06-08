@@ -95,10 +95,13 @@ exports.depositAI = async (amount, phoneNumber) => {
     await transaction.save();
     console.log(`Transaction Pending: ${transaction}`);
     await sendMessage(
-      `Transfer Naira ${transfer_amount} to ${transfer_account} ${transfer_bank}`,
+      `Transfer Naira ${transfer_amount} to \n\nAccount No: ${transfer_account} \nBank: ${transfer_bank} \nAccount Name: Payvry finance or Payvry FLW`,
       phoneNumber
     );
-    await sendMessage("Also, after you have made the transfer wait for 10 minutes for your transfer to be processed!", phoneNumber)
+    await sendMessage(
+      "Also, after you have made the transfer wait for 10 minutes for your transfer to be processed!",
+      phoneNumber
+    );
     return { transfer_account, transfer_bank, transfer_amount };
   } catch (err) {
     console.log(err);

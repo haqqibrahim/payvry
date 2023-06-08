@@ -12,7 +12,7 @@ const Student = require("../../../Models/Student");
 
 var mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
 
-exports.confirmTransactionPage = async (req, res) => {
+exports.P2PConfirmPage = async (req, res) => {
   try {
     const transaction_ref = req.params.id;
     const completedTransactions = await Transaction.find({
@@ -33,17 +33,17 @@ exports.confirmTransactionPage = async (req, res) => {
 
     const tx = await Transaction.find({ transaction_ref });
 
-    const vendorId = tx[0].ID;
+    const recieverId = tx[0].ID;
 
-    const vendorAccount = await Account.findById({ _id: vendorId });
-    if (!vendorAccount) {
-      console.log("vendor Account not found");
+    const receiverAccount = await Account.findById({ _id: recieverId });
+    if (!receiverAccount) {
+      console.log("Receiver Account not found");
       return;
     }
 
-    const vendor = await Vendor.findById(vendorAccount.ID);
-    if (!vendor) {
-      console.log("Vendor not found");
+    const receiver = await User.findById(receiverAccount.ID);
+    if (!receiver) {
+      console.log("Reciever not found");
       return;
     }
 
@@ -61,8 +61,8 @@ exports.confirmTransactionPage = async (req, res) => {
       return;
     }
 
-    res.render("Pin", {
-      vendor: vendor.vendorUsername,
+    res.render("p2pPin", {
+      vendor: receiver.fullName,
       userID: user._id,
       amount: tx[0].amount,
       transaction_ref,
@@ -74,19 +74,19 @@ exports.confirmTransactionPage = async (req, res) => {
 };
 
 // Aolcls
-exports.confirmTransaction = async (req, res) => {
+exports.P2PconfirmTransaction = async (req, res) => {
   try {
     const { transaction_ref, pin } = req.body;
     const tx = await Transaction.find({ transaction_ref });
-    const vendorId = tx[0].ID;
+    const receiverId = tx[0].ID;
 
-    const vendorAccount = await Account.findById({ _id: vendorId });
+    const receiverAccount = await Account.findById({ _id: receiverId });
 
-    if (!vendorAccount) {
-      return res.status(500).json({ message: "Vendor Account not found" });
+    if (!receiverAccount) {
+      return res.status(500).json({ message: "Receiver  Account not found" });
     }
-    const vendor = await Vendor.findById(vendorAccount.ID);
-    if (!vendor) {
+    const receiver = await User.findById(receiverAccount.ID);
+    if (!receiver) {
       return res.status(500).json({ message: "Vendor not found" });
     }
     const userId = tx[1].ID;
@@ -119,7 +119,7 @@ exports.confirmTransaction = async (req, res) => {
     );
 
     await Account.updateOne(
-      { _id: vendorAccount._id },
+      { _id: receiverAccount._id },
       {
         balance: tx[0].balance,
         lastTransactionType: "credit",
@@ -136,16 +136,16 @@ exports.confirmTransaction = async (req, res) => {
       }
     );
     await sendMessage(
-      `Your payment of Naira ${tx[1].amount} to ${vendor.vendorUsername} is successful`,
+      `Your payment of Naira ${tx[1].amount} to ${receiver.fullName} is successful`,
       user.phoneNumber
     );
     await sendMessage(
-      `${user.fullName} with the matric no: ${student.matricNumber}, made a payment of ${tx[0].amount}`,
-      vendor.phoneNumber
+      `${user.fullName} just sent you ${tx[0].amount}`,
+      receiver.phoneNumber
     );
     mixpanel.track("Confirm Transaction", {
       id: transaction_ref,
-      vendor: vendorId,
+      vendor: receiverId,
       "User ID": userId,
     });
     mixpanel.track("Payment Processed", {

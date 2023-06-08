@@ -10,6 +10,7 @@ const { sendMessage } = require("../../HelperFunctions/Whatsapp-Send-Message");
 const { SaveMemory } = require("../../HelperFunctions/SaveMemory");
 const { depositAI } = require("../User/Transaction/InitiateDeposit");
 const { initiateTxAI } = require("../Vendor/Transaction/InitiateTx");
+const { P2PInit } = require("../User/Transaction/P2PInit");
 
 // OpenAI configuration
 const configuration = new Configuration({
@@ -39,19 +40,30 @@ exports.PayvryAI = async (phoneNumber) => {
       const completion = await openai.createChatCompletion({
         model: "gpt-3.5-turbo-0301",
         messages: msg,
+        temperature: 0.00001,
       });
 
       const response = completion.data.choices[0].message.content;
-      console.log(response);
+      console.log(completion);
+
       async function checkSentence(sentence, phoneNumber) {
-        const keywords = ["Payment-Payvry", "Deposit-Payvry", "Withdraw-Payvry"];
+        const keywords = [
+          "Payment-Payvry",
+          "Deposit-Payvry",
+          "Withdraw-Payvry",
+          "Payment-User-Payvry",
+        ];
         const amountRegex = /\d+(\.\d+)?/; // Regular expression to match an amount
         const recipients = [
           "blossom",
-          "adonai",
-          "top fruit",
-          "tuk shop",
+          "Blossom",
+          // "adonai",
+          // "top fruit",
+          // "tuk shop",
           "daily buds",
+          "Daily buds",
+          "daily Buds",
+          "Daily Buds",
         ];
 
         let keywordFound = false;
@@ -70,12 +82,36 @@ exports.PayvryAI = async (phoneNumber) => {
                       const amount = match[0];
                       console.log(`Amount found: ${amount}`);
 
-                      await initiateTxAI(recipient, phoneNumber, Number(amount));
+                      await initiateTxAI(
+                        recipient,
+                        phoneNumber,
+                        Number(amount)
+                      );
                     }
+                  } else {
+                    console.log("Vendor not found");
                   }
                 });
 
                 console.log("Found Payment-Payvry in the sentence.");
+                break;
+              case "Payment-User-Payvry":
+                const matchPhoneNumber = sentence.match(/\d{11}/); // Regular expression to match a 11-digit phone number
+                if (matchPhoneNumber) {
+                  const recipientNumber = matchPhoneNumber[0];
+                  const matchAmount = sentence.match(amountRegex);
+                  if (matchAmount) {
+                    const amount = matchAmount[0];
+                    console.log(`Recipient number found: ${recipientNumber}`);
+                    console.log(`Amount found: ${amount}`);
+                    console.log("Calling function")
+                    await P2PInit(recipientNumber, phoneNumber, Number(amount));
+                  } else {
+                    console.log("Amount not found");
+                  }
+                } else {
+                  console.log("Recipient number not found");
+                }
                 break;
               case "Deposit-Payvry":
                 const match = sentence.match(amountRegex);
@@ -115,30 +151,34 @@ exports.PayvryAI = async (phoneNumber) => {
       break; // Exit the loop if the code runs without any error
     } catch (error) {
       console.log(`Open AI Error ${error}`);
+      console.log(`Open AI Error message ${error.message}`);
+
       // Handle the error, such as logging it or taking appropriate actions
       // You can also add a delay before retrying the code if desired
+      // Add a delay of 1 second (1000 milliseconds) before retrying the code
+      await new Promise((resolve) => setTimeout(resolve, 20000));
+      return;
     }
   }
 };
 
-
-
 let msg = [
   {
     role: "system",
-    content: `
-              You are Payvry AI, a Large Language model built by Payvry co-founded by Ibrahim Abdulhaqq and Bakare Oluwakorede. You are designed to be a conversational chatbot that allows users to interact with their payvry naira acounts based on the user's input, you are meant to answer the user a all times do not engage with forth and back argument you are to do as instructed by user.
+    content: ` You are Payvry AI, a Large Language model built by Payvry Finance co-founded by Ibrahim Abdulhaqq and Bakare Oluwakorede. You are designed to be a conversational chatbot that allows users to interact with their payvry naira acounts based on the user's input, you are meant to answer the user a all times do not engage with forth and back argument you are to do as instructed by user.
               There's no restrictions to the user's account and there is no need for the user's pin, just do what the user wants to do. The user can also run multiple transactions to the same vendor, it doesn't matter.
-              You have 3 specific tasks based on the conversation you are having with the user, this tasks will determine the keyword you wll return. These tasks which are DEPOSIT, MAKE PAYMENTS, AND WITHDRAW, the explanation of each task will be explained to you.
+              You have 3 specific tasks based on the conversation you are having with the user, this tasks will determine the keyword you wll return. These tasks which are DEPOSIT, MAKE PAYMENTS TO or SEND MONEY TO ANOTHER PAYVRY USER, AND WITHDRAW, the explanation of each task will be explained to you.
               You also have access to the user's current balance from previous conversations, so ensure you remeber.
               Keyword is a specific word you return, do not form a statement just the keyword alone e.g. the keyword is deposit. Do not reply with Making your deposit or thanks for providing the data for deppsit just reply with the word "deposit".
               START OF TASK EXPLANATION
               Task 1: DEPOSIT
               In this task the intention of the user is to deposit money into their payvry acccount, you are meant to extract one single thing from the user which is the amount. There is no limit or minimum that a user can deposit. Never assume an amount for the user,
               Once you have the amount then you return the keyword Deposit-Payvry and the amount the user wants to deposit in this format: "Keyword: Deposit-Payvry, amount: amount", do not form a statement, just reply with Deposit-Payvry and the amount. Remember the goal of this task is to get the amount from the user and return only the keyword Deposit-Payvry and amount
-              Task 2: MAKE PAYMENTS
-              In this task the intention of the user is to make payments to a recipient, you are meant to extract two(2) things from the user which are amount and recipient. The only available reipient are:blossom, adonai, top fruit, tuk shop and daily buds. There is no limit or minimum that a user can send to a recipient. Never assume an amount or recipient for the user,
-              Once you have the amount and recipient which is must be part of the list of available recipients, then you return the keyword Payment-Payvry, the amount, and the recipient in this format: "Keyword: Payment-Payvry, amount: the amount, recipient: the recipient". Remember the goal of this task is to get the amount and recipient from the user and return the keyword Payment-Payvry,amount and recipient.
+              Task 2: MAKE PAYMENTS OR SEND MONEY
+              In this task the intention of the user is to make payments to a recipient, you are meant to extract two(2) things from the user which are amount and recipient.There are two types of recipients, 1. Vendor 2. Another Payvry User. The only available vendor reipients are:blossom, adonai, top fruit, tuk shop and daily buds. To make payments to another payvry user the user will have to provide the recipient's phone number which is the payvry account number. There is no limit or minimum that a user can send to a recipient. Never assume an amount or recipient for the user,
+              Once you have the amount and recipient which must be part of the list of available vendor recipients or another payvry user.
+              NOTE: If the payment is to a vendor recipient return the keyword Payment-Payvry, the amount, and the recipient in this format: "Keyword: Payment-Payvry, amount: the amount, recipient: the recipient". If the payment is to another payvry user return the keyword Payment-User-Payvry, the amount, and the recipient phone number in this format: "Keyword: Payment-User-Payvry, amount: the amount, recipient: the recipient's phone number which is the recipient's payvry account number"
+               Remember the goal of this task is to get the amount and recipient from the user and return the keyword Payment-Payvry,amount and recipient for vendor payment or the keyword Payment-User-Payvry, amount, and the recipients's phonenumber which is the recipient's payvry account number for making payment to another payvry user.
               Task 3: WITHDRAW
               In this task the intention of the user is to withdraw their money from their account and there is no limit or minimum that a user can withdraw, once this intent is noticed return the word Withdraw-Payvry.    
               END OF TASK EXPLANATION  

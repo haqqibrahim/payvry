@@ -107,40 +107,53 @@ exports.initiateTx = async (req, res) => {
   }
 };
 
-exports.initiateTxAI = async (vendorUsername, phoneNumber, amount) => {
+exports.initiateTxAI = async (recipient, phoneNumber, amount) => {
   try {
+    const vendorUsername = recipient.toLowerCase()
+    console.log(`Username: ${vendorUsername}`)
     const vendor = await Vendor.findOne({ vendorUsername });
+    console.log("1")
     if (!vendor) {
       await sendMessage("Error in making payments, vendor not found", phoneNumber);
       console.log("Vendor not found");
       return;
     }
     const vendorAccount = await Account.findOne({ ID: vendor._id });
+    console.log("2")
+
     if (!vendorAccount) {
       console.log("Could not find vendor")
       await sendMessage("Error in making payments, could not find vendor", phoneNumber);
       return;
     }
     const user = await User.findOne({ phoneNumber });
+    console.log("3")
+
     if (!user) {
       await sendMessage("Opps i couldn't find your account", phoneNumber);
       return;
     }
     const userAccount = await Account.findOne({ ID: user._id });
+    console.log("4")
+
     if (!userAccount) {
       await sendMessage("Opps i couldn't find your account", phoneNumber);
 
       return;
     }
     const student = await Student.findOne({ ID: user._id });
+    console.log("5")
+
     if (!student) {
       await sendMessage("Opps i couldn't find your account", phoneNumber);
       return;
     }
 
-    const debitAmount = Number(amount) + 10;
+    const debitAmount = Number(amount) + 0;
 
     if (userAccount.balance < debitAmount) {
+      console.log("6")
+
       await sendMessage("Opps, Insufficient Funds", phoneNumber);
       return;
     }
@@ -184,6 +197,7 @@ exports.initiateTxAI = async (vendorUsername, phoneNumber, amount) => {
     const link = `https://payvry.onrender.com/user/api/confirm/${transaction_ref}`;
 
     const template = `Confirm the payment of Naira ${amount} to ${vendor.vendorUsername} ${link}`;
+    console.log("7")
 
     await sendMessage(template, user.phoneNumber);
     mixpanel.track("Initiate Transaction", {
@@ -196,6 +210,7 @@ exports.initiateTxAI = async (vendorUsername, phoneNumber, amount) => {
     });
   } catch (error) {
     console.error(`Initiate error: ${error}`);
+
     await sendMessage("Something went wrong", phoneNumber);
   }
 };
