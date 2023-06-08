@@ -40,8 +40,7 @@ exports.PayvryAI = async (phoneNumber) => {
       const completion = await openai.createChatCompletion({
         model: "gpt-3.5-turbo-0301",
         messages: msg,
-        temperature: 0.00001,
-      });
+     });
 
       const response = completion.data.choices[0].message.content;
       console.log(completion);
