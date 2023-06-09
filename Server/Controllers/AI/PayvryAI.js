@@ -11,6 +11,7 @@ const { SaveMemory } = require("../../HelperFunctions/SaveMemory");
 const { depositAI } = require("../User/Transaction/InitiateDeposit");
 const { initiateTxAI } = require("../Vendor/Transaction/InitiateTx");
 const { P2PInit } = require("../User/Transaction/P2PInit");
+const { DinnerInit } = require("../User/Transaction/DinnerInit");
 
 // OpenAI configuration
 const configuration = new Configuration({
@@ -40,10 +41,10 @@ exports.PayvryAI = async (phoneNumber) => {
       const completion = await openai.createChatCompletion({
         model: "gpt-3.5-turbo-0301",
         messages: msg,
-     });
+      });
 
       const response = completion.data.choices[0].message.content;
-      console.log(completion);
+      console.log(completion.data);
 
       async function checkSentence(sentence, phoneNumber) {
         const keywords = [
@@ -51,6 +52,7 @@ exports.PayvryAI = async (phoneNumber) => {
           "Deposit-Payvry",
           "Withdraw-Payvry",
           "Payment-User-Payvry",
+          "Payvry-Dinner",
         ];
         const amountRegex = /\d+(\.\d+)?/; // Regular expression to match an amount
         const recipients = [
@@ -103,7 +105,7 @@ exports.PayvryAI = async (phoneNumber) => {
                     const amount = matchAmount[0];
                     console.log(`Recipient number found: ${recipientNumber}`);
                     console.log(`Amount found: ${amount}`);
-                    console.log("Calling function")
+                    console.log("Calling function");
                     await P2PInit(recipientNumber, phoneNumber, Number(amount));
                   } else {
                     console.log("Amount not found");
@@ -126,6 +128,10 @@ exports.PayvryAI = async (phoneNumber) => {
                 const msg = `You can make a withdrawal through this link: ${link}`;
                 await sendMessage(msg, phoneNumber);
                 console.log("Found Withdraw-Payvry in the sentence.");
+                break;
+              case "Payvry-Dinner":
+                console.log("Dinner");
+                await DinnerInit(phoneNumber);
                 break;
               default:
                 break;
@@ -182,6 +188,7 @@ let msg = [
               In this task the intention of the user is to withdraw their money from their account and there is no limit or minimum that a user can withdraw, once this intent is noticed return the word Withdraw-Payvry.    
               END OF TASK EXPLANATION  
               Ensure you follow your task and return the specific keyword which is very important, be conversational and also remember conversations and the user has no restrictions to the user's account and there is no need for the user's pin.
+              There is an even coming up called dinner, user's that pay for the dinner through payvry get a Naira 1000 discount which means the dinner will be Naira 4000 not Naira 5000 for people buying through payvry, NOTE: A user can not pay for the dinner for another user. If the user wants to pay for the dinner, you do not need any information from the user just return the keyword Payvry-Dinner only. 
               `,
   },
 ];

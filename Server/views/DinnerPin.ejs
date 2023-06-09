@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  class="scroll-smooth m-0 p-0 border-0 outline-0 cursor-default list-none no-underline box-border font-poppins"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+    </style>
+    <title>Payvry</title>
+  </head>
+  <body>
+    <main class="h-screen px-auto flex flex-col items-center justify-center">
+      <h1 class="font-semibold text-[20px] leading-[26px] text-center pt-44">
+        Confirm payment
+      </h1>
+      <section
+        class="mt-[50px] w-[90%] m-auto flex flex-col border-[1px] border-[#d9d9d9] rounded-[30px] p-[30px]"
+      >
+        <h2
+          class="font-medium text-[16px] text-center px-auto leading-[27px] text-[rgba(0,0,0,0.5)]"
+        >
+          <span>
+            Approve
+            <span class="font-extrabold">Naira <%= amount %></span> payment
+            <br />
+            for the <span class="font-extrabold">Dinner and Award Night</span>
+          </span>
+        </h2>
+
+        <form action="/user/api/dinner/confirm" method="post">
+          <div class="relative mt-[30px]">
+            <input
+              type="password"
+              name="pin"
+              placeholder="Enter your 4 digit Pin"
+              class="bg-[#eeeeee] rounded-[100px] py-[15px] px-5 w-full placeholder:font-light text-[13px] leading-4 placeholder:text-[#3a3a3a] tracking-[0.06em]"
+            />
+          </div>
+
+          <button
+          type="submit"
+            class="bg-[#3a3a3a] rounded-[100px] py-[15px] px-[88px] whitespace-nowrap text-white mt-[30px] font-medium text-[15px] leading-[18px] tracking-[0.06em] w-full"
+          >
+            Confirm
+          </button>
+            <input type="hidden" name="userID" value="<%= userID %>" />
+            <input type="hidden" name="transaction_ref" value="<%= transaction_ref %>" />
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
