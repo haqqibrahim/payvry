@@ -43,7 +43,7 @@ exports.PayvryAI = async (phoneNumber) => {
      });
 
       const response = completion.data.choices[0].message.content;
-      console.log(completion);
+      console.log(completion.data);
 
       async function checkSentence(sentence, phoneNumber) {
         const keywords = [

@@ -40,7 +40,7 @@ const Login = () => {
 
         const response: UserTokenResponse = res.data;
         Cookies.set('token-payvry', response.token);
-        navigate('/user');
+        navigate('/message');
         setIsLoading(false);
       })
       .catch((error: AxiosError) => {

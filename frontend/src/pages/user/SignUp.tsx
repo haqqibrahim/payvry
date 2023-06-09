@@ -142,7 +142,7 @@ const SignUp = () => {
 
         showAlert({ msg: response.message });
         setIsLoading(false);
-        navigate('/user');
+        navigate('/message');
       })
       .catch((error: AxiosError) => {
         const errorCode = error.response!.status;

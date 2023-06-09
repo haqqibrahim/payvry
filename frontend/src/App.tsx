@@ -26,6 +26,7 @@ import Payment from './pages/vendor/Payment';
 import Admin from './pages/admin/Admin';
 import HomeAdmin from './pages/admin/Home';
 import ForgotPassword from './pages/user/ForgotPassword';
+import Msg from './pages/user/Msg';
 const App = () => {
   return (
     <Router>
@@ -34,6 +35,7 @@ const App = () => {
         <Route path='/user' element={<HomeUser />}></Route>
         <Route path='/user/login' element={<LoginUser />}></Route>
         <Route path='/user/sign-up' element={<SignUpUser />}></Route>
+        <Route path="/message" element={<Msg />}></Route>
         <Route path='/user/history' element={<HistoryUser />}></Route>
         <Route path='/user/profile' element={<ProfileUser />}></Route>
         <Route path='/user/create-pin' element={<CreatePinUser />}></Route>

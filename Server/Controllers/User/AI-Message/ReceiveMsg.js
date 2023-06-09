@@ -40,7 +40,7 @@ exports.ReceiveMsg = async (req, res) => {
     if (!user) {
       return console.log("User not found");
     }
-    console.log(user);
+    // console.log(user);
     const userAccount = await Account.findOne({ ID: user._id });
     if (!userAccount) {
       return res.status(500).json({ message: "Account not found" });

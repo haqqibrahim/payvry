@@ -19,10 +19,10 @@ exports.sendMessage = (message, receiver) => {
       request(options, (error, response, body) => {
         if (error) {
           console.log(`Error at sendMessage Request --> ${error}`);
-          console.log(response);
+          // console.log(response);
 
           // Retry the function with the same parameters
-          // sendRequest(options);
+          sendRequest(options);
         } else {
           // console.log(response);
           // console.log(options)
