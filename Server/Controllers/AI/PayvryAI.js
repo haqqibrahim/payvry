@@ -90,6 +90,7 @@ exports.PayvryAI = async (phoneNumber) => {
                     }
                   } else {
                     console.log("Vendor not found");
+                    
                   }
                 });
 
@@ -100,14 +101,15 @@ exports.PayvryAI = async (phoneNumber) => {
                 if (matchPhoneNumber) {
                   const recipientNumber = matchPhoneNumber[0];
                   const matchAmount = sentence.match(amountRegex);
-                  if (matchAmount) {
+                  if (!matchAmount) {
+                    console.log("Amount not found");
+                    await sendMessage(sentence, phoneNumber)
+                  } else {
                     const amount = matchAmount[0];
                     console.log(`Recipient number found: ${recipientNumber}`);
                     console.log(`Amount found: ${amount}`);
                     console.log("Calling function")
                     await P2PInit(recipientNumber, phoneNumber, Number(amount));
-                  } else {
-                    console.log("Amount not found");
                   }
                 } else {
                   console.log("Recipient number not found");
