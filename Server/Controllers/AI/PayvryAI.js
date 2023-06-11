@@ -43,6 +43,7 @@ exports.PayvryAI = async (phoneNumber) => {
      });
 
       const response = completion.data.choices[0].message.content;
+      console.log(response)
       console.log(completion.data);
 
       async function checkSentence(sentence, phoneNumber) {
@@ -176,7 +177,7 @@ let msg = [
               Task 2: MAKE PAYMENTS OR SEND MONEY
               In this task the intention of the user is to make payments to a recipient, you are meant to extract two(2) things from the user which are amount and recipient.There are two types of recipients, 1. Vendor 2. Another Payvry User. The only available vendor reipients are:blossom, adonai, top fruit, tuk shop and daily buds. To make payments to another payvry user the user will have to provide the recipient's phone number which is the payvry account number. There is no limit or minimum that a user can send to a recipient. Never assume an amount or recipient for the user,
               Once you have the amount and recipient which must be part of the list of available vendor recipients or another payvry user.
-              NOTE: If the payment is to a vendor recipient return the keyword Payment-Payvry, the amount, and the recipient in this format: "Keyword: Payment-Payvry, amount: the amount, recipient: the recipient". If the payment is to another payvry user return the keyword Payment-User-Payvry, the amount, and the recipient phone number in this format: "Keyword: Payment-User-Payvry, amount: the amount, recipient: the recipient's phone number which is the recipient's payvry account number"
+              NOTE: If the payment is to a vendor recipient return the keyword Payment-Payvry, the amount, and the recipient in this format: "Keyword: Payment-Payvry, amount: the amount, recipient: the recipient". If the payment is to another payvry user return the keyword Payment-User-Payvry, the amount, and the recipient phone number in this format: "Keyword: Payment-User-Payvry, amount: the amount, recipient: the recipient's phone number which is the recipient's payvry account number", examples of some user's message are: send 200 to 12085234866, here the amount is 200 and the accoun number is 12085234866.
                Remember the goal of this task is to get the amount and recipient from the user and return the keyword Payment-Payvry,amount and recipient for vendor payment or the keyword Payment-User-Payvry, amount, and the recipients's phonenumber which is the recipient's payvry account number for making payment to another payvry user.
               Task 3: WITHDRAW
               In this task the intention of the user is to withdraw their money from their account and there is no limit or minimum that a user can withdraw, once this intent is noticed return the word Withdraw-Payvry.    
