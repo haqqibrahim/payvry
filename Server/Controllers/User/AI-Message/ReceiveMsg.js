@@ -49,7 +49,7 @@ exports.ReceiveMsg = async (req, res) => {
     await SaveMemory(
       phoneNumber,
       "user",
-      `This is my **current** balance: ${userAccount.balance}`
+      `This is my **current** balance: ${userAccount.balance.toLocaleString()}`
     );
     console.log("Adding User Message to Memory.....");
     await SaveMemory(phoneNumber, "user", message);
@@ -58,5 +58,43 @@ exports.ReceiveMsg = async (req, res) => {
     return;
   } catch (error) {
     console.log(`Receive Message server error: ${error}`);
+  }
+};
+
+exports.ReceiveMsgGreen = async (userNumber, message) => {
+  try {
+    const phoneNumber = await convertNumber(userNumber);
+
+
+    // Checking if User Exists
+    const foundUser = await AuthUser(phoneNumber);
+    if (!foundUser) {
+      return console.log("Sent");
+    }
+
+    console.log("User is found.....");
+    console.log("Getting Current Balance.....");
+    const user = await User.findOne({ phoneNumber });
+    if (!user) {
+      return console.log("User not found");
+    }
+    // console.log(user);
+    const userAccount = await Account.findOne({ ID: user._id });
+    if (!userAccount) {
+      return console.log("Account not found");
+    }
+    console.log(userAccount);
+    await SaveMemory(
+      phoneNumber,
+      "user",
+      `This is my current balance: ${userAccount.balance}`
+    );
+    console.log("Adding User Message to Memory.....");
+    await SaveMemory(phoneNumber, "user", message);
+    const response = await PayvryAI(phoneNumber);
+    await sendMessage(response, phoneNumber);
+    return;
+  } catch (error) {
+    console.log(`Receive Message Green server error: ${error}`);
   }
 };

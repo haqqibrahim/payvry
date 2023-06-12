@@ -1,38 +1,25 @@
 var request = require("request");
-
-exports.sendMessage = (message, receiver) => {
+const whatsAppClient = require("@green-api/whatsapp-api-client");
+const restAPI = whatsAppClient.restAPI({
+  idInstance: "1101830165",
+  apiTokenInstance: "5b6f330cf2b94482bdb53ab3b22f17acb877a6d47d364a06b3",
+});
+exports.sendMessage = async (message, receiver) => {
   try {
-    var options = {
-      method: "POST",
-      url: "https://api.ultramsg.com/instance50089/messages/chat",
-      headers: { "content-type": "application/x-www-form-urlencoded" },
-      form: {
-        token: process.env.ULTRA_MSG_TOKEN,
-        to: receiver,
-        body: message,
-        priority: "10",
-        referenceId: "",
-      },
-    };
-
-    function sendRequest(options) {
-      request(options, (error, response, body) => {
-        if (error) {
-          console.log(`Error at sendMessage Request --> ${error}`);
-          // console.log(response);
-
-          // Retry the function with the same parameters
-          sendRequest(options);
-        } else {
-          // console.log(response);
-          // console.log(options)
-          console.log(body);
-        }
-      });
-    }
-
-    sendRequest(options);
+    const convertedNumber = "234" + receiver.slice(1) + "@c.us";
+    console.log(`TheMessage: ${message}`);
+    console.log(typeof message);
+    console.log(typeof Number(receiver));
+    // Send test message that triggers webhook
+    const response = await restAPI.message.sendMessage(
+      convertedNumber,
+      null,
+      message
+    );
+    console.log(`Response: ${JSON.stringify(response)}`);
+    return;
+    // sendRequest(options);
   } catch (error) {
-    console.log(`Error at sendMessage --> ${error}`);
+    console.error(`Error at sendMessage --> ${error}`);
   }
 };

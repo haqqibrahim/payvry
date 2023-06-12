@@ -11,7 +11,8 @@ const userTransactionRoutes = require("./Routes/User/UserTransactionRoutes");
 const vendorTransactionRoutes = require("./Routes/Vendor/VendorTransactionRoutes");
 const UserAIRoutes = require("./Routes/User/UserAIRoutes")
 const app = express();
-
+const whatsAppClient = require("@green-api/whatsapp-api-client");
+const { ReceiveMsgGreen } = require("./Controllers/User/AI-Message/ReceiveMsg");
 // Set the view engine to EJS
 app.set("view engine", "ejs");
 
@@ -45,11 +46,21 @@ app.use("/user/api", UserAuthRoutes);
 app.use("/user/api", userTransactionRoutes);
 app.use("/vendor/api", vendorAuthRoutes);
 app.use("/vendor/api", vendorTransactionRoutes);
-app.use("/ultramsgwebhook", UserAIRoutes);
+// app.use("/ultramsgwebhook", UserAIRoutes);
+const webHookAPI = whatsAppClient.webhookAPI(app, '/ultramsgwebhook')
+
+webHookAPI.onIncomingMessageText((data, idInstance, idMessage, sender, typeMessage, textMessage) => {
+  console.log(`outgoingMessageStatus data ${data.toString()}`);
+    console.log(`Incoming Notification Sender ${JSON.stringify(sender)}`)
+    console.log(`Incoming Notification Message ${JSON.stringify(textMessage)}`)
+    ReceiveMsgGreen(sender, textMessage)
+
+});
 
 // start the server
-app.listen(port, '0.0.0.0',  () => {
+app.listen(port, '0.0.0.0',  async () => {
   console.log(`Server running on port ${port}`);
+ 
 });
 
 

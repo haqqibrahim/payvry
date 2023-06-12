@@ -135,6 +135,7 @@ exports.PayvryAI = async (phoneNumber) => {
         }
 
         if (!keywordFound) {
+          console.log(`The sentence: ${sentence}`)
           await sendMessage(sentence, phoneNumber);
         }
       }
