@@ -45,11 +45,10 @@ exports.ReceiveMsg = async (req, res) => {
     if (!userAccount) {
       return res.status(500).json({ message: "Account not found" });
     }
-    console.log(userAccount);
     await SaveMemory(
       phoneNumber,
-      "user",
-      `This is my **current** balance: ${userAccount.balance.toLocaleString()}`
+      "system",
+      `This is the user's balance: ${userAccount.balance.toLocaleString()}`
     );
     console.log("Adding User Message to Memory.....");
     await SaveMemory(phoneNumber, "user", message);
@@ -83,7 +82,6 @@ exports.ReceiveMsgGreen = async (userNumber, message) => {
     if (!userAccount) {
       return console.log("Account not found");
     }
-    console.log(userAccount);
     await SaveMemory(
       phoneNumber,
       "user",

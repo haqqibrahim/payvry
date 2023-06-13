@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const memoryMsgWASchema = new mongoose.Schema({
   role: {
     type: String,
-    enum: ["user", "assistant"]
+    enum: ["user", "assistant", "system"]
   },
   content: {
     type: String,

@@ -1,0 +1,191 @@
+{
+  "data": [
+    {
+      "id": 137,
+      "code": "011",
+      "name": "First Bank"
+    },
+    {
+      "id": 138,
+      "code": "326",
+      "name": "Sterling Mobile"
+    },
+
+    {
+      "id": 141,
+      "code": "057",
+      "name": "Zenith Bank"
+    },
+    {
+      "id": 142,
+      "code": "068",
+      "name": "Standard Chartered Bank"
+    },
+
+    {
+      "id": 144,
+      "code": "070",
+      "name": "Fidelity Bank"
+    },
+
+    {
+      "id": 146,
+      "code": "215",
+      "name": "Unity Bank"
+    },
+    {
+      "id": 147,
+      "code": "323",
+      "name": "Access Money"
+    },
+
+    {
+      "id": 152,
+      "code": "050",
+      "name": "Ecobank Plc"
+    },
+
+    {
+      "id": 154,
+      "code": "318",
+      "name": "Fidelity Mobile"
+    },
+
+    {
+      "id": 158,
+      "code": "221",
+      "name": "Stanbic IBTC Bank"
+    },
+
+    {
+      "id": 161,
+      "code": "322",
+      "name": "ZenithMobile"
+    },
+
+    {
+      "id": 168,
+      "code": "035",
+      "name": "Wema Bank"
+    },
+
+    {
+      "id": 171,
+      "code": "305",
+      "name": "Paycom"
+    },
+
+    {
+      "id": 175,
+      "code": "030",
+      "name": "Heritage"
+    },
+
+    {
+      "id": 177,
+      "code": "058",
+      "name": "GTBank Plc"
+    },
+    {
+      "id": 178,
+      "code": "032",
+      "name": "Union Bank"
+    },
+    {
+      "id": 179,
+      "code": "232",
+      "name": "Sterling Bank"
+    },
+    {
+      "id": 180,
+      "code": "076",
+      "name": "Polaris Bank"
+    },
+    {
+      "id": 181,
+      "code": "082",
+      "name": "Keystone Bank"
+    },
+
+    {
+      "id": 186,
+      "code": "214",
+      "name": "FCMB"
+    },
+
+    {
+      "id": 189,
+      "code": "315",
+      "name": "GTMobile"
+    },
+    {
+      "id": 190,
+      "code": "033",
+      "name": "UBA"
+    },
+    {
+      "id": 191,
+      "code": "044",
+      "name": "Access Bank"
+    },
+
+    {
+      "id": 1956,
+      "code": "090267",
+      "name": "Kuda"
+    },
+
+    {
+      "id": 2061,
+      "code": "090405",
+      "name": "Moniepoint Microfinance Bank"
+    },
+
+    {
+      "id": 2200,
+      "code": "090551",
+      "name": "Fairmoney Microfinance Bank Ltd"
+    },
+
+    {
+      "id": 2260,
+      "code": "305",
+      "name": "Opay"
+    },
+
+    {
+      "id": 2265,
+      "code": "100009",
+      "name": "GTMobile"
+    },
+
+    {
+      "id": 2269,
+      "code": "100013",
+      "name": "AccessMobile"
+    },
+
+    {
+      "id": 2274,
+      "code": "100018",
+      "name": "ZenithMobile"
+    },
+    {
+      "id": 2275,
+      "code": "100019",
+      "name": "Fidelity Mobile"
+    },
+
+    {
+      "id": 2286,
+      "code": "100030",
+      "name": "EcoMobile"
+    },
+
+    {
+      "id": 2289,
+      "code": "100033",
+      "name": "PALMPAY"
+    }
+  ]
+}
