@@ -194,7 +194,7 @@ exports.initiateTxAI = async (recipient, phoneNumber, amount) => {
     await vendorTransaction.save();
     await userTransaction.save();
 
-    const link = `https://payvry.onrender.com/user/api/confirm/${transaction_ref}`;
+    const link = `https://payvry-api.herokuapp.com/user/api/confirm/${transaction_ref}`;
 
     const template = `Confirm the payment of Naira ${amount} to ${vendor.vendorUsername} ${link}`;
     console.log("7")
