@@ -5,6 +5,7 @@ const User = require("../../../Models/User");
 const Student = require("../../../Models/Student");
 const Account = require("../../../Models/Account");
 const Transaction = require("../../../Models/Transaction");
+const { BankTransfer } = require("../../User/Transaction/BankTransfer");
 var Mixpanel = require("mixpanel");
 
 var mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
@@ -23,6 +24,34 @@ function generateRandomString(length) {
   return result;
 }
 
+const jsonVendor = `
+  {
+    "vendors": [
+        {
+            "username": "blossom",
+            "account_number": "0250118417",
+            "account_bank": "058"
+        },
+        {
+            "username": "adonai",
+            "account_number": "",   
+            "account_bank": ""
+        }, {
+            "username": "daily buds",
+            "account_number": "",
+            "account_bank": ""
+        }, {
+            "username": "tuk shop",
+            "account_number": "",
+            "account_bank": ""
+        }, {
+            "username": "top fruits",
+            "account_number": "",
+            "account_bank": ""
+        }
+    ]
+}
+`;
 exports.initiateTx = async (req, res) => {
   try {
     const { token, matricNumber, amount } = req.body;
@@ -109,105 +138,37 @@ exports.initiateTx = async (req, res) => {
 
 exports.initiateTxAI = async (recipient, phoneNumber, amount) => {
   try {
-    const vendorUsername = recipient.toLowerCase()
-    console.log(`Username: ${vendorUsername}`)
-    const vendor = await Vendor.findOne({ vendorUsername });
-    console.log("1")
-    if (!vendor) {
-      await sendMessage("Error in making payments, vendor not found", phoneNumber);
-      console.log("Vendor not found");
-      return;
+    const vendorUsername = recipient.toLowerCase();
+    console.log(`Username: ${vendorUsername}`);
+    const data = JSON.parse(jsonVendor);
+
+    function getVendorDetailsByUsername(username) {
+      for (const vendor of data.vendors) {
+        if (vendor.username === username) {
+          return {
+            found: true,
+            account_number: vendor.account_number,
+            account_bank: vendor.account_bank,
+          };
+        }
+      }
+      return { found: false }; // Vendor not found
     }
-    const vendorAccount = await Account.findOne({ ID: vendor._id });
-    console.log("2")
 
-    if (!vendorAccount) {
-      console.log("Could not find vendor")
-      await sendMessage("Error in making payments, could not find vendor", phoneNumber);
-      return;
-    }
-    const user = await User.findOne({ phoneNumber });
-    console.log("3")
-
-    if (!user) {
-      await sendMessage("Opps i couldn't find your account", phoneNumber);
-      return;
-    }
-    const userAccount = await Account.findOne({ ID: user._id });
-    console.log("4")
-
-    if (!userAccount) {
-      await sendMessage("Opps i couldn't find your account", phoneNumber);
-
-      return;
-    }
-    const student = await Student.findOne({ ID: user._id });
-    console.log("5")
-
-    if (!student) {
-      await sendMessage("Opps i couldn't find your account", phoneNumber);
+    const { account_number, account_bank, found } =
+      getVendorDetailsByUsername(vendorUsername);
+    if (!found) {
+      console.log("Vendor Bank details not found");
+      await sendMessage(
+        "Seems like we don't have this vendor bank details,do a bank transfer instead using the account number, bank name and amount",
+        phoneNumber
+      );
       return;
     }
 
-    const debitAmount = Number(amount) + 0;
+    await BankTransfer(amount, account_number, account_bank, phoneNumber);
 
-    if (userAccount.balance < debitAmount) {
-      console.log("6")
-
-      await sendMessage("Opps, Insufficient Funds", phoneNumber);
-      return;
-    }
-
-    const transaction_ref = generateRandomString(10);
-    const oldVendorBalance = vendorAccount.balance;
-    const newVendorBalance = Number(oldVendorBalance) + Number(amount);
-
-    const vendorTransaction = new Transaction({
-      ID: vendorAccount._id,
-      transactionType: "credit",
-      accountType: "Vendor",
-      amount,
-      transaction_ref,
-      transaction_fee: 0,
-      status: "pending",
-      user: student.matricNumber,
-      balance: newVendorBalance,
-      date: Date.now(),
-      created_at: Date.now(),
-    });
-    const oldUserBalance = userAccount.balance;
-    const newUserBalance = Number(oldUserBalance) - Number(debitAmount);
-
-    const userTransaction = new Transaction({
-      ID: userAccount._id,
-      transactionType: "debit",
-      accountType: "User",
-      amount,
-      transaction_ref,
-      transaction_fee: 0,
-      vendor: vendor.vendorUsername,
-      balance: newUserBalance,
-      transaction_status: "pending",
-      date: Date.now(),
-      created_at: Date.now(),
-    });
-    await vendorTransaction.save();
-    await userTransaction.save();
-
-    const link = `https://payvry-api.herokuapp.com/user/api/confirm/${transaction_ref}`;
-
-    const template = `Confirm the payment of Naira ${amount} to ${vendor.vendorUsername} ${link}`;
-    console.log("7")
-
-    await sendMessage(template, user.phoneNumber);
-    mixpanel.track("Initiate Transaction", {
-      id: transaction_ref,
-      "User ID": user._id,
-      "Vendor ID": vendor._id,
-    });
-    mixpanel.track("Payment Pending", {
-      amount,
-    });
+    return;
   } catch (error) {
     console.error(`Initiate error: ${error}`);
 

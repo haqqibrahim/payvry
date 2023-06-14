@@ -20,7 +20,7 @@ exports.GetBankDetails = async (account_number, account_bank) => {
     const response = await flw.Misc.verify_Account(details)
     console.log(response);
     if (response.status != "success") {
-      return { code: 500, message: "Invalid Account Details, please confirm the acount details on WhatsApp"};
+      return { code: 500, message: "Invalid Account Details, please resend the account number, account bank and amount to the AI!!"};
     }
     const { account_name } = response.data;
     return {

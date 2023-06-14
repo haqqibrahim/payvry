@@ -33,7 +33,9 @@ exports.ReceiveMsg = async (req, res) => {
         mesage: "Sent",
       });
     }
-
+    const signUpURL = "https://payvry.vercel.app/user/sign-up";
+    const sendMsg = `So let's get you signed up: ${signUpURL}`;
+    await sendMessage(sendMsg, phoneNumber);
     console.log("User is found.....");
     console.log("Getting Current Balance.....");
     const user = await User.findOne({ phoneNumber });
@@ -63,7 +65,6 @@ exports.ReceiveMsg = async (req, res) => {
 exports.ReceiveMsgGreen = async (userNumber, message) => {
   try {
     const phoneNumber = await convertNumber(userNumber);
-
 
     // Checking if User Exists
     const foundUser = await AuthUser(phoneNumber);

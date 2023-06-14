@@ -93,6 +93,17 @@ exports.BankTransferConfirmTransaction = async (req, res) => {
       account_name,
       amount,
     } = req.body;
+    const completedTransactions = await Transaction.find({
+      transaction_ref: transaction_ref,
+      status: "completed",
+    });
+
+    if (completedTransactions.length > 0) {
+      console.log("Status is completed.");
+
+      return;
+    }
+
     const tx = await Transaction.find({ transaction_ref });
 
     const userId = tx[0].ID;

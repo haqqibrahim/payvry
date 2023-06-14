@@ -1,0 +1,26 @@
+{
+    "vendors": [
+        {
+            "username": "blossom",
+            "account_number": "0250118417",
+            "account_bank": ""
+        },
+        {
+            "username": "adonai",
+            "account_number": "",   
+            "account_bank": ""
+        }, {
+            "username": "daily buds",
+            "account_number": "",
+            "account_bank": ""
+        }, {
+            "username": "tuk shop",
+            "account_number": "",
+            "account_bank": ""
+        }, {
+            "username": "top fruits",
+            "account_number": "",
+            "account_bank": ""
+        }
+    ]
+}
