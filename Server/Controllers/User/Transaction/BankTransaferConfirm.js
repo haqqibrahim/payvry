@@ -11,8 +11,15 @@ const {
 const Student = require("../../../Models/Student");
 const { GetBankDetails } = require("../../../Flutterwave/GetBankDetails");
 const { FlwTransfer } = require("../../../Flutterwave/InitiateCharge");
-
+const { Reciept } = require("../../../HelperFunctions/Reciept");
+const { getCurrentDateTime } = require("../../../HelperFunctions/DateTime");
+const fs = require("fs");
+const path = require("path");
+const {
+  sendReciept,
+} = require("../../../HelperFunctions/Whatsapp-Send-Receipt");
 var mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
+const jsonData = require("../../../banks.json");
 
 exports.BankTransferConfirmPage = async (req, res) => {
   try {
@@ -158,6 +165,31 @@ exports.BankTransferConfirmTransaction = async (req, res) => {
     );
     await sendMessage(
       `Your Bank transfer of Naira ${tx[0].amount} to ${account_name} has been Queued Successfully`,
+      user.phoneNumber
+    );
+
+    const date_time = getCurrentDateTime();
+   
+    function findBankNameByCode(code) {
+      const banks = jsonData.data;    
+      for (const bank of banks) {
+        if (bank.code === code) {
+          return bank.name;
+        }
+      }
+    
+      return null; // Return null if no match found
+    }
+    
+    // Example usage
+    const bankName = findBankNameByCode(account_bank);
+    await Reciept(
+      amount,
+      account_name,
+      account_number,
+      bankName,
+      date_time,
+      transaction_ref,
       user.phoneNumber
     );
 

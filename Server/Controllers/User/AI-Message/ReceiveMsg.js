@@ -29,13 +29,12 @@ exports.ReceiveMsg = async (req, res) => {
     // Checking if User Exists
     const foundUser = await AuthUser(phoneNumber);
     if (!foundUser) {
+  
       return res.status(500).send({
         mesage: "Sent",
       });
     }
-    const signUpURL = "https://payvry.vercel.app/user/sign-up";
-    const sendMsg = `So let's get you signed up: ${signUpURL}`;
-    await sendMessage(sendMsg, phoneNumber);
+    
     console.log("User is found.....");
     console.log("Getting Current Balance.....");
     const user = await User.findOne({ phoneNumber });

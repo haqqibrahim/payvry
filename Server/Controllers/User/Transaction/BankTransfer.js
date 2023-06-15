@@ -64,7 +64,7 @@ exports.BankTransfer = async (
       return;
     }
 
-    const transaction_ref = generateRandomString(20);
+    const transaction_ref = generateRandomString(10);
     const oldUserBalance = userAccount.balance;
     const newUserBalance = Number(oldUserBalance) - Number(debitAmount);
     console.log("5");
