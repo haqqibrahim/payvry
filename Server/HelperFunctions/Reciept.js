@@ -1,8 +1,6 @@
 require("dotenv").config();
-const puppeteer = require("puppeteer");
 const fs = require("fs");
 const nodeHtmlToImage = require("node-html-to-image");
-const path = require("path");
 const { convertAmountToWords } = require("./convertThreeDigitNumber");
 const {
   S3Client,
@@ -194,8 +192,9 @@ h1.transaction-amount {
 
     const command = new GetObjectCommand(getObjectParams);
     const url = await getSignedUrl(s3Client, command, { expires: 43200 });
-    await sendReciept(url, phoneNumber);
-
+    // await sendReciept(url, phoneNumber);
+    const receiptMessage = `Transaction Receipts: ${url}`
+    await sendMessage(receiptMessage, phoneNumber)
     // Delete the local file after use
     fs.unlinkSync("./image.png");
 
