@@ -213,10 +213,11 @@ exports.PayvryAI = async (phoneNumber) => {
     } catch (error) {
       console.log(`Open AI Error ${error}`);
       console.log(`Open AI Error message ${error.message}`);
+      await sendMessage("Please resend your last message", phoneNumber)
 
       // Handle the error, such as logging it or taking appropriate actions
       // You can also add a delay before retrying the code if desired
-      // Add a delay of 1 second (1000 milliseconds) before retrying the code
+      // Add a delay of 2 second (2000 milliseconds) before retrying the code
       await new Promise((resolve) => setTimeout(resolve, 20000));
       return;
     }

@@ -20,6 +20,11 @@ const {
 } = require("../../../HelperFunctions/Whatsapp-Send-Receipt");
 var mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
 const jsonData = require("../../../banks.json");
+const {
+  convertAmountToWords,
+} = require("../../../HelperFunctions/convertThreeDigitNumber");
+const querystring = require("querystring");
+var shortUrl = require("node-url-shortener");
 
 exports.BankTransferConfirmPage = async (req, res) => {
   try {
@@ -169,40 +174,53 @@ exports.BankTransferConfirmTransaction = async (req, res) => {
     );
 
     const date_time = getCurrentDateTime();
-   
+
     function findBankNameByCode(code) {
-      const banks = jsonData.data;    
+      const banks = jsonData.data;
       for (const bank of banks) {
         if (bank.code === code) {
           return bank.name;
         }
       }
-    
+
       return null; // Return null if no match found
     }
-    
+
     // Example usage
     const bankName = findBankNameByCode(account_bank);
-    await Reciept(
-      amount,
-      account_name,
-      account_number,
-      bankName,
-      date_time,
-      transaction_ref,
-      user.phoneNumber
-    );
+    const amount_in_words = convertAmountToWords(Number(amount));
 
-    mixpanel.track("Confirm Transaction", {
-      id: transaction_ref,
-      "User ID": userId,
-    });
-    mixpanel.track("Payment Processed", {
-      amount: tx[0].amount,
-    });
-    return res.render("TxStatus", {
-      message: "Transactions Competed.",
-      status: "text-green-300",
+    const params = {
+      date_time: date_time,
+      transaction_ref: transaction_ref,
+      amount: amount,
+      amount_in_words: amount_in_words,
+      account_name: account_name,
+      account_number: account_number,
+      account_bank: bankName,
+    };
+
+    const url =
+      "https://payvry-api.herokuapp.com/user/api/receipt?" +
+      querystring.stringify(params);
+    shortUrl.short(url, async function (err, shortenedUrl) {
+      if (err) {
+        console.error("Error shortening URL:", err);
+        return;
+      }
+      const template = `Your transaction receipt ${shortenedUrl}`;
+      await sendMessage(template, user.phoneNumber);
+      mixpanel.track("Confirm Transaction", {
+        id: transaction_ref,
+        "User ID": userId,
+      });
+      mixpanel.track("Payment Processed", {
+        amount: tx[0].amount,
+      });
+      return res.render("TxStatus", {
+        message: "Transactions Completed.",
+        status: "text-green-300",
+      });
     });
   } catch (error) {
     console.error(error);

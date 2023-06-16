@@ -15,7 +15,9 @@ const bucketName = process.env.AWS_BUCKET_NAME;
 const region = process.env.AWS_BUCKET_REGION;
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-
+const chrome = require("chrome-aws-lambda");
+// const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
 const s3Client = new S3Client({
   region,
   credentials: {
@@ -163,56 +165,70 @@ h1.transaction-amount {
     </body>
     </html>
     `;
+    let browser;
 
-  try {
-    // Generate image from HTML using node-html-to-image
-    const image = await nodeHtmlToImage({
-      output: "./image.png",
-      html,
-    });
-
-    console.log("The image was created successfully!");
-
-    const fileBuffer = fs.readFileSync("./image.png");
-
-    const uploadParams = {
-      Bucket: bucketName,
-      Body: fileBuffer,
-      Key: `receipt-${transaction_ref}.png`,
-      ContentType: "image/png",
-    };
-
-    // Send the upload to S3
-    await s3Client.send(new PutObjectCommand(uploadParams));
-
-    const getObjectParams = {
-      Bucket: bucketName,
-      Key: `receipt-${transaction_ref}.png`,
-    };
-
-    const command = new GetObjectCommand(getObjectParams);
-    const url = await getSignedUrl(s3Client, command, { expires: 2592000 });
-
-    // Shorten the URL using shortUrl library
-    shortUrl.short(url, async function (err, shortenedUrl) {
-      if (err) {
-        console.error("Error shortening URL:", err);
-        return;
+    try {
+      // Launch the browser
+      browser = await puppeteer.launch({
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      });
+      const page = await browser.newPage();
+      await page.setContent(html);
+  
+      // Generate image from HTML using node-html-to-image
+      const image = await nodeHtmlToImage({
+        output: "./image.png",
+        html: page.content(),
+      });
+  
+      console.log("The image was created successfully!");
+  
+      const fileBuffer = fs.readFileSync("./image.png");
+  
+      const uploadParams = {
+        Bucket: bucketName,
+        Body: fileBuffer,
+        Key: `receipt-${transaction_ref}.png`,
+        ContentType: "image/png",
+      };
+  
+      // Send the upload to S3
+      await s3Client.send(new PutObjectCommand(uploadParams));
+  
+      const getObjectParams = {
+        Bucket: bucketName,
+        Key: `receipt-${transaction_ref}.png`,
+      };
+  
+      const command = new GetObjectCommand(getObjectParams);
+      const url = await getSignedUrl(s3Client, command, { expires: 2592000 });
+  
+      // Shorten the URL using shortUrl library
+      shortUrl.short(url, async function (err, shortenedUrl) {
+        if (err) {
+          console.error("Error shortening URL:", err);
+          return;
+        }
+  
+        console.log("Shortened URL:", shortenedUrl);
+  
+        // Pass the shortened URL to other functions
+        // await sendReciept(shortenedUrl, phoneNumber);
+        const receiptMessage = `Transaction Receipts: ${shortenedUrl}`;
+        await sendMessage(receiptMessage, phoneNumber);
+  
+        // Delete the local file after use
+        fs.unlinkSync("./image.png");
+  
+        console.log("Image uploaded to S3 successfully:", shortenedUrl);
+      });
+    } catch (error) {
+      console.error("Error generating or uploading the image:", error);
+    } finally {
+      // Close the browser instance
+      if (browser) {
+        await browser.close();
       }
-
-      console.log("Shortened URL:", shortenedUrl);
-
-      // Pass the shortened URL to other functions
-      // await sendReciept(shortenedUrl, phoneNumber);
-      const receiptMessage = `Transaction Receipts: ${shortenedUrl}`;
-      await sendMessage(receiptMessage, phoneNumber);
-
-      // Delete the local file after use
-      fs.unlinkSync("./image.png");
-
-      console.log("Image uploaded to S3 successfully:", shortenedUrl);
-    });
-  } catch (error) {
-    console.error("Error generating or uploading the image:", error);
-  }
-};
+    }
+  };

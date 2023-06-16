@@ -17,6 +17,7 @@ const {confirmDeposit} = require(
 );
 const { P2PconfirmTransaction, P2PConfirmPage } = require("../../Controllers/User/Transaction/P2PConfirm");
 const { BankTransferConfirmPage, BankTransferConfirmTransaction } = require("../../Controllers/User/Transaction/BankTransaferConfirm");
+const { Receipt } = require("../../Controllers/User/Transaction/Receipt");
 const router = express.Router();
 
 // router.post("/deposit", userTransactionController.deposit);
@@ -32,6 +33,7 @@ router.post("/p2p/confirm", P2PconfirmTransaction)
 router.get("/p2p/confirm/:id", P2PConfirmPage)
 router.get("/transfer/confirm", BankTransferConfirmPage)
 router.post("/transfer/confirm", BankTransferConfirmTransaction)
+router.get("/receipt", Receipt)
 router.post("/deposit", deposit)
 router.post("/flw-webhook", confirmDeposit)
 module.exports = router;

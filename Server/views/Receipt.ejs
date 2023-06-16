@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+    </style>
+    <title>Payvry</title>
+</head>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+.receipt {
+position: relative;
+background-color: #ffffff;
+border-radius: 16px;
+padding: 20px;
+max-width: 430px;
+padding-bottom: 10px;
+margin: 9vh auto;
+font-family: Arial, sans-serif;
+box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+text-align: center;
+display: flex;
+flex-direction: column;
+}
+
+.receipt-header {
+position: absolute;
+top: 0;
+left: 0;
+text-align: center;
+background-color: #F5F5F5;
+padding: 20px;
+border-radius: 16px 16px 0 0;
+width: 100%;
+}
+
+p.top {
+font-size: 14px;
+justify-content: center;
+color: #333;
+}
+
+p.fields {
+display: flex;
+justify-content: space-between;
+align-items: center;
+font-size: 14px;
+line-height: 26px;
+padding: 2px;
+border-bottom: 1px solid #eee;
+}
+
+#different{
+border-bottom: none;
+}
+
+span {
+display: flex;
+text-align: right;
+}
+
+h1.transaction-amount {
+font-size: 32px;
+font-weight: bold;
+margin: 5px 0;
+color: #05DBC1;
+}
+
+#transaction-date {
+color: red;
+}
+
+.receipt-details {
+display: flex;
+flex-direction: column;
+margin-top: 120px;
+}
+
+.receipt-details p {
+width: 390px;
+margin-bottom: 10px;
+font-size: 14px;
+}
+
+.receipt-details {
+display: inline-block;
+color: #555;
+width: auto;
+flex-grow: 1;
+text-align: left;
+}
+
+.receipt-details span {
+font-weight: bold;
+color: #333;
+text-align: right;
+}
+</style>
+<body>
+    <div class="receipt">
+        <div class="receipt-header">
+            <p class="top">You just transferred</p>
+            <h1 class="transaction-amount">NGN <%= amount %></h1>
+            <p class="top">to Blossom Kitchen</p>
+        </div>
+        <div class="receipt-details">
+            <p class="fields">Date & Time: <span id="transaction-date"><%= date_time %></span></p>
+            <p class="fields">Reference Number: <span id="reference-number"><%= transaction_ref %></span></p>
+            <p class="fields">Transaction Amount: <span class="transaction-amount">NGN <%= amount %></span></p>
+            <p class="fields">Amount in Words: <span id="amount-in-words"><%= amount_in_words %> Naira</span></p>
+            <p class="fields">Transaction Type: <span id="transaction-type">Debit</span></p>
+            <p class="fields">Receiver: <span id="receiver"><%= account_name %></span></p>
+            <p class="fields">Account Number: <span id="account-number"><%= account_number %></span></p>
+            <p class="fields">Receiving Bank: <span id="receiving-bank"><%= account_bank %></span></p>
+            <p class="fields" id="different">Narration: <span id="narration">Payvry Bank Transfer</span></p>
+        </div>
+        
+    </div>
+</body>
+</html>

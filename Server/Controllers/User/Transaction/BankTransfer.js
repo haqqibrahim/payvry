@@ -99,7 +99,7 @@ exports.BankTransfer = async (
     };
     // const link = `https://payvry.onrender.com/user/api/p2p/confirm/${transaction_ref}`;
     const url =
-      "https://fdf8-154-113-158-227.ngrok-free.app/user/api/transfer/confirm?" +
+      "https://payvry-api.herokuapp.com/user/api/transfer/confirm?" +
       querystring.stringify(queryParams);
     const template = `Confirm the bank transfer ${url}`;
     await sendMessage(template, phoneNumber);

@@ -24,6 +24,7 @@
     "nodemon": "^2.0.22",
     "openai": "^3.2.1",
     "puppeteer": "^19.11.1",
+    "puppeteer-core": "^10.1.0",
     "qrcode": "^1.5.3",
     "request": "^2.88.2"
   },
