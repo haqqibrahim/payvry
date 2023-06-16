@@ -8,7 +8,9 @@ const {
   GetObjectCommand,
 } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const { sendReciept } = require("./Whatsapp-Send-Receipt");
 const { sendMessage } = require("./Whatsapp-Send-Message");
+var shortUrl = require("node-url-shortener");
 const bucketName = process.env.AWS_BUCKET_NAME;
 const region = process.env.AWS_BUCKET_REGION;
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
@@ -161,8 +163,7 @@ h1.transaction-amount {
     </body>
     </html>
     `;
-  
-  
+
   try {
     // Generate image from HTML using node-html-to-image
     const image = await nodeHtmlToImage({
@@ -173,7 +174,6 @@ h1.transaction-amount {
     console.log("The image was created successfully!");
 
     const fileBuffer = fs.readFileSync("./image.png");
-
 
     const uploadParams = {
       Bucket: bucketName,
@@ -191,14 +191,27 @@ h1.transaction-amount {
     };
 
     const command = new GetObjectCommand(getObjectParams);
-    const url = await getSignedUrl(s3Client, command, { expires: 43200 });
-    // await sendReciept(url, phoneNumber);
-    const receiptMessage = `Transaction Receipts: ${url}`
-    await sendMessage(receiptMessage, phoneNumber)
-    // Delete the local file after use
-    fs.unlinkSync("./image.png");
+    const url = await getSignedUrl(s3Client, command, { expires: 2592000 });
 
-    console.log("Image uploaded to S3 successfully:", url);
+    // Shorten the URL using shortUrl library
+    shortUrl.short(url, async function (err, shortenedUrl) {
+      if (err) {
+        console.error("Error shortening URL:", err);
+        return;
+      }
+
+      console.log("Shortened URL:", shortenedUrl);
+
+      // Pass the shortened URL to other functions
+      // await sendReciept(shortenedUrl, phoneNumber);
+      const receiptMessage = `Transaction Receipts: ${shortenedUrl}`;
+      await sendMessage(receiptMessage, phoneNumber);
+
+      // Delete the local file after use
+      fs.unlinkSync("./image.png");
+
+      console.log("Image uploaded to S3 successfully:", shortenedUrl);
+    });
   } catch (error) {
     console.error("Error generating or uploading the image:", error);
   }
