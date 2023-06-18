@@ -9,6 +9,7 @@ const UserAuthRoutes = require("./Routes/User/UserAuthRoutes");
 const vendorAuthRoutes = require("./Routes/Vendor/VendorAuthRoutes");
 const userTransactionRoutes = require("./Routes/User/UserTransactionRoutes");
 const vendorTransactionRoutes = require("./Routes/Vendor/VendorTransactionRoutes");
+const AnalicsRoute = require("./Routes/Analytics/Dashboard")
 const UserAIRoutes = require("./Routes/User/UserAIRoutes")
 const app = express();
 const whatsAppClient = require("@green-api/whatsapp-api-client");
@@ -41,7 +42,7 @@ if (port != 5000) {
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Payvry" });
 });
-
+app.use("/analytics", AnalicsRoute)
 app.use("/user/api", UserAuthRoutes);
 app.use("/user/api", userTransactionRoutes);
 app.use("/vendor/api", vendorAuthRoutes);

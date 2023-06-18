@@ -34,20 +34,20 @@ const jsonVendor = `
         },
         {
             "username": "adonai",
-            "account_number": "",   
-            "account_bank": ""
+            "account_number": "2254202773",   
+            "account_bank": "033"
         }, {
             "username": "daily buds",
-            "account_number": "",
-            "account_bank": ""
+            "account_number": "0045028859",
+            "account_bank": "221"
         }, {
             "username": "tuk shop",
             "account_number": "",
             "account_bank": ""
         }, {
             "username": "top fruits",
-            "account_number": "",
-            "account_bank": ""
+            "account_number": "1023919511",
+            "account_bank": "033"
         }
     ]
 }

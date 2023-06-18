@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <!-- Include Tailwind CSS styles -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Custom styles -->
+  <style>
+    /* Add your custom styles here */
+  </style>
+</head>
+
+<body class="bg-gray-100">
+  <div class="container mx-auto py-8 px-4">
+    <h1 class="text-2xl font-bold mb-4">Dashboard</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <% responseData.forEach((user, index) => { %>
+        <div id="user-<%= index %>" class="bg-white rounded-lg shadow p-4">
+          <h2 class="text-lg font-semibold mb-2"><%= user.fullName %></h2>
+          <p class="text-lg text-gray-600 mb-4"><%= user.department %></p>
+
+          <div class="mb-4">
+            <h3 class="text-base font-semibold text-gray-600 mb-1">Account Balance</h3>
+            <p id="account-balance-<%= index %>" class="text-2xl font-bold text-green-600">₦<%= user.accountBalance %></p>
+          </div>
+
+          <div class="mb-4">
+            <h3 class="text-base font-semibold text-gray-600 mb-1">Total Deposits</h3>
+            <p id="total-deposits-<%= index %>" class="text-2xl font-bold text-yellow-600">₦<%= user.totalDeposits %></p>
+          </div>
+
+          <div class="mb-4">
+            <h3 class="text-base font-semibold text-gray-600 mb-1">Total Withdrawals</h3>
+            <p id="total-withdrawals-<%= index %>" class="text-2xl font-bold text-red-600">₦<%= user.totalWithdrawals %></p>
+          </div>
+
+          <div class="mb-4">
+            <h3 class="text-base font-semibold text-gray-600 mb-1">Total Transfers and Payments</h3>
+            <p id="total-transfers-payments-<%= index %>" class="text-2xl font-bold text-purple-600">₦<%= user.totalTransfersAndPayments %></p>
+          </div>
+
+          <div class="mb-4">
+            <h3 class="text-base font-semibold text-gray-600 mb-1">Recent Transaction</h3>
+            <% if (user.recentTransaction.time) { %>
+              <p class="text-base text-gray-600 mb-1">Amount: ₦<%= user.recentTransaction.amount %></p>
+              <p class="text-base text-gray-600">Time: <%= user.recentTransaction.time %></p>
+            <% } else { %>
+              <p class="text-base text-gray-600">No recent transactions</p>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- Include Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com/2.2.16/tailwind.min.js"></script>
+  <script>
+    // Format numbers with comma separator using IDs
+    const responseData = <%= JSON.stringify(responseData) %>;
+
+    responseData.forEach((user, index) => {
+      const accountBalance = document.getElementById(`account-balance-${index}`);
+      const totalDeposits = document.getElementById(`total-deposits-${index}`);
+      const totalWithdrawals = document.getElementById(`total-withdrawals-${index}`);
+      const totalTransfersPayments = document.getElementById(`total-transfers-payments-${index}`);
+
+      accountBalance.textContent = `₦${formatNumber(user.accountBalance)}`;
+      totalDeposits.textContent = `₦${formatNumber(user.totalDeposits)}`;
+      totalWithdrawals.textContent = `₦${formatNumber(user.totalWithdrawals)}`;
+      totalTransfersPayments.textContent = `₦${formatNumber(user.totalTransfersAndPayments)}`;
+    });
+
+    // Format number function with comma separator
+    function formatNumber(number) {
+      return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+  </script>
+</body>
+
+</html>

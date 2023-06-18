@@ -57,7 +57,7 @@ exports.PayvryAI = async (phoneNumber) => {
       msg.push(...rolesAndContent);
       //  Calling the OpenAI API
       const completion = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo-0301",
+        model: "gpt-3.5-turbo-16k",
         messages: msg,
       });
 
@@ -77,7 +77,10 @@ exports.PayvryAI = async (phoneNumber) => {
         const recipients = [
           "blossom",
           "Blossom",
-          // "adonai",
+          "adonai",
+          "Adonai",
+          "adonnai",
+          "Adonnai",
           // "top fruit",
           // "tuk shop",
           "daily buds",
@@ -111,24 +114,21 @@ exports.PayvryAI = async (phoneNumber) => {
               }
               break;
 
-            case "Payment-User-Payvry":
-              const matchPhoneNumber = sentence.match(/\d{11}/); // Regular expression to match an 11-digit phone number
-              if (matchPhoneNumber) {
-                const recipientNumber = matchPhoneNumber[0];
-                const matchAmount = sentence.match(amountRegex);
-                if (matchAmount) {
-                  const amount = matchAmount[0];
+              case "Payment-User-Payvry":
+                const matchPhoneNumber = sentence.match(/\d{11}/); // Regular expression to match an 11-digit phone number
+                const matchAmount = sentence.match(/amount: (\d+)/i); // Regular expression to match the amount
+                if (matchPhoneNumber && matchAmount) {
+                  const recipientNumber = matchPhoneNumber[0];
+                  const amount = matchAmount[1];
                   console.log(`Recipient number found: ${recipientNumber}`);
                   console.log(`Amount found: ${amount}`);
                   console.log("Calling function");
                   await P2PInit(recipientNumber, phoneNumber, Number(amount));
                 } else {
-                  console.log("Amount not found");
+                  console.log("Recipient number or amount not found");
                 }
-              } else {
-                console.log("Recipient number not found");
-              }
-              break;
+                break;
+              
 
             case "Transfer-User-Payvry":
               const accountNumberMatch = sentence.match(/\d{10}/); // Regular expression to match a 10-digit account number
