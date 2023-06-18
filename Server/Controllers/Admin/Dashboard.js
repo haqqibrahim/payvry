@@ -13,17 +13,20 @@ exports.Dashbard = async (req, res) => {
         },
       },
     ]);
-    const totalDeposits = await Transaction.aggregate([
-      {
-        $match: { transactionType: "deposit" },
-      },
-      {
-        $group: {
-          _id: null,
-          totalDeposits: { $sum: "$amount" },
+    const totalDepositsResult = await Transaction.aggregate([
+        {
+          $match: { transactionType: "deposit" },
         },
-      },
-    ]);
+        {
+          $group: {
+            _id: null,
+            totalDeposits: { $sum: "$amount" },
+          },
+        },
+      ]);
+      const totalDeposits = totalDepositsResult.length > 0 ? totalDepositsResult[0].totalDeposits : 0;
+      
+      console.log(totalDeposits);      
     const totalWithdrawals = await Transaction.aggregate([
       {
         $match: { transactionType: "withdraw" },

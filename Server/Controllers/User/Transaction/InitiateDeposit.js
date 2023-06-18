@@ -83,7 +83,7 @@ exports.depositAI = async (amount, phoneNumber) => {
 
     const transaction = new Transaction({
       ID: userAccount._id,
-      transactionType: "credit",
+      transactionType: "deposit",
       accountType: "User",
       amount,
       transaction_ref: tx_ref,
