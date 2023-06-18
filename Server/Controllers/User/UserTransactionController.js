@@ -78,7 +78,7 @@ exports.deposit = async (req, res) => {
 
 exports.withdraw = async (req, res) => {
   try {
-    const { account_bank, account_number, account_name, amount, token } =
+    const { account_bank, account_number, account_name, amount, email } =
       req.body;
     const details = {
       account_number,
@@ -107,9 +107,8 @@ exports.withdraw = async (req, res) => {
           .json({ message: `Account Name not correct: ${account_nameFound}` });
       }
     });
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // decoding the token
-    const userId = decoded.id;
-    const user = await User.findById(userId);
+  
+    const user = await User.findOne(email);
     if (!user) {
       return res.status(500).json({ message: "User not found" });
     }
@@ -167,7 +166,7 @@ exports.withdraw = async (req, res) => {
     mixpanel.track("Withdraw Funds", {
       "id": reference,
       "Type": "User",
-      "User ID": userId
+      "User ID": email
     })
     mixpanel.track("Withdraw", {
       amount

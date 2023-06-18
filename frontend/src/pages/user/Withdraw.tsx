@@ -133,7 +133,7 @@ const Withdraw = () => {
   return (
     <main className='h-screen w-screen flex flex-col' style={{ justifyContent: "center", alignItems: "center", width: "100vw" }}>
       <h1 className='font-semibold text-[20px]  leading-[26px] text-center pt-14'>Withdraw Funds</h1>
-      <BackButton />
+      {/* <BackButton /> */}
 
       <section className='p-[30px] flex flex-col w-[90%]' style={{ width: "100vw" }}>
         <h2 className='font-medium text-[16px] text-center mt-20 mb-20 leading-[27px] text-[rgba(0,0,0,0.5)]'>

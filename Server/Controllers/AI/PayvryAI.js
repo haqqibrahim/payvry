@@ -186,9 +186,9 @@ exports.PayvryAI = async (phoneNumber) => {
               break;
 
             case "Withdraw-Payvry":
-              const link = "https://payvry.onrender.com/user/withdraw";
+              const link = "https://payvry.vercel.app/user/withdraw";
               const msg = `You can make a withdrawal through this link: ${link}`;
-              await sendMessage(msg, phoneNumber);
+              await sendMessage("To make a withdrawal, just make a bank transfer to the bank acount of your choice.", phoneNumber);
               break;
 
             default:
