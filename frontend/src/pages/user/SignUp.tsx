@@ -179,6 +179,7 @@ const SignUp = () => {
       phoneNumber: phoneNumberRef.current!.value,
     };
 
+    // ddd
     axios
       .post('/verify-number', payload, generalInfoConfig)
       .then(res => {
