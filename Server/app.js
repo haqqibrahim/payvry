@@ -15,6 +15,7 @@ const app = express();
 const whatsAppClient = require("@green-api/whatsapp-api-client");
 const { ReceiveMsgGreen } = require("./Controllers/User/AI-Message/ReceiveMsg");
 const Flutterwave = require("flutterwave-node-v3");
+const {GetBankDetails} = require("./Flutterwave/GetBankDetails")
 
 const flw = new Flutterwave(
   process.env.FLW_PUBLIC_KEY,
@@ -91,6 +92,7 @@ app.post("/transfer", (req, res) => {
 
 }
 
+
 const {bank, account_number, amount, reference} = req.body
 // const bank = "033"
 // const account_number = "2124955312"
@@ -98,6 +100,15 @@ const {bank, account_number, amount, reference} = req.body
 // const reference = kddjd
 initTrans(bank, account_number, amount, reference);
 })
+
+app.post("/verify_bank", async (req, res) => {
+  const {account_number, account_bank} = req.body
+  // const account_number = "2148029455"
+  // const account_bank = "033"
+  const {code, message, account_name} = await GetBankDetails(account_number, account_bank)
+  res.status(200).json({message: account_name})
+})
+
 app.use("/analytics", AnalicsRoute);
 app.use("/user/api", UserAuthRoutes);
 app.use("/user/api", userTransactionRoutes);
